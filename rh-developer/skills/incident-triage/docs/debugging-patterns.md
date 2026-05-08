@@ -1,1 +1,1 @@
-../../deploy/docs/debugging-patterns.md
+../../debug-build/docs/debugging-patterns.md

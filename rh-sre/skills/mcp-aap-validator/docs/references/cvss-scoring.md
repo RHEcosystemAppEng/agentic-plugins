@@ -1,1 +1,1 @@
-../../../playbook-generator/docs/references/cvss-scoring.md
+../../../cve-validation/docs/references/cvss-scoring.md

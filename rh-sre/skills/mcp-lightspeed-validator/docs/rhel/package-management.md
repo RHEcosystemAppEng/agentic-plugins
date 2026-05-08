@@ -1,1 +1,1 @@
-../../../playbook-executor/docs/rhel/package-management.md
+../../../playbook-generator/docs/rhel/package-management.md

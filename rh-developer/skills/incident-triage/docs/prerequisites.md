@@ -1,1 +1,1 @@
-../../deploy/docs/prerequisites.md
+../../validate-environment/docs/prerequisites.md
