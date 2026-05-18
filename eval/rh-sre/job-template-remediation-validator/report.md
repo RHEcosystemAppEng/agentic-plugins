@@ -3,7 +3,7 @@
 ## Summary
 
 * Related PR: https://github.com/RHEcosystemAppEng/skill-submissions/pull/11
-* LLM: Claude Sonnet 4.5 (vertex_ai)
+* LLM: Claude Sonnet 4.6 (vertex_ai)
 
 | Metric | Treatment | Control |
 |--------|-----------|---------|

@@ -1,0 +1,75 @@
+{
+  "submission_name": "rh-basic-red-hat-support-severity",
+  "provenance": {
+    "generated_at": "2026-05-13T20:22:54.621127Z",
+    "commit_sha": "00087c12db7ae45689bf8aeb2fea936bc9bee3e7",
+    "pipeline_run_id": "abevalflow-624rf",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-basic-red-hat-support-severity@sha256:2b721f5d6dae8394054a8c9672101733f3e158265e316743f7fd70f1ee613021",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-basic-red-hat-support-severity@sha256:c90e722f817fd55fd3b05d9ae2c8f5a1afab1c6f1658a453bbbc5f098d58983d",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/35",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)",
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 1.0,
+      "median_reward": 1.0,
+      "std_reward": 0.0
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.8888666666666666,
+      "median_reward": 0.8333,
+      "std_reward": 0.0962442898739106
+    },
+    "mean_reward_gap": 0.11113333333333342,
+    "ttest_p_value": 0.18350341907227372,
+    "fisher_p_value": 1.0,
+    "recommendation": "pass"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-basic-red-hat-support-severit__G7Exfzr",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-basic-red-hat-support-severit__UbGoSJY",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-basic-red-hat-support-severit__tuoBx83",
+        "reward": 1.0,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-basic-red-hat-support-severit__3ZogVyQ",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-basic-red-hat-support-severit__9R8dgwH",
+        "reward": 0.8333,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-basic-red-hat-support-severit__YB3Wuiz",
+        "reward": 0.8333,
+        "passed": true
+      }
+    ]
+  }
+}

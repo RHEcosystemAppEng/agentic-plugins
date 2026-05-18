@@ -1,0 +1,76 @@
+{
+  "submission_name": "rh-automation-governed-job-launcher",
+  "provenance": {
+    "generated_at": "2026-05-16T22:02:15.620574Z",
+    "commit_sha": "8e58327d9d22a2a941a6c65226cfc66338b70961",
+    "pipeline_run_id": "abevalflow-slp87",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-governed-job-launcher@sha256:b14c93a40192f3f10d9247520a616eb9fd395e6fda6d5585956ead4eddc34970",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-governed-job-launcher@sha256:680cd3349511b15bf189f571d72721aaeb4641c16cb5702678680128f95804b2",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.9523666666666667,
+      "median_reward": 1.0,
+      "std_reward": 0.08250335346719753
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.47619999999999996,
+      "median_reward": 0.4286,
+      "std_reward": 0.08244561844027858
+    },
+    "uplift": 0.0,
+    "mean_reward_gap": 0.47616666666666674,
+    "ttest_p_value": 0.0021106502191999897,
+    "fisher_p_value": 1.0,
+    "recommendation": "pass",
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/68",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-automation-governed-job-launc__n3GUXXT",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-governed-job-launc__qt3M4Rj",
+        "reward": 0.8571,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-governed-job-launc__t7wpkPH",
+        "reward": 1.0,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-automation-governed-job-launc__TeLJHZy",
+        "reward": 0.5714,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-governed-job-launc__YhZTanZ",
+        "reward": 0.4286,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-governed-job-launc__f7qkk9c",
+        "reward": 0.4286,
+        "passed": true
+      }
+    ]
+  }
+}

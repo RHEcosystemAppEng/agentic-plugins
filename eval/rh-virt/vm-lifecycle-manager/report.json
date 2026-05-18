@@ -1,74 +1,74 @@
 {
   "submission_name": "rh-virt-vm-lifecycle-manager",
   "provenance": {
-    "generated_at": "2026-05-06T01:28:40.295972Z",
-    "commit_sha": "d42e5977ac8faa772a57f58b7e2eab13d3efd5dd",
-    "pipeline_run_id": "abevalflow-9jcpc",
-    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-lifecycle-manager@sha256:912c250eb85bf2f195438880c3edb46a1f37d48908c85cb98b5f0fdb2bd41e87",
-    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-lifecycle-manager@sha256:8f7a7303d51c6281146e1a2ea4bb2b8ac276b8582657b3038b03f956b17d8ec2",
+    "generated_at": "2026-05-13T17:54:58.055980Z",
+    "commit_sha": "fc8ebb25420237ae5b9064b004ff1dbce890b329",
+    "pipeline_run_id": "abevalflow-pr9v6",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-lifecycle-manager@sha256:f57fb8fe607ac705cbe400d5ae98a1bdfc8a4e80ca970a85f41181ff01c2cec3",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-lifecycle-manager@sha256:5cc70112f2c266b9ca7df6da00ae5f6c7cc5a4fb6ca60f2541403f164149736f",
     "harbor_fork_revision": "main"
   },
   "summary": {
     "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/18",
-    "llm": "Claude Sonnet 4.5 (vertex_ai)",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)",
     "treatment": {
       "n_trials": 3,
       "n_passed": 3,
       "n_failed": 0,
       "n_errors": 0,
       "pass_rate": 1.0,
-      "mean_reward": 0.9583333333333334,
-      "median_reward": 1.0,
-      "std_reward": 0.07216878364870322
+      "mean_reward": 0.8888666666666666,
+      "median_reward": 0.8333,
+      "std_reward": 0.0962442898739106
     },
     "control": {
       "n_trials": 3,
-      "n_passed": 3,
-      "n_failed": 0,
+      "n_passed": 2,
+      "n_failed": 1,
       "n_errors": 0,
-      "pass_rate": 1.0,
-      "mean_reward": 0.875,
-      "median_reward": 0.875,
-      "std_reward": 0.0
+      "pass_rate": 0.6666666666666666,
+      "mean_reward": 0.5,
+      "median_reward": 0.6667,
+      "std_reward": 0.4409522536511181
     },
-    "mean_reward_gap": 0.08333333333333337,
-    "ttest_p_value": 0.1835034190722739,
+    "mean_reward_gap": 0.3888666666666666,
+    "ttest_p_value": 0.2637080526747648,
     "fisher_p_value": 1.0,
     "recommendation": "pass"
   },
   "trials": {
     "treatment": [
       {
-        "trial_name": "rh-virt-vm-lifecycle-manager__6UKxKck",
+        "trial_name": "rh-virt-vm-lifecycle-manager__FWedXLE",
+        "reward": 0.8333,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-virt-vm-lifecycle-manager__d3uEgqH",
         "reward": 1.0,
         "passed": true
       },
       {
-        "trial_name": "rh-virt-vm-lifecycle-manager__d88h8AX",
-        "reward": 1.0,
-        "passed": true
-      },
-      {
-        "trial_name": "rh-virt-vm-lifecycle-manager__r5AVgtg",
-        "reward": 0.875,
+        "trial_name": "rh-virt-vm-lifecycle-manager__s9uQBMY",
+        "reward": 0.8333,
         "passed": true
       }
     ],
     "control": [
       {
-        "trial_name": "rh-virt-vm-lifecycle-manager__kddXkXB",
-        "reward": 0.875,
+        "trial_name": "rh-virt-vm-lifecycle-manager__M6uzZ9J",
+        "reward": 0.6667,
         "passed": true
       },
       {
-        "trial_name": "rh-virt-vm-lifecycle-manager__tbewTSZ",
-        "reward": 0.875,
+        "trial_name": "rh-virt-vm-lifecycle-manager__QApYK6c",
+        "reward": 0.8333,
         "passed": true
       },
       {
-        "trial_name": "rh-virt-vm-lifecycle-manager__zKnJ778",
-        "reward": 0.875,
-        "passed": true
+        "trial_name": "rh-virt-vm-lifecycle-manager__ZXYnTwk",
+        "reward": 0.0,
+        "passed": false
       }
     ]
   }

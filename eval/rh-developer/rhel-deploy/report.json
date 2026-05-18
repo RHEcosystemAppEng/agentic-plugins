@@ -1,0 +1,76 @@
+{
+  "submission_name": "rh-developer-rhel-deploy",
+  "provenance": {
+    "generated_at": "2026-05-16T19:17:00.232568Z",
+    "commit_sha": "203bc6e69b1b4eef87c88c974bbebf6390be4605",
+    "pipeline_run_id": "abevalflow-wxkph",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-developer-rhel-deploy@sha256:10ceaed5a08409503cf85b500da1f4dfb31e4874f17a7d64775c6a0a2cb1892e",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-developer-rhel-deploy@sha256:9e409228c8108739b60774baacaa5669064c5353da0d0510a25bc074ebbf4ce5",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.9523666666666667,
+      "median_reward": 1.0,
+      "std_reward": 0.08250335346719753
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.5714333333333333,
+      "median_reward": 0.5714,
+      "std_reward": 0.14285000291681252
+    },
+    "uplift": 0.0,
+    "mean_reward_gap": 0.38093333333333335,
+    "ttest_p_value": 0.02481363102763739,
+    "fisher_p_value": 1.0,
+    "recommendation": "pass",
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/49",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-developer-rhel-deploy__6MdwY7M",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-developer-rhel-deploy__Bw5kfx9",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-developer-rhel-deploy__MR4Ziaw",
+        "reward": 0.8571,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-developer-rhel-deploy__8XEU7Uq",
+        "reward": 0.4286,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-developer-rhel-deploy__J2Qu4ow",
+        "reward": 0.7143,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-developer-rhel-deploy__MALxZEE",
+        "reward": 0.5714,
+        "passed": true
+      }
+    ]
+  }
+}

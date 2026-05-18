@@ -1,0 +1,76 @@
+{
+  "submission_name": "rh-automation-execution-summary",
+  "provenance": {
+    "generated_at": "2026-05-15T00:31:39.019554Z",
+    "commit_sha": "1baa71c966ddb41283efa260574cf72c0568d3cd",
+    "pipeline_run_id": "abevalflow-rznzc",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-execution-summary@sha256:b00ba35b6099fa8e7a2a16dbecd75ef9ba41eceb8e7fe5c5179e7a0c7d9a877a",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-execution-summary@sha256:1b31f4872a7d8c71dc475be6e2b33e27a872cd99b6a3ebb54348559415768e22",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.9444333333333333,
+      "median_reward": 1.0,
+      "std_reward": 0.0962442898739106
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.7222333333333334,
+      "median_reward": 0.6667,
+      "std_reward": 0.09618655484699169
+    },
+    "uplift": 0.0,
+    "mean_reward_gap": 0.22219999999999995,
+    "ttest_p_value": 0.04742068145777307,
+    "fisher_p_value": 1.0,
+    "recommendation": "pass",
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/63",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-automation-execution-summary__C22Q3am",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-execution-summary__Gd9Tnau",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-execution-summary__nLodNzj",
+        "reward": 0.8333,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-automation-execution-summary__TzViXSf",
+        "reward": 0.6667,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-execution-summary__huM2wdT",
+        "reward": 0.8333,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-execution-summary__zQMBN6g",
+        "reward": 0.6667,
+        "passed": true
+      }
+    ]
+  }
+}

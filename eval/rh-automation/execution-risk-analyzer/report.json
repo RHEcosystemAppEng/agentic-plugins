@@ -1,0 +1,76 @@
+{
+  "submission_name": "rh-automation-execution-risk-analyzer",
+  "provenance": {
+    "generated_at": "2026-05-16T20:27:14.166440Z",
+    "commit_sha": "fb68963123b5b3a3a3affd871ff442b6945fff48",
+    "pipeline_run_id": "abevalflow-gx2cz",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-execution-risk-analyzer@sha256:a40dec3aa1e5ace8acdabae0ea8448b8d02824d52998681f598c07b72d9b8310",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-execution-risk-analyzer@sha256:311a4d374bae397beec285a3c191127a1aef31dc9871941bf00e4a289755ec86",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.9047333333333333,
+      "median_reward": 0.8571,
+      "std_reward": 0.08250335346719753
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 2,
+      "n_failed": 1,
+      "n_errors": 0,
+      "pass_rate": 0.6666666666666666,
+      "mean_reward": 0.28573333333333334,
+      "median_reward": 0.4286,
+      "std_reward": 0.2474523253746736
+    },
+    "uplift": 0.33333333333333337,
+    "mean_reward_gap": 0.619,
+    "ttest_p_value": 0.03838803782816801,
+    "fisher_p_value": 1.0,
+    "recommendation": "pass",
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/62",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-automation-execution-risk-ana__U7XLtun",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-execution-risk-ana__gUSikNa",
+        "reward": 0.8571,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-execution-risk-ana__pLjZZ4A",
+        "reward": 0.8571,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-automation-execution-risk-ana__K9VuL9c",
+        "reward": 0.4286,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-execution-risk-ana__UXYJjvF",
+        "reward": 0.0,
+        "passed": false
+      },
+      {
+        "trial_name": "rh-automation-execution-risk-ana__eEbsrTk",
+        "reward": 0.4286,
+        "passed": true
+      }
+    ]
+  }
+}

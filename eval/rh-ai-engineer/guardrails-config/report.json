@@ -1,0 +1,76 @@
+{
+  "submission_name": "rh-ai-engineer-guardrails-config",
+  "provenance": {
+    "generated_at": "2026-05-14T20:51:50.118193Z",
+    "commit_sha": "5ae29fd156022b76b7453146c32b0b003e832938",
+    "pipeline_run_id": "abevalflow-swlp7",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-ai-engineer-guardrails-config@sha256:9bbea650ed62072140fe13750473f26237c1e48626b6a8a82dcb0d5757eae134",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-ai-engineer-guardrails-config@sha256:7192ec6fef134203449bcc870d78699498f5c0d6e9e988737f17eada556f607f",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.9444333333333333,
+      "median_reward": 1.0,
+      "std_reward": 0.0962442898739106
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 2,
+      "n_failed": 1,
+      "n_errors": 0,
+      "pass_rate": 0.6666666666666666,
+      "mean_reward": 0.3333333333333333,
+      "median_reward": 0.5,
+      "std_reward": 0.28867513459481287
+    },
+    "uplift": 0.33333333333333337,
+    "mean_reward_gap": 0.6111,
+    "ttest_p_value": 0.055053929892058685,
+    "fisher_p_value": 1.0,
+    "recommendation": "pass",
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/55",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-ai-engineer-guardrails-config__74uiCDq",
+        "reward": 0.8333,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-guardrails-config__W8ZnrpB",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-guardrails-config__vsjmQAM",
+        "reward": 1.0,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-ai-engineer-guardrails-config__Gq9ZARV",
+        "reward": 0.5,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-guardrails-config__bPhBT9b",
+        "reward": 0.0,
+        "passed": false
+      },
+      {
+        "trial_name": "rh-ai-engineer-guardrails-config__rYRPP9d",
+        "reward": 0.5,
+        "passed": true
+      }
+    ]
+  }
+}

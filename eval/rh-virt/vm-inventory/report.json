@@ -1,0 +1,76 @@
+{
+  "submission_name": "rh-virt-vm-inventory",
+  "provenance": {
+    "generated_at": "2026-05-14T14:06:46.020270Z",
+    "commit_sha": "b1db00e92087b369f882523185c36ca61978d881",
+    "pipeline_run_id": "abevalflow-hndtj",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-inventory@sha256:ab59881381032c04c0d0496e3cc430ecc3ec2b84c6faf4cbb2b1966497f8c6f6",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-inventory@sha256:fbf3a7f812c19fe90caa30e3362777bef28cf046f5236366f1a6501dd4b5facc",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.9047333333333333,
+      "median_reward": 0.8571,
+      "std_reward": 0.08250335346719753
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 0,
+      "n_failed": 3,
+      "n_errors": 0,
+      "pass_rate": 0.0,
+      "mean_reward": 0.0,
+      "median_reward": 0.0,
+      "std_reward": 0.0
+    },
+    "uplift": 1.0,
+    "mean_reward_gap": 0.9047333333333333,
+    "ttest_p_value": 0.002760448141363059,
+    "fisher_p_value": 0.10000000000000002,
+    "recommendation": "pass",
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/6",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-virt-vm-inventory__5qiG5F4",
+        "reward": 0.8571,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-virt-vm-inventory__pxNSvRP",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-virt-vm-inventory__qfAQnuP",
+        "reward": 0.8571,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-virt-vm-inventory__TBkkc9r",
+        "reward": 0.0,
+        "passed": false
+      },
+      {
+        "trial_name": "rh-virt-vm-inventory__UbTGKkf",
+        "reward": 0.0,
+        "passed": false
+      },
+      {
+        "trial_name": "rh-virt-vm-inventory__g8KkvhR",
+        "reward": 0.0,
+        "passed": false
+      }
+    ]
+  }
+}

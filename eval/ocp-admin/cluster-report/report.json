@@ -1,0 +1,75 @@
+{
+  "submission_name": "ocp-admin-cluster-report",
+  "provenance": {
+    "generated_at": "2026-05-12T11:05:34.424536Z",
+    "commit_sha": "0f448e0ae9610166053dde81af92f6a0288543bb",
+    "pipeline_run_id": "abevalflow-s7fp5",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/ocp-admin-cluster-report@sha256:f9723786d85d6fa3a5fe2fd0770c2f638ca0f05625146009e4921d62c7a92f89",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/ocp-admin-cluster-report@sha256:9902f8feb13266de61565a2e5c5c9db771b88b1e3acbb9ad25e3c9fe4329d373",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/3",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)",
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.9091,
+      "median_reward": 0.9091,
+      "std_reward": 0.0
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 1,
+      "n_failed": 2,
+      "n_errors": 0,
+      "pass_rate": 0.3333333333333333,
+      "mean_reward": 0.2727333333333333,
+      "median_reward": 0.0,
+      "std_reward": 0.47238799025095185
+    },
+    "mean_reward_gap": 0.6363666666666667,
+    "ttest_p_value": 0.14481790102754966,
+    "fisher_p_value": 0.4000000000000001,
+    "recommendation": "pass"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "ocp-admin-cluster-report__JM9AwJ2",
+        "reward": 0.9091,
+        "passed": true
+      },
+      {
+        "trial_name": "ocp-admin-cluster-report__NdGgVSJ",
+        "reward": 0.9091,
+        "passed": true
+      },
+      {
+        "trial_name": "ocp-admin-cluster-report__qSvNkzV",
+        "reward": 0.9091,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "ocp-admin-cluster-report__LhreyEP",
+        "reward": 0.8182,
+        "passed": true
+      },
+      {
+        "trial_name": "ocp-admin-cluster-report__bTJTUSe",
+        "reward": 0.0,
+        "passed": false
+      },
+      {
+        "trial_name": "ocp-admin-cluster-report__q865w8X",
+        "reward": 0.0,
+        "passed": false
+      }
+    ]
+  }
+}

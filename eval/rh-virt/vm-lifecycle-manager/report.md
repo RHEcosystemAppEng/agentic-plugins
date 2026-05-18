@@ -3,33 +3,33 @@
 ## Summary
 
 * Related PR: https://github.com/RHEcosystemAppEng/skill-submissions/pull/18
-* LLM: Claude Sonnet 4.5 (vertex_ai)
+* LLM: Claude Sonnet 4.6 (vertex_ai)
 
 | Metric | Treatment | Control |
 |--------|-----------|---------|
 | Trials | 3 | 3 |
-| Passed | 3 | 3 |
-| Failed | 0 | 0 |
+| Passed | 3 | 2 |
+| Failed | 0 | 1 |
 | Errors | 0 | 0 |
-| Pass Rate | 1.0000 | 1.0000 |
-| Mean Reward | 0.9583 | 0.8750 |
-| Median Reward | 1.0000 | 0.8750 |
-| Std Reward | 0.0722 | 0.0000 |
+| Pass Rate | 1.0000 | 0.6667 |
+| Mean Reward | 0.8889 | 0.5000 |
+| Median Reward | 0.8333 | 0.6667 |
+| Std Reward | 0.0962 | 0.4410 |
 
 ## Comparison
 
-- **Mean reward gap (Uplift):** +0.0833
-- **Welch's t-test p-value:** 0.1835
+- **Mean reward gap (Uplift):** +0.3889
+- **Welch's t-test p-value:** 0.2637
 - **Fisher's exact p-value:** 1.0000
 - **Recommendation:** **PASS**
 
 ## Provenance
 
-- Generated at: 2026-05-06T01:28:40.295972+00:00
-- Commit SHA: `d42e5977ac8faa772a57f58b7e2eab13d3efd5dd`
-- Pipeline run: `abevalflow-9jcpc`
-- Treatment image: `image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-lifecycle-manager@sha256:912c250eb85bf2f195438880c3edb46a1f37d48908c85cb98b5f0fdb2bd41e87`
-- Control image: `image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-lifecycle-manager@sha256:8f7a7303d51c6281146e1a2ea4bb2b8ac276b8582657b3038b03f956b17d8ec2`
+- Generated at: 2026-05-13T17:54:58.055980+00:00
+- Commit SHA: `fc8ebb25420237ae5b9064b004ff1dbce890b329`
+- Pipeline run: `abevalflow-pr9v6`
+- Treatment image: `image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-lifecycle-manager@sha256:f57fb8fe607ac705cbe400d5ae98a1bdfc8a4e80ca970a85f41181ff01c2cec3`
+- Control image: `image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-virt-vm-lifecycle-manager@sha256:5cc70112f2c266b9ca7df6da00ae5f6c7cc5a4fb6ca60f2541403f164149736f`
 - Harbor fork revision: `main`
 
 ## Trial Details
@@ -39,9 +39,9 @@
 
 | # | Trial | Reward | Passed |
 |---|-------|--------|--------|
-| 1 | rh-virt-vm-lifecycle-manager__6UKxKck | 1.0000 | PASS |
-| 2 | rh-virt-vm-lifecycle-manager__d88h8AX | 1.0000 | PASS |
-| 3 | rh-virt-vm-lifecycle-manager__r5AVgtg | 0.8750 | PASS |
+| 1 | rh-virt-vm-lifecycle-manager__FWedXLE | 0.8333 | PASS |
+| 2 | rh-virt-vm-lifecycle-manager__d3uEgqH | 1.0000 | PASS |
+| 3 | rh-virt-vm-lifecycle-manager__s9uQBMY | 0.8333 | PASS |
 
 </details>
 
@@ -50,8 +50,8 @@
 
 | # | Trial | Reward | Passed |
 |---|-------|--------|--------|
-| 1 | rh-virt-vm-lifecycle-manager__kddXkXB | 0.8750 | PASS |
-| 2 | rh-virt-vm-lifecycle-manager__tbewTSZ | 0.8750 | PASS |
-| 3 | rh-virt-vm-lifecycle-manager__zKnJ778 | 0.8750 | PASS |
+| 1 | rh-virt-vm-lifecycle-manager__M6uzZ9J | 0.6667 | PASS |
+| 2 | rh-virt-vm-lifecycle-manager__QApYK6c | 0.8333 | PASS |
+| 3 | rh-virt-vm-lifecycle-manager__ZXYnTwk | 0.0000 | FAIL |
 
 </details>

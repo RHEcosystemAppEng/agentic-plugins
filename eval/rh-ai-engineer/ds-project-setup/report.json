@@ -1,0 +1,75 @@
+{
+  "submission_name": "rh-ai-engineer-ds-project-setup",
+  "provenance": {
+    "generated_at": "2026-05-12T17:28:47.619003Z",
+    "commit_sha": "bc90559c812977f19fad8b62e46479ba457d367d",
+    "pipeline_run_id": "abevalflow-qmxns",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-ai-engineer-ds-project-setup@sha256:0dcc5b5e037dfa909ccae75fe5b6ab3a8c0d6fe17d4e8ff97bccf8f0ff91759e",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-ai-engineer-ds-project-setup@sha256:8c9ae04d5e0be8577db3d94bd0161553117f0a1153b448dce9aeb08ae864052e",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/51",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)",
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.9333333333333332,
+      "median_reward": 0.9,
+      "std_reward": 0.05773502691896256
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 1,
+      "n_failed": 2,
+      "n_errors": 0,
+      "pass_rate": 0.3333333333333333,
+      "mean_reward": 0.26666666666666666,
+      "median_reward": 0.0,
+      "std_reward": 0.46188021535170065
+    },
+    "mean_reward_gap": 0.6666666666666665,
+    "ttest_p_value": 0.12748771776836548,
+    "fisher_p_value": 0.4000000000000001,
+    "recommendation": "pass"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-ai-engineer-ds-project-setup__QswMpnT",
+        "reward": 0.9,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-ds-project-setup__ZxMohFy",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-ds-project-setup__m8J696y",
+        "reward": 0.9,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-ai-engineer-ds-project-setup__JmpxQ2D",
+        "reward": 0.0,
+        "passed": false
+      },
+      {
+        "trial_name": "rh-ai-engineer-ds-project-setup__fQx8PKW",
+        "reward": 0.8,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-ds-project-setup__sBtCJyL",
+        "reward": 0.0,
+        "passed": false
+      }
+    ]
+  }
+}

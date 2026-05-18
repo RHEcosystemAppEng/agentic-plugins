@@ -10,7 +10,7 @@
   },
   "summary": {
     "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/24",
-    "llm": "Claude Sonnet 4.5 (vertex_ai)",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)",
     "treatment": {
       "n_trials": 3,
       "n_passed": 3,

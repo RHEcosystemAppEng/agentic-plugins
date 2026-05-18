@@ -1,0 +1,76 @@
+{
+  "submission_name": "rh-automation-host-fact-inspector",
+  "provenance": {
+    "generated_at": "2026-05-16T22:49:02.421694Z",
+    "commit_sha": "ce8a52d816396ddc1059748ebd358c40b8d4f169",
+    "pipeline_run_id": "abevalflow-b2jr8",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-host-fact-inspector@sha256:db997ab2600a89b5ddc523e936d3b71d4b02170242591414fb5d388627c6857e",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-host-fact-inspector@sha256:1250272b93d0fc0c96a68cc7e6bc5e98b9768cb439ceb9ca954206f5f7701e53",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.8571,
+      "median_reward": 0.8571,
+      "std_reward": 0.0
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 2,
+      "n_failed": 1,
+      "n_errors": 0,
+      "pass_rate": 0.6666666666666666,
+      "mean_reward": 0.28573333333333334,
+      "median_reward": 0.4286,
+      "std_reward": 0.2474523253746736
+    },
+    "uplift": 0.33333333333333337,
+    "mean_reward_gap": 0.5713666666666666,
+    "ttest_p_value": 0.057209293871737704,
+    "fisher_p_value": 1.0,
+    "recommendation": "pass",
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/69",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-automation-host-fact-inspecto__chxLzQ8",
+        "reward": 0.8571,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-host-fact-inspecto__i5ynixh",
+        "reward": 0.8571,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-host-fact-inspecto__uVsDUtq",
+        "reward": 0.8571,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-automation-host-fact-inspecto__NBA9bZr",
+        "reward": 0.4286,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-host-fact-inspecto__qmPK96E",
+        "reward": 0.4286,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-host-fact-inspecto__syHUaC4",
+        "reward": 0.0,
+        "passed": false
+      }
+    ]
+  }
+}

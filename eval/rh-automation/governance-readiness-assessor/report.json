@@ -1,0 +1,76 @@
+{
+  "submission_name": "rh-automation-governance-readiness-assessor",
+  "provenance": {
+    "generated_at": "2026-05-16T21:16:37.624312Z",
+    "commit_sha": "2930d47b4d9ffe5c20684bd32c7564022779300b",
+    "pipeline_run_id": "abevalflow-s7brq",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-governance-readiness-assessor@sha256:a4f2ff6823ccb1d8d30bda032a88de368226fd0dcde6e6fe6ae41947f6f16b2b",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-automation-governance-readiness-assessor@sha256:42b420f47532b4a9d122dacec1515a6ea078364ae774ebf960b789b5fee9fe0f",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.8571,
+      "median_reward": 0.8571,
+      "std_reward": 0.0
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.1905,
+      "median_reward": 0.1429,
+      "std_reward": 0.08244561844027856
+    },
+    "uplift": 0.0,
+    "mean_reward_gap": 0.6666,
+    "ttest_p_value": 0.005060308851297974,
+    "fisher_p_value": 1.0,
+    "recommendation": "pass",
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/67",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-automation-governance-readine__3WS8BQM",
+        "reward": 0.8571,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-governance-readine__9ubbnvb",
+        "reward": 0.8571,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-governance-readine__YAT5G4M",
+        "reward": 0.8571,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-automation-governance-readine__WmgA8nw",
+        "reward": 0.2857,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-governance-readine__ZN77Nur",
+        "reward": 0.1429,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-automation-governance-readine__xQxPMMa",
+        "reward": 0.1429,
+        "passed": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "submission_name": "rh-ai-engineer-workbench-manage",
+  "provenance": {
+    "generated_at": "2026-05-14T19:56:43.821292Z",
+    "commit_sha": "90d4428c66126b11027cbf410d1d63b66d8d203d",
+    "pipeline_run_id": "abevalflow-xrdr7",
+    "treatment_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-ai-engineer-workbench-manage@sha256:b29d7fe7bfc2e7295e2436f7589a963e965cf5a6d3d535d6de8cd6ed75524451",
+    "control_image_ref": "image-registry.openshift-image-registry.svc:5000/ab-eval-flow/rh-ai-engineer-workbench-manage@sha256:6aef65abb137d823efb029cf28c38d89e09706390d68c8b9ffe9e94350d20f8e",
+    "harbor_fork_revision": "main"
+  },
+  "summary": {
+    "treatment": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 1.0,
+      "median_reward": 1.0,
+      "std_reward": 0.0
+    },
+    "control": {
+      "n_trials": 3,
+      "n_passed": 3,
+      "n_failed": 0,
+      "n_errors": 0,
+      "pass_rate": 1.0,
+      "mean_reward": 0.7222,
+      "median_reward": 0.8333,
+      "std_reward": 0.1924308447209023
+    },
+    "uplift": 0.0,
+    "mean_reward_gap": 0.27780000000000005,
+    "ttest_p_value": 0.12957374361260093,
+    "fisher_p_value": 1.0,
+    "recommendation": "pass",
+    "related_pr": "https://github.com/RHEcosystemAppEng/skill-submissions/pull/53",
+    "llm": "Claude Sonnet 4.6 (vertex_ai)"
+  },
+  "trials": {
+    "treatment": [
+      {
+        "trial_name": "rh-ai-engineer-workbench-manage__9aKYAR8",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-workbench-manage__nSgMzAn",
+        "reward": 1.0,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-workbench-manage__z7TpLV9",
+        "reward": 1.0,
+        "passed": true
+      }
+    ],
+    "control": [
+      {
+        "trial_name": "rh-ai-engineer-workbench-manage__MHchv3S",
+        "reward": 0.8333,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-workbench-manage__kz9oG4X",
+        "reward": 0.5,
+        "passed": true
+      },
+      {
+        "trial_name": "rh-ai-engineer-workbench-manage__wdPpHK9",
+        "reward": 0.8333,
+        "passed": true
+      }
+    ]
+  }
+}
