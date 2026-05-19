@@ -6,6 +6,8 @@ Starts each container-based MCP server via podman, performs JSON-RPC
 initialize + tools/list, then cross-references against each skill's
 allowed-tools declaration.
 
+Platform: Linux and macOS only (uses select.select for non-blocking I/O).
+
 Usage:
     python scripts/validate_mcp_tools.py [pack1] [pack2] ...
     No args: validates all packs that have mcps.json
@@ -211,12 +213,12 @@ def query_mcp_tools(command: str, args: list[str], kubeconfig: str) -> list[str]
     )
 
     try:
-        # Check for immediate exit (missing credentials, bad image, etc.)
-        time.sleep(0.5)
-        if proc.poll() is not None:
-            stderr = proc.stderr.read()[:300] if proc.stderr else ""
-            print(f"    Server exited immediately (code {proc.returncode}): {stderr.strip()}")
-            return None
+        for _ in range(10):
+            if proc.poll() is not None:
+                stderr = proc.stderr.read()[:300] if proc.stderr else ""
+                print(f"    Server exited immediately (code {proc.returncode}): {stderr.strip()}")
+                return None
+            time.sleep(0.1)
 
         send_jsonrpc(proc, INIT_MSG)
         resp = read_response(proc, expected_id=1, timeout=SERVER_START_TIMEOUT)

@@ -35,7 +35,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # full history required for git diff in pack detection
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -96,16 +96,15 @@ jobs:
           CHANGED_PACKS: ${{ steps.detect.outputs.packs }}
           PACKS_CHANGED: ${{ steps.detect.outputs.changed }}
         run: |
+          # Dispatch: manual with pack > PR changed packs > all packs
           if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$INPUT_PACK" ]; then
+            echo "Manual dispatch: validating pack '$INPUT_PACK'"
             python scripts/validate_mcp_tools.py "$INPUT_PACK"
+          elif [ "$EVENT_NAME" = "pull_request" ] && [ "$PACKS_CHANGED" != "true" ]; then
+            echo "No packs changed in this PR, skipping"
           elif [ "$EVENT_NAME" = "pull_request" ]; then
-            if [ "$PACKS_CHANGED" = "true" ]; then
-              echo "Validating changed packs: $CHANGED_PACKS"
-              python scripts/validate_mcp_tools.py $CHANGED_PACKS
-            else
-              echo "No packs changed, skipping"
-              exit 0
-            fi
+            echo "Validating changed packs: $CHANGED_PACKS"
+            python scripts/validate_mcp_tools.py $CHANGED_PACKS
           else
             echo "Validating all packs..."
             python scripts/validate_mcp_tools.py

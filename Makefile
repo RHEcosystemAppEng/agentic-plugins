@@ -43,9 +43,9 @@ validate: check-uv
 	@uv run python scripts/validate_structure.py
 	@echo "Validating collection compliance (.catalog/)..."
 	@uv run python scripts/validate_collection_compliance.py
-	@echo "Validating MCP tool references..."
+	@echo "Validating MCP tool references (skips gracefully without podman)..."
 	@uv run python scripts/validate_mcp_tools.py
-	@echo "✓ Validation passed!"
+	@echo "✓ Validation complete!"
 
 validate-collection-schema: check-uv
 	@uv run python scripts/validate_collection_schema.py
