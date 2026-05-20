@@ -129,6 +129,7 @@ def main():
     parser = argparse.ArgumentParser(description="Fetch OCP release and CoreOS RPM metadata")
     parser.add_argument("ocp_version", help="OCP version (e.g., 4.20.17)")
     parser.add_argument("--cache-dir", default="", help="Directory to cache results per OCP version")
+    parser.add_argument("--authfile", default="", help="Path to pull secret file for podman authentication")
     args = parser.parse_args()
 
     if args.cache_dir:
@@ -197,19 +198,21 @@ def main():
     rhel_major = coreos_info["rhel_major"]
     ocp_minor = ".".join(args.ocp_version.split(".")[:2])
 
-    rc, stdout_rpm, stderr_rpm = run_cmd(
-        ["podman", "run", "--rm", "--entrypoint", "/bin/rpm",
+    podman_cmd = ["podman", "run", "--rm"]
+    if args.authfile:
+        podman_cmd += ["--authfile", args.authfile]
+    podman_cmd += ["--entrypoint", "/bin/rpm",
          info["coreos_pullspec"],
-         "-qa", "--queryformat", "%{NAME}\\t%{EPOCH}:%{VERSION}-%{RELEASE}\\t%{ARCH}\\n"],
-        timeout=TIMEOUT_RPM
-    )
+         "-qa", "--queryformat", "%{NAME}\\t%{EPOCH}:%{VERSION}-%{RELEASE}\\t%{ARCH}\\n"]
+
+    rc, stdout_rpm, stderr_rpm = run_cmd(podman_cmd, timeout=TIMEOUT_RPM)
 
     if rc != 0:
         if any(s in stderr_rpm.lower() for s in ("unauthorized", "authentication", "denied", "auth")):
             json.dump({
                 "ocp_version": args.ocp_version,
                 "coreos_pullspec": info["coreos_pullspec"],
-                "error": "Authentication failed pulling CoreOS image. Save your pull secret from https://console.redhat.com/openshift/downloads to ~/.docker/config.json",
+                "error": "Authentication failed pulling CoreOS image. Download your pull secret from https://console.redhat.com/openshift/downloads and re-run with --authfile <path-to-pull-secret>",
                 "errors": ["Pull secret required for quay.io/openshift-release-dev/"],
             }, sys.stdout, indent=2)
             print()
