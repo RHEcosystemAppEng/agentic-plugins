@@ -1,16 +1,18 @@
 ---
 name: agentic-contribution-skill
 description: |
-  Interactive skill and agentic pack creation with automated validation and marketplace compliance.
+  Interactive skill creation and import with automated validation and marketplace compliance.
 
   Use when:
   - "Create a new skill"
+  - "Import an existing skill"
   - "Create a new agentic pack"
   - "Add skill to <pack>"
   - "Build skill for <rh-product>"
-  - User mentions "skill builder", "contribute", "new skill", or "new pack"
+  - User mentions "skill builder", "contribute", "new skill", "import skill", or "new pack"
 
-  Guides through discovery, definition, generation, and validation. Enforces SKILL_DESIGN_PRINCIPLES.md and agentskills.io spec.
+  Two modes: create from scratch or import existing SKILL.md. Guides through discovery, definition, generation, and validation. Enforces SKILL_DESIGN_PRINCIPLES.md and agentskills.io spec.
+license: Apache-2.0
 model: inherit
 color: green
 metadata:
@@ -58,6 +60,7 @@ If prerequisites fail:
 
 **Use when**:
 - Creating new skill for any pack
+- Importing an existing SKILL.md into the repository
 - Creating new agentic pack collection
 - Developing or editing skills for this agentic collection
 - User explicitly invokes `/agentic-contribution-skill`
@@ -67,6 +70,13 @@ If prerequisites fail:
 - General contributing questions (direct to CONTRIBUTING.md)
 
 ## Workflow
+
+### Phase 0: Mode Selection
+
+Ask: **"Are you creating a new skill from scratch, or importing an existing SKILL.md?"**
+
+- **Create** → Proceed to Phase 1 (Discovery)
+- **Import** → Proceed to Phase 1-Import (Analysis)
 
 ### Phase 1: Discovery (5 questions max)
 
@@ -111,6 +121,47 @@ Ask concisely, validate before proceeding. Make additional questions if needed t
 7. **External Resources**: "Any external docs/links/KB articles referenced?" (will be saved to `docs/` folder)
 
 **Quality over Speed**: Focus on gathering complete, accurate information. Validation and iteration will ensure correctness - prioritize quality of final result over generation time.
+
+### Phase 1-Import: Analysis (import mode only)
+
+1. **Get file**: Ask for the path to the existing SKILL.md
+2. **Read & parse**: Read the file with Read tool. Parse YAML frontmatter, extract name, description, workflow steps, MCP tools mentioned
+3. **Pack suggestion**: Analyze skill content keywords and suggest the best-fit pack:
+
+   | Keywords in skill content | Suggested pack |
+   |---|---|
+   | VM, virtual machine, KubeVirt, snapshot, migration, clone | rh-virt |
+   | CVE, vulnerability, remediation, compliance, RHEL, SRE | rh-sre |
+   | deploy, build, S2I, Helm, container, route, BuildConfig | rh-developer |
+   | cluster, install, Assisted Installer, multi-cluster, ROSA | ocp-admin |
+   | model, inference, GPU, vLLM, KServe, RHOAI, workbench | rh-ai-engineer |
+   | Ansible, AAP, playbook, governance, job template | rh-automation |
+
+   - Present top match with reasoning: "This skill mentions X, Y, Z which aligns with `<pack>` (persona: <role>)"
+   - Ask user to confirm or override
+
+4. **Report analysis**:
+   ```
+   Analyzed: <path>
+   Name: <name> | Lines: <N> | Frontmatter: <valid/needs-fixes>
+   Suggested pack: <pack> (keywords: <matched>)
+   Missing sections: <list or "none">
+   
+   Proceed with adaptation? (yes/no)
+   ```
+
+### Phase 2-Import: Adaptation (import mode only)
+
+**Document Consultation** (REQUIRED): Read [SKILL_DESIGN_PRINCIPLES.md](../../../SKILL_DESIGN_PRINCIPLES.md) using Read tool. Output: "I consulted SKILL_DESIGN_PRINCIPLES.md to ensure compliant adaptation."
+
+1. **Fix frontmatter**: Ensure `model: inherit` and `color` set (infer from operation type: read-only=cyan, additive=green, reversible=blue, destructive=yellow/red). Add `metadata` block if missing
+2. **Add missing sections**: Per DP6/DP7 — Prerequisites, When to Use, Workflow, Common Issues, Dependencies. Keep existing content, add structure around it
+3. **Validate naming**: kebab-case, check uniqueness: `test -d <pack>/skills/<name>/`
+4. **Place file**: Copy to `<pack>/skills/<skill-name>/SKILL.md`
+5. **Update routing**: Add entry to `<pack>/CLAUDE.md` intent routing table
+6. **Show changes**: Present summary of all modifications to user, wait for confirmation
+
+After confirmation → proceed to Phase 5 (Validation & Iteration).
 
 ### Phase 3: Pre-Generation Summary & Document Consultation
 
@@ -182,19 +233,7 @@ mkdir -p <pack>/skills/<skill-name>/docs/
 5. **Update marketplace/rh-agentic-collection.yml**: If new pack (register pack for Lola installation)
 6. **Create pack structure**: If new pack (README.md, CLAUDE.md, skills/ directory)
 
-**Mandatory SKILL.md sections** (in order per DP7):
-1. Frontmatter (name, description, model, color)
-2. `# /<skill-name> Skill` + overview (1-2 sentences)
-3. `## Critical: Human-in-the-Loop Requirements` (if applicable - HITL can be here or after Dependencies)
-4. `## Prerequisites` (verification + Human Notification Protocol per DP8)
-5. `## When to Use This Skill` (use cases + anti-patterns)
-6. `## Workflow` (precise parameters per DP2, document consultation per DP1 if needed in steps)
-7. `## Common Issues` (min 3, reference docs/ for details)
-8. `## Dependencies` (MCP servers, tools, related skills)
-9. `## Security Considerations` (if applicable)
-10. `## Example Usage` (min 1, reference docs/examples.md for comprehensive cases)
-
-**Note**: If SKILL.md becomes too long during generation, detailed content moves to `docs/` with references in main file.
+Generate SKILL.md following the mandatory section template in SKILL_DESIGN_PRINCIPLES.md (already consulted in Phase 3). If SKILL.md becomes too long, move detailed content to `docs/` with references in main file.
 
 ### Phase 5: Validation & Iteration
 
@@ -232,84 +271,29 @@ python scripts/validate_skill_design.py <pack>/skills/<skill-name>/SKILL.md
 
 ### Phase 6: Post-Validation Summary
 
-```markdown
-## ✅ Skill Created
-
-**Files**:
-✅ <pack>/skills/<name>/SKILL.md (<N> lines)
-[If docs/ created]:
-✅ <pack>/skills/<name>/docs/workflow-details.md
-✅ <pack>/skills/<name>/docs/common-issues.md
-✅ <pack>/skills/<name>/docs/examples.md
-✅ <pack>/skills/<name>/docs/external-resources.md (if applicable)
-✅ <pack>/CLAUDE.md (intent routing updated)
-[If new pack]:
-✅ <pack>/README.md
-✅ <pack>/CLAUDE.md
-✅ <pack>/mcps.json (if MCP servers needed)
-✅ marketplace/rh-agentic-collection.yml (pack registered)
-
-**Validation**:
-✅ Tier 1: agentskills.io compliant (PASSED [with N warnings])
-✅ Tier 2: Design principles satisfied (PASSED [with N warnings])
-[If iterated]:
-✅ Iterations: <N> (quality over speed achieved)
-
-**Quality**:
-- Main skill: <N> lines (under 500-line limit)
-- Sections: <N> (all mandatory sections present)
-- Workflow steps: <N>
-- Common issues: <N> documented
-- Supporting docs: <count> files (detailed content preserved)
-
-**Structure**:
-- Main SKILL.md: Concise and actionable
-- docs/ folder: Detailed explanations, examples, external resources
-
-**Lola Installation**:
-After merge: `lola install -f <pack-name>`
-
-**Opinion**: <Your assessment - strengths, fit, readiness, production-ready status>
-
-Ready to commit? (yes/no)
-```
+Present a concise summary to the user:
+- List all created/modified files with line counts
+- Validation results (Tier 1 + Tier 2, pass/warning counts)
+- Quality metrics (line count, section count, workflow steps, common issues)
+- Iteration count if applicable
+- Your assessment of readiness and fit within the pack
+- Ask: "Ready to commit? (yes/no)"
 
 ### Phase 7: Git Workflow (Optional - User Controls)
 
-**User has full control** over git operations. Each step requires explicit confirmation.
-
-**Workflow**:
+**User has full control**. Each step requires explicit confirmation:
 
 1. **Branch**: "Create `feat/<skill-name>`? (yes/no)"
-2. **Stage**: Show files, ask confirmation before staging
-3. **Commit**: Show proposed message, wait for approval
-   ```
-   feat: add <skill-name> skill to <pack>
-
-   <skill-purpose>
-
-   Tier 1+2 validated
-
-   Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
-   ```
+2. **Stage**: Show files, ask confirmation
+3. **Commit**: Propose message (`feat: add <skill-name> skill to <pack>`), wait for approval
 4. **Push**: "Push changes? (yes/no)"
-5. **PR**: Provide instructions (use `gh pr create` if available, or manual steps)
+5. **PR**: Use `gh pr create` if available, or provide manual steps
 
-**Note**: User can skip any step. Git operations are suggested, not required. User manages their repository workflow.
+User can skip any step.
 
 ### Phase 8: Final Summary
 
-```markdown
-## 🎉 Complete!
-
-**Created**: <pack>/skills/<name>/SKILL.md
-**Quality**: Production-ready
-**PR**: <url_or_manual_instructions>
-
-**CI checks will run automatically**
-
-Thank you for contributing! 🚀
-```
+Report: skill path, quality status, PR URL (if created), and note that CI checks will run automatically.
 
 ## Common Issues
 
@@ -463,6 +447,7 @@ Result: Production-ready skill in rh-virt/skills/vm-backup-create/
 ```
 
 **More examples**: [docs/examples.md](docs/examples.md)
-- Example 1: VM backup skill (complete interaction)
+- Example 1: VM backup skill (complete create interaction)
 - Example 2: Non-representative name correction
-- Example 3: Large skill requiring docs/ folder with iteration
+- Example 3: Importing an existing skill (analysis, adaptation, validation)
+- Example 4: Large skill requiring docs/ folder with iteration

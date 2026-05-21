@@ -1,3 +1,9 @@
+<!--
+  TIP: Run /agentic-contribution-skill in Claude Code to create or import skills.
+  It handles validation, pack selection, and CLAUDE.md routing automatically.
+  See CONTRIBUTING.md for details.
+-->
+
 ## Summary
 
 <!-- What does this PR do and why? -->
@@ -20,6 +26,15 @@
 - [ ] MCP server config (`mcps.json`)
 - [ ] Docs / README
 - [ ] CI / tooling
+
+## Contribution method
+
+- [ ] Created/imported with `/agentic-contribution-skill`
+- [ ] Manual contribution (validated with `make validate` + `make validate-skill-design-changed`)
+
+## Pack-persona alignment (new skills only)
+
+<!-- Why does this skill belong in the selected pack? (1-2 sentences) -->
 
 ## CLAUDE.md compliance
 

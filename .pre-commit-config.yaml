@@ -32,3 +32,9 @@ repos:
         language: system
         pass_filenames: false
         files: ^(rh-[-a-z0-9]+|ocp-admin)/skills/[^/]+/SKILL\.md$
+
+      - id: skill-spec-linter
+        name: skill spec linter (Tier-1 agentskills.io)
+        entry: bash -c 'for f in "$@"; do ./scripts/run-skill-linter.sh "$(dirname "$f")/"; done' --
+        language: system
+        files: ^(rh-[-a-z0-9]+|ocp-admin)/skills/[^/]+/SKILL\.md$
