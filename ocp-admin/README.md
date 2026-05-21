@@ -35,6 +35,7 @@ The ocp-admin collection provides specialized tools for managing OpenShift clust
   - `python3` + `requests` — helper scripts for API calls
   - `regctl` — remote image metadata inspection ([install guide](https://github.com/regclient/regclient))
   - `cosign` — SBOM extraction from container attestations ([install guide](https://github.com/sigstore/cosign))
+  - `syft` — (optional) fallback SBOM generation when attestations are unavailable ([install guide](https://github.com/anchore/syft))
   - `oc` + `podman` — CoreOS RPM extraction (coreos-cve-validator only)
   - Registry authentication: `regctl registry login registry.redhat.io` for Red Hat image access
 

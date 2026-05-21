@@ -35,7 +35,7 @@ If the image reference is missing or invalid, ask the user to provide it. Do not
 
 **Resolve scripts directory:**
 ```bash
-SCRIPTS_DIR="$(cd "$(dirname "$(dirname "$(pwd)")")" && pwd)/scripts"&& pwd)/scripts" pwd)/scripts/security-validation"
+SCRIPTS_DIR="$(git rev-parse --show-toplevel)/ocp-admin/scripts/security-validation"
 test -f "$SCRIPTS_DIR/inspect_image.py" || { echo "Error: Scripts directory not found at $SCRIPTS_DIR"; exit 1; }
 ```
 The scripts handle tool checks internally (regctl, cosign) and return clear errors if tools are missing.
@@ -184,7 +184,7 @@ image_reference,registry,registry_ownership,canonical_reference,reference_type,t
 ### Required MCP Servers
 - None — this skill uses bundled Python scripts, not MCP tools
 
-### Required MCP Tools
+### Required Helper Scripts
 - `inspect_image` — extracts container image metadata via regctl
 - `download_sbom` — fetches SBOM attestations from registry
 

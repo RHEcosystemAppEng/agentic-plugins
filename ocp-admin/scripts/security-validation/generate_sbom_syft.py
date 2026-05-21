@@ -59,7 +59,6 @@ def main():
     parser = argparse.ArgumentParser(description="Generate SBOM using syft")
     parser.add_argument("image_ref", help="Container image reference")
     parser.add_argument("--platform", default="linux/amd64", help="Platform (default: linux/amd64)")
-    parser.add_argument("--output-file", default="", help="Save raw syft SBOM to file")
     args = parser.parse_args()
 
     if not shutil.which("syft"):
@@ -97,10 +96,6 @@ def main():
         }, sys.stdout, indent=2)
         print()
         sys.exit(1)
-
-    if args.output_file:
-        with open(args.output_file, "w") as f:
-            json.dump(sbom, f, indent=2)
 
     packages = parse_syft_sbom(sbom)
 

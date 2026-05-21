@@ -53,6 +53,7 @@ Security validation skills use Python helper scripts in `scripts/security-valida
 - `regctl` — remote image metadata inspection
 - `cosign` — SBOM extraction from container attestations
 - `python3` + `requests` — helper scripts
+- `syft` — fallback SBOM generation (optional, used when attestations unavailable)
 - `oc` + `podman` — CoreOS RPM extraction (coreos-cve-validator only)
 
 ## Global Rules
