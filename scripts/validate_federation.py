@@ -46,6 +46,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 class CheckResult:
     name: str
     passed: bool = False
+    skipped: bool = False
     details: list[str] = field(default_factory=list)
 
 
@@ -234,7 +235,8 @@ def run_gitleaks(pack_dir: Path) -> CheckResult:
     check = CheckResult(name="gitleaks")
     if not shutil.which("gitleaks"):
         check.passed = True
-        check.details.append("gitleaks not installed, skipping (install for full scan)")
+        check.skipped = True
+        check.details.append("gitleaks not installed — SKIPPED (install for full scan)")
         return check
 
     try:
@@ -265,8 +267,15 @@ def print_report(report: ValidationReport) -> None:
     print("=" * 60)
 
     for c in report.checks:
-        status = "PASS" if c.passed else "FAIL"
-        icon = "✅" if c.passed else "❌"
+        if c.skipped:
+            status = "SKIP"
+            icon = "⚠️"
+        elif c.passed:
+            status = "PASS"
+            icon = "✅"
+        else:
+            status = "FAIL"
+            icon = "❌"
         print(f"\n{icon} [{status}] {c.name}")
         for d in c.details:
             print(f"    {d}")

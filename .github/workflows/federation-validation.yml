@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -20,6 +20,11 @@ jobs:
 
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install gitleaks
+        run: |
+          GITLEAKS_VERSION="8.21.2"
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | tar xz -C /usr/local/bin gitleaks
 
       - name: Install dependencies
         run: |
@@ -75,6 +80,7 @@ jobs:
           with open('/tmp/federation-modules.json') as f:
               modules = json.load(f)
 
+          all_results = []
           failed = False
           for mod in modules:
               repo = mod.get('repository', '')
@@ -84,13 +90,26 @@ jobs:
               name = mod.get('name', 'unknown')
 
               print(f'\n--- Validating: {name} ---')
-              cmd = [sys.executable, 'scripts/validate_federation.py', repo, ref, '--pack-path', pack_path]
+              cmd = [sys.executable, 'scripts/validate_federation.py', repo, ref, '--pack-path', pack_path, '--json']
               if skills:
                   cmd.extend(['--skills'] + skills)
 
-              result = subprocess.run(cmd)
+              result = subprocess.run(cmd, capture_output=True, text=True)
+              print(result.stdout)
+              if result.stderr:
+                  print(result.stderr, file=sys.stderr)
+
+              try:
+                  report = json.loads(result.stdout)
+                  all_results.append({'name': name, 'report': report})
+              except json.JSONDecodeError:
+                  all_results.append({'name': name, 'report': None})
+
               if result.returncode != 0:
                   failed = True
+
+          with open('/tmp/federation-results.json', 'w') as f:
+              json.dump(all_results, f)
 
           sys.exit(1 if failed else 0)
           "
@@ -100,26 +119,58 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const fs = require('fs');
             const success = '${{ steps.validate.outcome }}' === 'success';
             const runUrl = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+            const shortSha = '${{ github.event.pull_request.head.sha }}'.substring(0, 7);
+            const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+
+            const checkLabels = {
+              clone: { name: 'Clone & access', desc: 'Repository cloned at pinned ref' },
+              lola_structure: { name: 'Lola structure', desc: 'CLAUDE.md, README.md, mcps.json, skills/' },
+              tier1_agentskills: { name: 'Tier 1', desc: 'agentskills.io spec compliance' },
+              tier2_design_principles: { name: 'Tier 2', desc: 'Design principles compliance' },
+              mcp_version_pinning: { name: 'MCP pinning', desc: 'No `:latest` tags, no hardcoded credentials' },
+              gitleaks: { name: 'Credential scan', desc: 'gitleaks secret detection' },
+            };
+
+            let moduleSections = '';
+            try {
+              const raw = fs.readFileSync('/tmp/federation-results.json', 'utf8');
+              const results = JSON.parse(raw);
+              for (const mod of results) {
+                const report = mod.report;
+                moduleSections += `\n### ${mod.name}\n\n`;
+                if (!report || !report.checks) {
+                  moduleSections += '> Could not parse validation results for this module.\n\n';
+                  continue;
+                }
+                moduleSections += '| Check | Description | Status |\n';
+                moduleSections += '|-------|-------------|--------|\n';
+                for (const check of report.checks) {
+                  const label = checkLabels[check.name] || { name: check.name, desc: '' };
+                  const statusIcon = check.skipped ? '⚠️' : (check.passed ? '✅' : '❌');
+                  moduleSections += `| ${label.name} | ${label.desc} | ${statusIcon} |\n`;
+                }
+                moduleSections += '\n';
+              }
+            } catch (e) {
+              moduleSections = '\n> Could not parse validation results.\n\n';
+            }
 
             const icon = success ? '✅' : '❌';
             const status = success ? 'ALL CHECKS PASSED' : 'VALIDATION FAILED';
 
-            const body = `## ${icon} Federation Validation: ${status}
-
-            Automated validation ran on federated modules declared in \`marketplace/rh-agentic-collection.yml\`.
-
-            | Check | Description |
-            |-------|-------------|
-            | Clone & access | Repository cloned at pinned ref |
-            | Lola structure | CLAUDE.md, README.md, mcps.json, skills/ |
-            | Tier 1 | agentskills.io spec compliance |
-            | Tier 2 | Design principles compliance |
-            | MCP pinning | No \`:latest\` tags, no hardcoded credentials |
-            | Credential scan | gitleaks secret detection |
-
-            [See workflow run for full details](${runUrl})`;
+            const body = [
+              `## ${icon} Federation Validation: ${status}`,
+              '',
+              'Automated validation ran on federated modules declared in `marketplace/rh-agentic-collection.yml`.',
+              moduleSections,
+              `[See workflow run for full details](${runUrl})`,
+              '',
+              '---',
+              `<sub>Analyzed commit <code>${shortSha}</code> at ${timestamp}</sub>`,
+            ].join('\n');
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,

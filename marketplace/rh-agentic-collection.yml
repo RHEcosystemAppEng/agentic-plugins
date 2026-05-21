@@ -105,9 +105,9 @@ modules:
       - "troubleshooting"
       - "execution"
 
-# Federated modules — skills hosted in external repositories, referenced by URL + pinned ref.
-# Each entry points to a public repo; the build fetches skills at the pinned ref,
-# validates them (Tier 1), and includes them in the catalog under the target pack.
+# Federated modules — complete Lola packs hosted in external repositories.
+# Each entry points to a public repo at a pinned ref. The build clones, validates,
+# and includes them in the catalog as standalone federated packs.
 # To request federation, open a GitHub issue using the "Federation Request" template.
 federated_modules: []
   # Example:
@@ -116,8 +116,8 @@ federated_modules: []
   #   version: "1.2.0"
   #   repository: "https://github.com/partner-org/network-skills"
   #   ref: "a1b2c3d4e5f6789012345678901234567890abcd"
-  #   pack: "ocp-admin"
-  #   skills:
+  #   pack_path: "."              # path within the repo where the Lola pack lives (default: repo root)
+  #   skills:                     # optional: federate only these skills (omit to include all)
   #     - "skills/sdn-diagnostics/SKILL.md"
   #     - "skills/ovn-trace/SKILL.md"
   #     - "skills/network-policy-audit/SKILL.md"

@@ -13,7 +13,7 @@ body:
 
         Your code stays in your repo — we reference it in our marketplace.
 
-        See the [Federation Review Guide](../../docs/FEDERATION_REVIEW_GUIDE.md) for the full evaluation criteria.
+        See the [Federation Review Guide](https://github.com/RHEcosystemAppEng/agentic-collections/blob/main/docs/FEDERATION_REVIEW_GUIDE.md) for the full evaluation criteria.
 
   - type: dropdown
     id: request_type
@@ -101,6 +101,15 @@ body:
         - label: Cursor
         - label: ChatGPT
         - label: Other (specify in description above)
+
+  - type: input
+    id: pack_path
+    attributes:
+      label: Pack path within repository (optional)
+      description: If the Lola pack is not at the repository root, specify the subdirectory path. Leave empty if the pack is at the root.
+      placeholder: "my-pack (or leave empty for repo root)"
+    validations:
+      required: false
 
   - type: textarea
     id: skills_subset
