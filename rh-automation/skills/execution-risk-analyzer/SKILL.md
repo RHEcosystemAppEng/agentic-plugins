@@ -13,7 +13,7 @@ description: |
 model: inherit
 color: yellow
 license: Apache-2.0
-allowed-tools: mcp__aap-mcp-job-management__job_templates_list mcp__aap-mcp-job-management__job_templates_retrieve mcp__aap-mcp-job-management__job_templates_launch_retrieve mcp__aap-mcp-job-management__jobs_list mcp__aap-mcp-job-management__jobs_job_events_list mcp__aap-mcp-job-management__workflow_job_templates_list mcp__aap-mcp-inventory-management__inventories_list mcp__aap-mcp-inventory-management__hosts_list
+allowed-tools: job_templates_list job_templates_retrieve job_templates_launch_retrieve jobs_list jobs_job_events_list workflow_job_templates_list inventories_list hosts_list
 ---
 
 # Execution Risk Analyzer

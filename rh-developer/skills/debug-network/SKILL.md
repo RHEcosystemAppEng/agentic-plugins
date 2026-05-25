@@ -5,7 +5,7 @@ description: |
 model: inherit
 color: cyan
 license: Apache-2.0
-allowed-tools: mcp__openshift__resources_list mcp__openshift__resources_get mcp__openshift__pods_list
+allowed-tools: resources_list resources_get pods_list
 metadata:
   user_invocable: "true"
 ---

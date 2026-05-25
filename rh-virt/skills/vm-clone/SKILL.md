@@ -16,7 +16,7 @@ description: |
 license: Apache-2.0
 model: inherit
 color: blue
-allowed-tools: mcp__openshift-virtualization__resources_get mcp__openshift-virtualization__resources_create_or_update mcp__openshift-virtualization__resources_list
+allowed-tools: resources_get resources_create_or_update resources_list
 ---
 
 # /vm-clone Skill

@@ -13,7 +13,7 @@ description: |
 model: inherit
 color: blue
 license: Apache-2.0
-allowed-tools: mcp__aap-mcp-inventory-management__hosts_list mcp__aap-mcp-inventory-management__hosts_variable_data_retrieve
+allowed-tools: hosts_list hosts_variable_data_retrieve
 ---
 
 # Host Fact Inspector

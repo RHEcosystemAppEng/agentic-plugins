@@ -12,7 +12,7 @@ description: |
 model: inherit
 color: yellow
 license: Apache-2.0
-allowed-tools: mcp__aap-mcp-job-management__job_templates_list mcp__aap-mcp-job-management__jobs_retrieve mcp__aap-mcp-job-management__jobs_job_events_list mcp__aap-mcp-job-management__jobs_job_host_summaries_list mcp__aap-mcp-job-management__jobs_stdout_retrieve mcp__aap-mcp-inventory-management__inventories_list mcp__aap-mcp-inventory-management__hosts_list mcp__aap-mcp-inventory-management__hosts_variable_data_retrieve mcp__aap-mcp-configuration__notification_templates_list mcp__aap-mcp-security-compliance__credentials_list mcp__aap-mcp-system-monitoring__instance_groups_list mcp__aap-mcp-user-management__users_list
+allowed-tools: job_templates_list jobs_retrieve jobs_job_events_list jobs_job_host_summaries_list jobs_stdout_retrieve inventories_list hosts_list hosts_variable_data_retrieve notification_templates_list credentials_list instance_groups_list users_list
 ---
 
 # Forensic Troubleshooter

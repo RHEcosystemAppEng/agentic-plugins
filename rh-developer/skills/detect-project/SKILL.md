@@ -5,7 +5,7 @@ description: |
 model: inherit
 color: cyan
 license: Apache-2.0
-allowed-tools: mcp__github__get_file_contents
+allowed-tools: get_file_contents
 metadata:
    user_invocable: "true"
 ---

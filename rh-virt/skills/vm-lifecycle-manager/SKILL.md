@@ -16,7 +16,7 @@ description: |
 license: Apache-2.0
 model: inherit
 color: blue
-allowed-tools: mcp__openshift-virtualization__vm_lifecycle mcp__openshift-virtualization__resources_get
+allowed-tools: vm_lifecycle resources_get
 ---
 
 # /vm-lifecycle-manager Skill

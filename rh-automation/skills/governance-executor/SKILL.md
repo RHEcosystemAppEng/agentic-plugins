@@ -12,7 +12,7 @@ description: |
 model: inherit
 color: red
 license: Apache-2.0
-allowed-tools: mcp__aap-mcp-job-management__job_templates_list mcp__aap-mcp-job-management__job_templates_retrieve mcp__aap-mcp-job-management__job_templates_launch_retrieve mcp__aap-mcp-job-management__job_templates_launch_create mcp__aap-mcp-job-management__jobs_list mcp__aap-mcp-job-management__jobs_retrieve mcp__aap-mcp-job-management__jobs_job_events_list mcp__aap-mcp-job-management__jobs_job_host_summaries_list mcp__aap-mcp-job-management__jobs_relaunch_create mcp__aap-mcp-job-management__workflow_job_templates_list mcp__aap-mcp-inventory-management__inventories_list mcp__aap-mcp-inventory-management__hosts_list mcp__aap-mcp-configuration__notification_templates_list mcp__aap-mcp-security-compliance__credentials_list mcp__aap-mcp-system-monitoring__instance_groups_list mcp__aap-mcp-user-management__users_list
+allowed-tools: job_templates_list job_templates_retrieve job_templates_launch_retrieve job_templates_launch_create jobs_list jobs_retrieve jobs_job_events_list jobs_job_host_summaries_list jobs_relaunch_create workflow_job_templates_list inventories_list hosts_list notification_templates_list credentials_list instance_groups_list users_list
 ---
 
 # Governance Executor

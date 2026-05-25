@@ -5,7 +5,7 @@ description: |
 model: inherit
 color: cyan
 license: Apache-2.0
-allowed-tools: mcp__podman__container_list mcp__podman__container_inspect mcp__podman__container_logs mcp__podman__image_list
+allowed-tools: container_list container_inspect container_logs image_list
 metadata:
   user_invocable: "true"
 ---

@@ -5,7 +5,7 @@ description: |
 model: haiku
 color: yellow
 license: Apache-2.0
-allowed-tools: mcp__aap-mcp-job-management__job_templates_list mcp__aap-mcp-inventory-management__inventories_list
+allowed-tools: job_templates_list inventories_list
 ---
 
 # MCP AAP Validator

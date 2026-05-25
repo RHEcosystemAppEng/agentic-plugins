@@ -5,7 +5,7 @@ description: |
 model: inherit
 color: yellow
 license: Apache-2.0
-allowed-tools: mcp__lightspeed-mcp__find_host_by_name mcp__lightspeed-mcp__get_system_cves mcp__lightspeed-mcp__get_rhel_lifecycle
+allowed-tools: find_host_by_name get_system_cves get_rhel_lifecycle
 metadata:
    user_invocable: "true"
 ---

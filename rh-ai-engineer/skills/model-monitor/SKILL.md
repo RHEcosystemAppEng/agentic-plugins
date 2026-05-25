@@ -18,7 +18,7 @@ description: |
 model: inherit
 color: blue
 license: Apache-2.0
-allowed-tools: mcp__openshift__resources_get mcp__openshift__resources_list mcp__openshift__resources_create_or_update mcp__openshift__pods_list mcp__openshift__pods_log mcp__openshift__events_list mcp__rhoai__list_inference_services mcp__rhoai__get_inference_service mcp__rhoai__list_data_science_projects mcp__ai-observability__execute_promql
+allowed-tools: resources_get resources_list resources_create_or_update pods_list pods_log events_list list_inference_services get_inference_service list_data_science_projects execute_promql
 ---
 
 # /model-monitor Skill

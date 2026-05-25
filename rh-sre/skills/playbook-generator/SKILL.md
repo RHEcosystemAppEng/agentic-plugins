@@ -19,7 +19,7 @@ description: |
 model: inherit
 color: yellow
 license: Apache-2.0
-allowed-tools: mcp__lightspeed-mcp__create_vuln_playbook
+allowed-tools: create_vuln_playbook
 ---
 
 # Ansible Playbook Generator Skill

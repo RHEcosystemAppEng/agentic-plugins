@@ -16,7 +16,7 @@ description: |
 model: inherit
 color: blue
 license: Apache-2.0
-allowed-tools: mcp__openshift__resources_get mcp__openshift__resources_list mcp__openshift__resources_create_or_update mcp__openshift__events_list mcp__rhoai__list_data_science_projects mcp__rhoai__list_serving_runtimes mcp__ai-observability__get_gpu_info
+allowed-tools: resources_get resources_list resources_create_or_update events_list list_data_science_projects list_serving_runtimes get_gpu_info
 ---
 
 # /nim-setup Skill

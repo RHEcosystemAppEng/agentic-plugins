@@ -5,7 +5,7 @@ description: |
 model: inherit
 color: cyan
 license: Apache-2.0
-allowed-tools: mcp__lightspeed-mcp__find_host_by_name mcp__lightspeed-mcp__get_system_cves mcp__lightspeed-mcp__get_active_rules mcp__lightspeed-mcp__get_rule_by_text_search
+allowed-tools: find_host_by_name get_system_cves get_active_rules get_rule_by_text_search
 metadata:
   user_invocable: "true"
 ---

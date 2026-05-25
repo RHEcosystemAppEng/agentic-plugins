@@ -21,7 +21,7 @@ metadata:
   author: "Red Hat Ecosystem Engineering"
   version: "1.0"
 license: Apache-2.0
-allowed-tools: mcp__openshift__resources_get mcp__openshift__resources_list mcp__openshift__resources_create_or_update mcp__rhoai__list_data_science_projects mcp__rhoai__create_data_science_project mcp__rhoai__get_project_details mcp__rhoai__get_project_status mcp__rhoai__create_s3_data_connection mcp__rhoai__list_data_connections mcp__rhoai__get_pipeline_server mcp__rhoai__set_model_serving_mode
+allowed-tools: resources_get resources_list resources_create_or_update list_data_science_projects create_data_science_project get_project_details get_project_status create_s3_data_connection list_data_connections get_pipeline_server set_model_serving_mode
 ---
 
 # /ds-project-setup Skill

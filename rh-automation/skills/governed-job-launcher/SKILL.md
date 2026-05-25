@@ -13,7 +13,7 @@ description: |
 model: inherit
 color: red
 license: Apache-2.0
-allowed-tools: mcp__aap-mcp-job-management__job_templates_launch_create mcp__aap-mcp-job-management__jobs_retrieve mcp__aap-mcp-job-management__jobs_job_events_list mcp__aap-mcp-job-management__jobs_job_host_summaries_list mcp__aap-mcp-job-management__jobs_relaunch_create
+allowed-tools: job_templates_launch_create jobs_retrieve jobs_job_events_list jobs_job_host_summaries_list jobs_relaunch_create
 ---
 
 # Governed Job Launcher

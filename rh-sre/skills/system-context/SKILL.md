@@ -17,7 +17,7 @@ description: |
 model: inherit
 color: blue
 license: Apache-2.0
-allowed-tools: mcp__lightspeed-mcp__get_cve_systems mcp__lightspeed-mcp__get_host_details
+allowed-tools: get_cve_systems get_host_details
 ---
 
 # System Context Gathering Skill

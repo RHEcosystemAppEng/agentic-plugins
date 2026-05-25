@@ -5,7 +5,7 @@ description: |
 model: inherit
 color: green
 license: Apache-2.0
-allowed-tools: mcp__openshift__resources_create_or_update mcp__openshift__pods_list mcp__openshift__pods_log
+allowed-tools: resources_create_or_update pods_list pods_log
 metadata:
   user_invocable: "true"
 ---

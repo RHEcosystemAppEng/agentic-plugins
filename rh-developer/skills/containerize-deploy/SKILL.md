@@ -5,7 +5,7 @@ description: |
 model: inherit
 color: green
 license: Apache-2.0
-allowed-tools: mcp__openshift__resources_list mcp__openshift__resources_get mcp__openshift__resources_create_or_update mcp__openshift__pods_list mcp__openshift__pods_list_in_namespace mcp__openshift__pods_log mcp__openshift__events_list mcp__github__get_file_contents mcp__openshift__helm_list mcp__openshift__helm_install mcp__openshift__helm_upgrade mcp__lightspeed-mcp__find_host_by_name mcp__lightspeed-mcp__get_system_cves mcp__lightspeed-mcp__get_rhel_lifecycle
+allowed-tools: resources_list resources_get resources_create_or_update pods_list pods_list_in_namespace pods_log events_list get_file_contents helm_list helm_install helm_upgrade find_host_by_name get_system_cves get_rhel_lifecycle
 metadata:
    user_invocable: "true"
 ---

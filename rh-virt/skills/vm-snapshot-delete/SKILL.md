@@ -15,7 +15,7 @@ description: |
 license: Apache-2.0
 model: inherit
 color: yellow
-allowed-tools: mcp__openshift-virtualization__resources_get mcp__openshift-virtualization__resources_list mcp__openshift-virtualization__resources_delete
+allowed-tools: resources_get resources_list resources_delete
 ---
 
 # /vm-snapshot-delete Skill

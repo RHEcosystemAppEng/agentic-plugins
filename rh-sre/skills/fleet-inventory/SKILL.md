@@ -19,7 +19,7 @@ description: |
 model: inherit
 color: blue
 license: Apache-2.0
-allowed-tools: mcp__lightspeed-mcp__get_host_details mcp__lightspeed-mcp__get_cve_systems
+allowed-tools: get_host_details get_cve_systems
 ---
 
 # Fleet Inventory Skill
