@@ -409,6 +409,58 @@ gh workflow run skill-code-review.yml -f pr_number=42
 - `MAINTAINERS` — authorized users list
 - `.github/workflows/skill-code-review.yml` — workflow definition
 
+### 6. `mcp-tool-validation.yml` - MCP Tool Validation
+
+**Purpose**: Validates that `allowed-tools` declarations in SKILL.md frontmatter match the actual tools exposed by MCP servers defined in each pack's `mcps.json`.
+
+**Triggers**:
+- **Pull requests** → Validates only packs with changed `mcps.json` or `skills/*/SKILL.md` files
+- **Pushes to main** → Validates all packs
+- **Manual dispatch** → Optionally specify a single pack name to validate
+
+**What it validates**:
+- ✅ Starts each container-based MCP server via `podman`
+- ✅ Queries tools via JSON-RPC (`initialize` + `tools/list`)
+- ✅ Cross-references declared `allowed-tools` against actual tool names
+- ✅ Suggests corrections for misspelled tool names (Levenshtein distance)
+
+**Classification**:
+- **PASS** — All declared tools found in started MCP servers
+- **WARN** — Tools could not be verified because their MCP server is non-container (`npx`, `uvx`, empty command) or failed to start. Does not block the PR
+- **SKIP** — Skill has no `allowed-tools` declared
+- **FAIL** — Tools missing from MCP servers that were successfully started. Blocks the PR
+
+**How to run locally**:
+```bash
+# Validate all packs
+python scripts/validate_mcp_tools.py
+
+# Validate specific packs
+python scripts/validate_mcp_tools.py rh-sre ocp-admin rh-virt
+```
+
+**Expected output**:
+```
+VALIDATION SUMMARY
+------------------------------------------------------------------
+  Total skills:                71
+  Passed:                      31
+  Warned (unverifiable):       31
+  Skipped (no allowed-tools):  9
+  Failed:                      0
+
+PASSED WITH WARNINGS - some tools could not be verified (MCP servers not started)
+```
+
+**Prerequisites**:
+- `podman` installed
+- `KUBECONFIG` set (or `~/.kube/config` present) — a dummy kubeconfig is created in CI
+
+**Related files**:
+- `scripts/validate_mcp_tools.py` — validation script
+- `*/mcps.json` — MCP server configurations per pack
+- `*/skills/*/SKILL.md` — skill definitions with `allowed-tools` frontmatter
+
 ## Adding New Workflows
 
 When adding new workflows:
@@ -482,5 +534,5 @@ This README should be updated when:
 - New validation levels are introduced
 - Troubleshooting patterns emerge
 
-**Last Updated**: 2026-05-06
-**Workflows Count**: 5 (skill-spec-report.yml, compliance-check.yml, deploy-pages.yml, skill-security-scan.yml, skill-code-review.yml)
+**Last Updated**: 2026-05-26
+**Workflows Count**: 6 (skill-spec-report.yml, compliance-check.yml, deploy-pages.yml, skill-security-scan.yml, skill-code-review.yml, mcp-tool-validation.yml)
