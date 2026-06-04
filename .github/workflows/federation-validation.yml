@@ -1,8 +1,12 @@
 name: Federation Validation
 
 on:
-  pull_request:
+  pull_request_target:
     types: [labeled, opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
 
 jobs:
   validate-federation:
@@ -11,6 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Set up Python
