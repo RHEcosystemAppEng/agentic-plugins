@@ -49,24 +49,23 @@ class ModuleResult:
     clone_path: str = ""
 
 
-def clone_at_ref(repository: str, ref: str, dest: Path) -> Optional[str]:
-    """Clone a repository and checkout the pinned ref. Returns error string or None."""
+def clone_at_ref(repository: str, ref: Optional[str], dest: Path) -> Optional[str]:
+    """Clone a repository and optionally checkout a pinned ref. Returns error string or None."""
     try:
-        subprocess.run(
-            ["git", "clone", "--quiet", "--no-checkout", repository, str(dest)],
-            check=True,
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
-        subprocess.run(
-            ["git", "checkout", "--quiet", ref],
-            check=True,
-            capture_output=True,
-            text=True,
-            cwd=dest,
-            timeout=30,
-        )
+        if ref:
+            subprocess.run(
+                ["git", "clone", "--quiet", "--no-checkout", repository, str(dest)],
+                check=True, capture_output=True, text=True, timeout=120,
+            )
+            subprocess.run(
+                ["git", "checkout", "--quiet", ref],
+                check=True, capture_output=True, text=True, cwd=dest, timeout=30,
+            )
+        else:
+            subprocess.run(
+                ["git", "clone", "--quiet", "--depth", "1", repository, str(dest)],
+                check=True, capture_output=True, text=True, timeout=120,
+            )
         return None
     except subprocess.CalledProcessError as exc:
         return exc.stderr.strip() or str(exc)
@@ -118,8 +117,8 @@ def process_module(
 
     result = ModuleResult(name=name, repository=repository, ref=ref, pack_path=pack_path)
 
-    if not repository or not ref:
-        result.error = "Missing repository or ref"
+    if not repository:
+        result.error = "Missing repository"
         return result
 
     clone_dest = base_dir / name

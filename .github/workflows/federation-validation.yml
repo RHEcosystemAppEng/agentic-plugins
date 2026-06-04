@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -33,39 +33,47 @@ jobs:
 
       - name: Detect federated module changes
         id: detect
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
           source $HOME/.cargo/env
-          # Identify federated modules (external repository) in the modules list
+          # Compare federated modules in PR vs base branch — only validate added/changed ones
+          git show "origin/${BASE_REF}:marketplace/rh-agentic-collection.yml" > /tmp/base-marketplace.yml 2>/dev/null || echo "modules: []" > /tmp/base-marketplace.yml
+
           uv run python -c "
           import yaml, json, sys
 
           MAIN_REPO = 'https://github.com/RHEcosystemAppEng/agentic-collections'
 
-          with open('marketplace/rh-agentic-collection.yml') as f:
-              data = yaml.safe_load(f) or {}
+          def load_federated(path):
+              with open(path) as f:
+                  data = yaml.safe_load(f) or {}
+              return {
+                  m['name']: m for m in (data.get('modules') or [])
+                  if isinstance(m, dict)
+                  and m.get('repository', '').rstrip('/') != MAIN_REPO
+                  and m.get('repository')
+              }
 
-          all_modules = data.get('modules') or []
-          if not isinstance(all_modules, list):
-              all_modules = []
+          base = load_federated('/tmp/base-marketplace.yml')
+          head = load_federated('marketplace/rh-agentic-collection.yml')
 
-          # Federated = modules whose repository differs from this repo
-          modules = [
-              m for m in all_modules
-              if isinstance(m, dict)
-              and m.get('repository', '').rstrip('/') != MAIN_REPO
-              and m.get('repository')
-          ]
+          # Added or changed modules only
+          changed = []
+          for name, mod in head.items():
+              if name not in base or mod != base[name]:
+                  changed.append(mod)
 
-          if not modules:
-              print('No federated modules found')
+          if not changed:
+              print('No new or changed federated modules in this PR')
               sys.exit(0)
 
-          print(f'Found {len(modules)} federated module(s)')
-          for m in modules:
+          print(f'Found {len(changed)} new/changed federated module(s)')
+          for m in changed:
               print(f'  - {m.get(\"name\", \"unknown\")}: {m.get(\"repository\", \"?\")} @ {m.get(\"ref\", \"?\")}')
 
           with open('/tmp/federation-modules.json', 'w') as f:
-              json.dump(modules, f)
+              json.dump(changed, f)
           " || true
 
           if [ -f /tmp/federation-modules.json ]; then
@@ -95,7 +103,10 @@ jobs:
               name = mod.get('name', 'unknown')
 
               print(f'\n--- Validating: {name} ---')
-              cmd = [sys.executable, 'scripts/validate_federation.py', repo, ref, '--pack-path', pack_path, '--json']
+              cmd = [sys.executable, 'scripts/validate_federation.py', repo, '--pack-path', pack_path, '--json',
+                     '--module-json', json.dumps(mod)]
+              if ref:
+                  cmd.extend(['--ref', ref])
               if skills:
                   cmd.extend(['--skills'] + skills)
 
@@ -131,8 +142,8 @@ jobs:
             const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
 
             const checkLabels = {
-              clone: { name: 'Clone & access', desc: 'Repository cloned at pinned ref' },
-              lola_structure: { name: 'Lola structure', desc: 'CLAUDE.md, README.md, mcps.json, skills/' },
+              clone: { name: 'Clone & access', desc: 'Repository cloned (pinned ref or default branch)' },
+              lola_structure: { name: 'Lola module schema', desc: 'Required fields: name, description, version, repository' },
               tier1_agentskills: { name: 'Tier 1', desc: 'agentskills.io spec compliance' },
               tier2_design_principles: { name: 'Tier 2', desc: 'Design principles compliance' },
               mcp_version_pinning: { name: 'MCP pinning', desc: 'No `:latest` tags, no hardcoded credentials' },

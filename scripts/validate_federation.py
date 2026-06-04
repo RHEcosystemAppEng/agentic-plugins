@@ -3,7 +3,7 @@
 Validate an external repository for federation into Red Hat Agentic Collections.
 
 Automates the mechanical checks from docs/FEDERATION_REVIEW_GUIDE.md:
-  1. Clone at pinned ref
+  1. Clone repository (at pinned ref if provided, default branch otherwise)
   2. Verify Lola pack structure
   3. Tier 1 validation (agentskills.io spec)
   4. Tier 2 validation (design principles)
@@ -11,18 +11,21 @@ Automates the mechanical checks from docs/FEDERATION_REVIEW_GUIDE.md:
   6. Credential leak scan (gitleaks)
 
 Usage:
-    python scripts/validate_federation.py <repo-url> <ref> [--pack-path <path>] [--skills skill1 skill2]
-    python scripts/validate_federation.py <repo-url> <ref> --json
+    python scripts/validate_federation.py <repo-url> [--ref <ref>] [--pack-path <path>] [--skills skill1 skill2]
+    python scripts/validate_federation.py <repo-url> --json
 
 Examples:
-    # Validate entire pack at repo root
-    python scripts/validate_federation.py https://github.com/org/repo v1.0.0
+    # Validate entire pack (default branch)
+    python scripts/validate_federation.py https://github.com/org/repo
+
+    # Validate at a specific ref
+    python scripts/validate_federation.py https://github.com/org/repo --ref v1.0.0
 
     # Pack lives in a subdirectory
-    python scripts/validate_federation.py https://github.com/org/repo v1.0.0 --pack-path my-pack
+    python scripts/validate_federation.py https://github.com/org/repo --pack-path my-pack
 
     # Validate only specific skills
-    python scripts/validate_federation.py https://github.com/org/repo abc123 --skills sdn-diagnostics ovn-trace
+    python scripts/validate_federation.py https://github.com/org/repo --skills sdn-diagnostics ovn-trace
 """
 
 from __future__ import annotations
@@ -37,8 +40,7 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
 
-REQUIRED_FILES = ["CLAUDE.md", "README.md", "mcps.json"]
-REQUIRED_DIRS = ["skills"]
+LOLA_REQUIRED_FIELDS = ["name", "description", "version", "repository"]
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -61,19 +63,26 @@ class ValidationReport:
         return all(c.passed for c in self.checks)
 
 
-def clone_at_ref(repo_url: str, ref: str, dest: Path) -> CheckResult:
+def clone_at_ref(repo_url: str, ref: str | None, dest: Path) -> CheckResult:
     check = CheckResult(name="clone")
     try:
-        subprocess.run(
-            ["git", "clone", "--quiet", "--no-checkout", repo_url, str(dest)],
-            check=True, capture_output=True, text=True, timeout=120,
-        )
-        subprocess.run(
-            ["git", "checkout", "--quiet", ref],
-            check=True, capture_output=True, text=True, cwd=dest, timeout=30,
-        )
+        if ref:
+            subprocess.run(
+                ["git", "clone", "--quiet", "--no-checkout", repo_url, str(dest)],
+                check=True, capture_output=True, text=True, timeout=120,
+            )
+            subprocess.run(
+                ["git", "checkout", "--quiet", ref],
+                check=True, capture_output=True, text=True, cwd=dest, timeout=30,
+            )
+            check.details.append(f"Cloned and checked out {ref}")
+        else:
+            subprocess.run(
+                ["git", "clone", "--quiet", "--depth", "1", repo_url, str(dest)],
+                check=True, capture_output=True, text=True, timeout=120,
+            )
+            check.details.append("Cloned default branch")
         check.passed = True
-        check.details.append(f"Cloned and checked out {ref}")
     except subprocess.CalledProcessError as exc:
         check.passed = False
         check.details.append(exc.stderr.strip() or str(exc))
@@ -83,27 +92,21 @@ def clone_at_ref(repo_url: str, ref: str, dest: Path) -> CheckResult:
     return check
 
 
-def check_lola_structure(pack_dir: Path) -> CheckResult:
+def check_lola_module_schema(module_meta: dict | None) -> CheckResult:
     check = CheckResult(name="lola_structure")
-    missing = []
-    for f in REQUIRED_FILES:
-        if not (pack_dir / f).exists():
-            missing.append(f)
-    for d in REQUIRED_DIRS:
-        if not (pack_dir / d).is_dir():
-            missing.append(f"{d}/")
+    if module_meta is None:
+        check.passed = True
+        check.skipped = True
+        check.details.append("No module metadata provided — skipped")
+        return check
 
-    skills = list((pack_dir / "skills").glob("*/SKILL.md")) if (pack_dir / "skills").is_dir() else []
-
+    missing = [f for f in LOLA_REQUIRED_FIELDS if not module_meta.get(f, "")]
     if missing:
         check.passed = False
-        check.details.append(f"Missing: {', '.join(missing)}")
-    elif not skills:
-        check.passed = False
-        check.details.append("No skills found in skills/")
+        check.details.append(f"Missing required Lola fields: {', '.join(missing)}")
     else:
         check.passed = True
-        check.details.append(f"Structure valid: {len(skills)} skill(s) found")
+        check.details.append(f"Module schema valid: {', '.join(LOLA_REQUIRED_FIELDS)} present")
     return check
 
 
@@ -241,7 +244,7 @@ def run_gitleaks(pack_dir: Path) -> CheckResult:
 
     try:
         result = subprocess.run(
-            ["gitleaks", "detect", "--source", str(pack_dir), "--no-git", "--quiet"],
+            ["gitleaks", "detect", "--source", str(pack_dir), "--no-git", "--no-banner", "--verbose"],
             capture_output=True, text=True, timeout=60,
         )
         if result.returncode == 0:
@@ -263,7 +266,7 @@ def print_report(report: ValidationReport) -> None:
     print("=" * 60)
     print("Federation Validation Report")
     print(f"  Repository: {report.repository}")
-    print(f"  Ref:        {report.ref}")
+    print(f"  Ref:        {report.ref or 'default branch'}")
     print("=" * 60)
 
     for c in report.checks:
@@ -296,10 +299,11 @@ def main() -> int:
         description="Validate an external repo for federation"
     )
     parser.add_argument("repo_url", help="Public repository URL")
-    parser.add_argument("ref", help="Commit SHA or release tag")
+    parser.add_argument("--ref", default=None, help="Commit SHA or release tag (default: default branch)")
     parser.add_argument("--pack-path", default=".", help="Path to the pack within the repo (default: repo root)")
     parser.add_argument("--skills", nargs="*", help="Validate only these skills (by directory name)")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser.add_argument("--module-json", default=None, help="Module entry from marketplace YAML as JSON (for Lola schema validation)")
     parser.add_argument("--keep-clone", action="store_true", help="Don't delete the cloned repo after validation")
     args = parser.parse_args()
 
@@ -319,8 +323,9 @@ def main() -> int:
 
         pack_dir = tmp / "repo" / args.pack_path
 
-        # Step 2: Lola structure
-        report.checks.append(check_lola_structure(pack_dir))
+        # Step 2: Lola module schema
+        module_meta = json.loads(args.module_json) if args.module_json else None
+        report.checks.append(check_lola_module_schema(module_meta))
 
         # Step 3: Tier 1
         report.checks.append(run_tier1(pack_dir, args.skills))

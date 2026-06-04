@@ -105,12 +105,27 @@ modules:
       - "troubleshooting"
       - "execution"
 
+  - name: "rh-automation"
+    description: "Ansible Automation Platform governance, execution safety, and forensic troubleshooting tools for Red Hat automation engineers."
+    version: "0.1.0"
+    repository: "https://github.com/r2dedios/agentic-collections"
+    path: "rh-automation"
+    tags:
+      - "ansible"
+      - "aap"
+      - "automation"
+      - "red-hat"
+      - "governance"
+      - "troubleshooting"
+      - "execution"
+      - "federation"
+
   # Federated modules — complete Lola packs hosted in external repositories.
   # Add them as regular module entries with a different repository URL.
   # The build identifies federated packs by comparing the repository field
   # against this repo's URL. Extra fields (ref, license, skills) are
   # project extensions that Lola silently ignores.
-  # To request federation, open a GitHub issue using the "Federation Request" template.
+  # To request federation, open a PR adding the module entry with the "federation" label.
   #
   # Example:
   # - name: "partner-network-tools"
@@ -118,7 +133,7 @@ modules:
   #   version: "1.2.0"
   #   license: "Apache-2.0"       # must be compatible with Apache 2.0
   #   repository: "https://github.com/partner-org/network-skills"
-  #   ref: "a1b2c3d4e5f6789012345678901234567890abcd"
+  #   ref: "a1b2c3d4e5f6..."      # optional: pinned commit (default: default branch)
   #   path: "."                   # path within the repo where the Lola pack lives (default: repo root)
   #   skills:                     # optional: federate only these skills (omit to include all)
   #     - "skills/sdn-diagnostics/SKILL.md"

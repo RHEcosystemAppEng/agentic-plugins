@@ -1,6 +1,6 @@
 # Federation Review Guide
 
-Step-by-step guide for maintainers evaluating a [Federation Request](https://github.com/RHEcosystemAppEng/agentic-collections/issues/new?template=federation-request.yml).
+Step-by-step guide for maintainers evaluating a federation PR.
 
 Federation means referencing an **external agentic pack** in our catalog. The code stays in the external repo — we don't copy or modify it. Users install federated packs directly from the external repo via Lola.
 
@@ -20,20 +20,23 @@ CI also runs automated validation on any PR with the `federation` label (see [CI
 Steps 1–6 can be run with a single command from the agentic-collections repo root:
 
 ```bash
-# Full pack at repo root
-uv run python scripts/validate_federation.py <repo-url> <ref>
+# Full pack at repo root (default branch)
+uv run python scripts/validate_federation.py <repo-url>
+
+# At a specific ref
+uv run python scripts/validate_federation.py <repo-url> --ref <ref>
 
 # Pack in a subdirectory
-uv run python scripts/validate_federation.py <repo-url> <ref> --pack-path <path>
+uv run python scripts/validate_federation.py <repo-url> --pack-path <path>
 
 # Only specific skills
-uv run python scripts/validate_federation.py <repo-url> <ref> --skills <skill1> <skill2>
+uv run python scripts/validate_federation.py <repo-url> --skills <skill1> <skill2>
 
 # JSON output (for CI)
-uv run python scripts/validate_federation.py <repo-url> <ref> --json
+uv run python scripts/validate_federation.py <repo-url> --json
 ```
 
-The script checks: clone access, Lola structure, Tier 1, Tier 2, MCP version pinning, and gitleaks. If all pass, the pack is ready for manual review (steps 7–8).
+The script checks: clone access, Lola module schema, Tier 1, Tier 2, MCP version pinning, and gitleaks. If all pass, the pack is ready for manual review (steps 7–8).
 
 ---
 
@@ -42,7 +45,7 @@ The script checks: clone access, Lola structure, Tier 1, Tier 2, MCP version pin
 ### Step 1: Verify access and basic info
 
 - [ ] Repository URL is reachable and public
-- [ ] The ref (SHA or tag) exists: `git ls-remote <repo-url> <ref>`
+- [ ] If a specific ref (SHA or tag) is declared, it exists: `git ls-remote <repo-url> <ref>`
 - [ ] Owner/contact information is provided
 - [ ] License file exists in the repo and is compatible with Apache 2.0 (e.g., Apache-2.0, MIT, BSD-2-Clause, BSD-3-Clause)
 
@@ -52,23 +55,16 @@ cd /tmp/federation-review
 git checkout <ref>
 ```
 
-### Step 2: Verify Lola pack structure
+### Step 2: Verify Lola module schema
 
-The pack must have the minimum structure for Lola installation:
+The module entry in `marketplace/rh-agentic-collection.yml` must have the required Lola fields:
 
-```
-<pack>/
-├── CLAUDE.md        # Required: persona, intent routing, rules
-├── README.md        # Required: description, prerequisites, installation
-├── mcps.json        # Required: MCP server configs (can be empty: {"mcpServers": {}})
-└── skills/          # Required: at least one skill
-    └── <skill>/
-        └── SKILL.md # Required: YAML frontmatter + implementation
-```
-
-```bash
-ls CLAUDE.md README.md mcps.json skills/*/SKILL.md
-```
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | Yes | Module identifier |
+| `description` | Yes | Brief description |
+| `version` | Yes | Module version |
+| `repository` | Yes | Git URL to the external repo |
 
 If the request is for a **subset of skills** (not the full pack), verify only the listed skill paths exist.
 
@@ -112,7 +108,7 @@ grep -r ":latest" mcps.json && echo "FAIL: found :latest" || echo "PASS: no :lat
 - [ ] Destructive operations have human-in-the-loop confirmation
 
 ```bash
-gitleaks detect --source /tmp/federation-review --verbose
+gitleaks detect --source /tmp/federation-review --no-git --no-banner --verbose
 ```
 
 LLM-based security scan is triggered **on-demand** by a maintainer due to cost.
@@ -149,6 +145,25 @@ The label-based trigger ensures validation only runs on federation PRs, not on e
 
 ---
 
+## Verifying federation with Lola
+
+After merging a federation PR, verify the module is visible in the marketplace:
+
+```bash
+# Add the marketplace (use the raw YAML URL for a specific branch or main)
+lola market add test-federation https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-collections/main/marketplace/rh-agentic-collection.yml
+
+# List modules — the federated pack should appear alongside internal packs
+lola market ls test-federation
+
+# Clean up when done
+lola market rm test-federation
+```
+
+To test a PR branch before merging, replace `main` with the branch name in the URL.
+
+---
+
 ## Cleanup
 
 ```bash
@@ -161,7 +176,7 @@ rm -rf /tmp/federation-review
 |-------|----------|-----------|--------------|
 | Public access | Yes | Yes | `git ls-remote` |
 | License compatibility | Yes | No | Manual review |
-| Lola pack structure | Yes | Yes | `scripts/validate_federation.py` |
+| Lola module schema | Yes | Yes | `scripts/validate_federation.py` |
 | Tier 1 (agentskills.io) | Yes | Yes | `scripts/validate_federation.py` |
 | Tier 2 (design principles) | Yes | Yes | `scripts/validate_federation.py` |
 | MCP version pinning | Yes | Yes | `scripts/validate_federation.py` |

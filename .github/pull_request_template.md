@@ -49,6 +49,16 @@
 - [ ] No credentials hardcoded; env vars used via `${VAR}` references
 - [ ] Human-in-the-loop confirmation added for any destructive or critical operations
 
+## Federation request (external pack)
+
+<!-- Fill this section ONLY if this PR adds or updates a federated module. Delete it otherwise. -->
+
+- **Repository URL:** <!-- https://github.com/org/repo -->
+- **Pack path:** <!-- Subdirectory within the repo, or "." for root -->
+- **Ref:** <!-- Commit SHA or tag, or "default branch" -->
+- **License:** <!-- Must be compatible with Apache 2.0 (Apache-2.0, MIT, BSD-2-Clause, BSD-3-Clause) -->
+- **Contact:** <!-- @github-handle or email of the pack owner -->
+
 ## Validation
 
 - [ ] `make validate` passes locally

@@ -318,20 +318,26 @@ def load_federated_packs() -> List[Dict[str, Any]]:
             pack_path = mod.get("path", ".")
             skill_subset = mod.get("skills")
 
-            if not repository or not ref:
-                print(f"  Warning: federated module '{name}' missing repository or ref, skipping")
+            if not repository:
+                print(f"  Warning: federated module '{name}' missing repository, skipping")
                 continue
 
             clone_dest = tmp / name
             try:
-                subprocess.run(
-                    ["git", "clone", "--quiet", "--no-checkout", repository, str(clone_dest)],
-                    check=True, capture_output=True, text=True, timeout=120,
-                )
-                subprocess.run(
-                    ["git", "checkout", "--quiet", ref],
-                    check=True, capture_output=True, text=True, cwd=clone_dest, timeout=30,
-                )
+                if ref:
+                    subprocess.run(
+                        ["git", "clone", "--quiet", "--no-checkout", repository, str(clone_dest)],
+                        check=True, capture_output=True, text=True, timeout=120,
+                    )
+                    subprocess.run(
+                        ["git", "checkout", "--quiet", ref],
+                        check=True, capture_output=True, text=True, cwd=clone_dest, timeout=30,
+                    )
+                else:
+                    subprocess.run(
+                        ["git", "clone", "--quiet", "--depth", "1", repository, str(clone_dest)],
+                        check=True, capture_output=True, text=True, timeout=120,
+                    )
             except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
                 print(f"  Warning: failed to clone '{name}': {exc}")
                 continue
