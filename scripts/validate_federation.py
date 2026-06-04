@@ -43,6 +43,9 @@ from pathlib import Path
 LOLA_REQUIRED_FIELDS = ["name", "description", "version", "repository"]
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from pack_registry import parse_repo_url  # noqa: E402
+
 
 @dataclass
 class CheckResult:
@@ -307,8 +310,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Validate an external repo for federation"
     )
-    parser.add_argument("repo_url", help="Public repository URL")
-    parser.add_argument("--ref", default=None, help="Commit SHA or release tag (default: default branch)")
+    parser.add_argument("repo_url", help="Public repository URL (may contain @ref suffix)")
+    parser.add_argument("--ref", default=None, help="Commit SHA or release tag (overrides @ref in URL)")
     parser.add_argument("--pack-path", default=".", help="Path to the pack within the repo (default: repo root)")
     parser.add_argument("--skills", nargs="*", help="Validate only these skills (by directory name)")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
@@ -316,12 +319,15 @@ def main() -> int:
     parser.add_argument("--keep-clone", action="store_true", help="Don't delete the cloned repo after validation")
     args = parser.parse_args()
 
-    report = ValidationReport(repository=args.repo_url, ref=args.ref)
+    base_url, embedded_ref = parse_repo_url(args.repo_url)
+    effective_ref = args.ref or embedded_ref
+
+    report = ValidationReport(repository=args.repo_url, ref=effective_ref)
     tmp = Path(tempfile.mkdtemp(prefix="federation-review-"))
 
     try:
         # Step 1: Clone
-        clone_result = clone_at_ref(args.repo_url, args.ref, tmp / "repo")
+        clone_result = clone_at_ref(base_url, effective_ref, tmp / "repo")
         report.checks.append(clone_result)
         if not clone_result.passed:
             if args.json:

@@ -88,6 +88,22 @@ def load_marketplace_module_by_path(
 MAIN_REPO_URL = "https://github.com/RHEcosystemAppEng/agentic-collections"
 
 
+def parse_repo_url(repository: str) -> tuple:
+    """Split ``repository`` into ``(base_url, ref_or_none)``.
+
+    The marketplace format embeds an optional ref with ``@``:
+    ``https://github.com/org/repo@commitOrBranch``.  A bare URL without
+    ``@`` returns ``(url, None)``.
+    """
+    repo = repository.rstrip("/")
+    # Match the last @ that comes after the host/path portion.
+    # We look for @ after "github.com/org/repo" — i.e., not inside the scheme.
+    idx = repo.rfind("@")
+    if idx > 0 and "://" in repo and idx > repo.index("://") + 3:
+        return repo[:idx], repo[idx + 1:]
+    return repo, None
+
+
 def load_federated_modules(
     marketplace_path: Optional[Path] = None,
 ) -> List[Dict[str, Any]]:
@@ -103,7 +119,7 @@ def load_federated_modules(
     return [
         m for m in modules
         if isinstance(m, dict)
-        and m.get("repository", "").rstrip("/") != MAIN_REPO_URL
+        and parse_repo_url(m.get("repository", ""))[0].rstrip("/") != MAIN_REPO_URL
     ]
 
 

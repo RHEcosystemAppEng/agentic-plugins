@@ -87,8 +87,10 @@ Ask the user for each field, one at a time. Explain what each field is and provi
    - Validate: must be one of the compatible licenses
 
 6. **ref** (optional)
-   - Ask: "Do you want to pin to a specific commit SHA or tag? Leave empty to use the default branch."
-   - If provided, validate format (40-char hex for SHA, or valid tag name)
+   - Ask: "Do you want to pin to a specific commit SHA, tag, or branch? Leave empty to use the default branch."
+   - If provided, the ref is appended to the repository URL with `@`: `https://github.com/org/repo@<ref>`
+   - The `repository` field in the marketplace YAML will contain the full URL with ref embedded (e.g., `https://github.com/org/repo@v1.0.0` or `https://github.com/org/repo@abc123...`)
+   - There is NO separate `ref` field in the marketplace entry
 
 7. **path** (optional, default: `.`)
    - Ask: "Where is the Lola pack inside the repository? Use `.` if it's at the repo root, or specify a subdirectory path (e.g., `my-pack`)."
@@ -109,9 +111,8 @@ Ask the user for each field, one at a time. Explain what each field is and provi
 | Name        | <name>                                        |
 | Description | <description>                                 |
 | Version     | <version>                                     |
-| Repository  | <repository>                                  |
+| Repository  | <repository> or <repository>@<ref>            |
 | License     | <license>                                     |
-| Ref         | <ref or "default branch">                     |
 | Path        | <path>                                        |
 | Tags        | <tag1>, <tag2>, ..., federation               |
 
@@ -130,8 +131,7 @@ Wait for explicit user confirmation before continuing.
     description: "<description>"
     version: "<version>"
     license: "<license>"
-    repository: "<repository>"
-    ref: "<ref>"              # omit this line if no ref was provided
+    repository: "<repository>"        # includes @<ref> if ref was provided
     path: "<path>"
     tags:
       - "<tag1>"
@@ -139,16 +139,21 @@ Wait for explicit user confirmation before continuing.
       - "federation"
 ```
 
+If a ref was provided, the `repository` value must be `<repository-url>@<ref>` (e.g., `https://github.com/org/repo@v1.0.0`). If no ref, use the plain URL.
+
 3. **Output to user**: "Added module entry to `marketplace/rh-agentic-collection.yml`."
 
 ### Phase 3: Generate Collection Files
 
-1. **Action**: Clone the external repository to a temporary directory:
+1. **Action**: Clone the external repository to a temporary directory. If the repository URL contains `@<ref>`, split it to get the base URL and ref:
 
 ```bash
+# If repository is "https://github.com/org/repo@ref":
+git clone --quiet --no-checkout https://github.com/org/repo /tmp/federation-<name>
+cd /tmp/federation-<name> && git checkout --quiet <ref>
+
+# If repository has no @ref (plain URL):
 git clone --quiet --depth 1 <repository> /tmp/federation-<name>
-# If ref was provided:
-cd /tmp/federation-<name> && git fetch --depth 1 origin <ref> && git checkout <ref>
 ```
 
 2. **Action**: Verify the pack exists at the declared path:
@@ -237,8 +242,8 @@ Adds **<name>** as a federated module from [<repository>](<repository>).
 | Name        | <name>           |
 | Version     | <version>        |
 | License     | <license>        |
+| Repository  | <repository>     |
 | Path        | <path>           |
-| Ref         | <ref or default> |
 
 ### What's Included
 
@@ -340,7 +345,7 @@ Skill: License? Must be compatible with Apache 2.0 (Apache-2.0, MIT, BSD-2-Claus
 
 User: MIT
 
-Skill: Pin to a specific commit or tag? Leave empty for default branch.
+Skill: Pin to a specific commit SHA, tag, or branch? Leave empty for default branch.
 
 User: v0.2.0
 
@@ -358,9 +363,8 @@ Skill: ## Module Summary
        | Name        | network-diagnostics                            |
        | Description | Network troubleshooting skills for SDN and ... |
        | Version     | 0.2.0                                          |
-       | Repository  | https://github.com/partner-org/net-diag-skills |
+       | Repository  | https://github.com/partner-org/net-diag-skills@v0.2.0 |
        | License     | MIT                                            |
-       | Ref         | v0.2.0                                         |
        | Path        | .                                              |
        | Tags        | networking, sdn, ovn, troubleshooting, federation |
 
