@@ -94,7 +94,7 @@ git commit -m "feat: federate <name> module from <repository>"
 gh pr create --title "feat: federate <name> module" --label "federation"
 ```
 
-The **`federation`** label triggers CI. Full check list: [FEDERATION_REVIEW_GUIDE.md](FEDERATION_REVIEW_GUIDE.md#automated-validation-recommended).
+The **`federation`** label triggers CI. Full check list: [FEDERATION_REVIEW_GUIDE.md#checks](FEDERATION_REVIEW_GUIDE.md#checks).
 
 ---
 
