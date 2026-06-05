@@ -2,30 +2,28 @@
 """
 Validate an external repository for federation into Red Hat Agentic Collections.
 
-Automates the mechanical checks from docs/FEDERATION_REVIEW_GUIDE.md:
-  1. Clone repository (at pinned ref if provided, default branch otherwise)
-  2. Verify Lola pack structure
-  3. Tier 1 validation (agentskills.io spec)
-  4. Tier 2 validation (design principles)
-  5. MCP version pinning (no :latest)
-  6. Credential leak scan (gitleaks)
+Automates the mechanical checks from FEDERATION_REVIEW_GUIDE.md:
+  1. Validate pinned commit SHA (ref)
+  2. Clone repository at that commit
+  3. Verify Lola pack structure
+  4. Tier 1 validation (agentskills.io spec)
+  5. Tier 2 validation (design principles)
+  6. MCP version pinning (no :latest)
+  7. Credential leak scan (gitleaks)
 
 Usage:
-    python scripts/validate_federation.py <repo-url> [--ref <ref>] [--pack-path <path>] [--skills skill1 skill2]
-    python scripts/validate_federation.py <repo-url> --json
+    python scripts/validate_federation.py <repo-url> --ref <commit-sha> [--pack-path <path>] [--skills skill1 skill2]
+    python scripts/validate_federation.py <repo-url> --ref <commit-sha> --json
 
 Examples:
-    # Validate entire pack (default branch)
-    python scripts/validate_federation.py https://github.com/org/repo
-
-    # Validate at a specific ref
-    python scripts/validate_federation.py https://github.com/org/repo --ref v1.0.0
+    # Validate entire pack at a pinned commit
+    python scripts/validate_federation.py https://github.com/org/repo --ref a1b2c3d4e5f6789012345678901234567890abcd
 
     # Pack lives in a subdirectory
-    python scripts/validate_federation.py https://github.com/org/repo --pack-path my-pack
+    python scripts/validate_federation.py https://github.com/org/repo --ref a1b2c3... --pack-path my-pack
 
     # Validate only specific skills
-    python scripts/validate_federation.py https://github.com/org/repo --skills sdn-diagnostics ovn-trace
+    python scripts/validate_federation.py https://github.com/org/repo --ref a1b2c3... --skills sdn-diagnostics ovn-trace
 """
 
 from __future__ import annotations
@@ -38,6 +36,8 @@ import sys
 import tempfile
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
+
+import pack_registry
 
 
 LOLA_REQUIRED_FIELDS = ["name", "description", "version", "repository"]
@@ -69,25 +69,32 @@ class ValidationReport:
         )
 
 
-def clone_at_ref(repo_url: str, ref: str | None, dest: Path) -> CheckResult:
+def check_federation_ref(ref: str | None) -> CheckResult:
+    check = CheckResult(name="federation_ref")
+    err = pack_registry.federation_ref_error(ref)
+    if err:
+        check.passed = False
+        check.details.append(err)
+        return check
+    normalized = pack_registry.normalize_federation_ref(ref)
+    check.passed = True
+    check.details.append(f"Pinned commit SHA: {normalized}")
+    return check
+
+
+def clone_at_ref(repo_url: str, ref: str, dest: Path) -> CheckResult:
     check = CheckResult(name="clone")
+    sha = pack_registry.normalize_federation_ref(ref)
     try:
-        if ref:
-            subprocess.run(
-                ["git", "clone", "--quiet", "--no-checkout", repo_url, str(dest)],
-                check=True, capture_output=True, text=True, timeout=120,
-            )
-            subprocess.run(
-                ["git", "checkout", "--quiet", ref],
-                check=True, capture_output=True, text=True, cwd=dest, timeout=30,
-            )
-            check.details.append(f"Cloned and checked out {ref}")
-        else:
-            subprocess.run(
-                ["git", "clone", "--quiet", "--depth", "1", repo_url, str(dest)],
-                check=True, capture_output=True, text=True, timeout=120,
-            )
-            check.details.append("Cloned default branch")
+        subprocess.run(
+            ["git", "clone", "--quiet", "--no-checkout", repo_url, str(dest)],
+            check=True, capture_output=True, text=True, timeout=120,
+        )
+        subprocess.run(
+            ["git", "checkout", "--quiet", sha],
+            check=True, capture_output=True, text=True, cwd=dest, timeout=30,
+        )
+        check.details.append(f"Cloned and checked out {sha}")
         check.passed = True
     except subprocess.CalledProcessError as exc:
         check.passed = False
@@ -95,10 +102,13 @@ def clone_at_ref(repo_url: str, ref: str | None, dest: Path) -> CheckResult:
     except subprocess.TimeoutExpired:
         check.passed = False
         check.details.append("Git operation timed out")
+    except ValueError as exc:
+        check.passed = False
+        check.details.append(str(exc))
     return check
 
 
-def check_lola_module_schema(module_meta: dict | None) -> CheckResult:
+def check_lola_module_schema(module_meta: dict | None, ref: str | None = None) -> CheckResult:
     check = CheckResult(name="lola_structure")
     if module_meta is None:
         check.passed = True
@@ -107,12 +117,18 @@ def check_lola_module_schema(module_meta: dict | None) -> CheckResult:
         return check
 
     missing = [f for f in LOLA_REQUIRED_FIELDS if not module_meta.get(f, "")]
+    ref_value = ref if ref is not None else module_meta.get("ref")
+    ref_err = pack_registry.federation_ref_error(ref_value)
     if missing:
-        check.passed = False
         check.details.append(f"Missing required Lola fields: {', '.join(missing)}")
-    else:
+    if ref_err:
+        check.details.append(ref_err)
+    if not missing and not ref_err:
         check.passed = True
-        check.details.append(f"Module schema valid: {', '.join(LOLA_REQUIRED_FIELDS)} present")
+        check.details.append(
+            f"Module schema valid: {', '.join(LOLA_REQUIRED_FIELDS)} present; "
+            f"ref pinned to {pack_registry.normalize_federation_ref(ref_value)}"
+        )
     return check
 
 
@@ -272,7 +288,7 @@ def print_report(report: ValidationReport) -> None:
     print("=" * 60)
     print("Federation Validation Report")
     print(f"  Repository: {report.repository}")
-    print(f"  Ref:        {report.ref or 'default branch'}")
+    print(f"  Ref:        {report.ref or '(missing)'}")
     print("=" * 60)
 
     for c in report.checks:
@@ -308,7 +324,11 @@ def main() -> int:
         description="Validate an external repo for federation"
     )
     parser.add_argument("repo_url", help="Public repository URL")
-    parser.add_argument("--ref", default=None, help="Commit SHA or release tag (default: default branch)")
+    parser.add_argument(
+        "--ref",
+        required=True,
+        help="Required 40-character commit SHA (not a branch or tag name)",
+    )
     parser.add_argument("--pack-path", default=".", help="Path to the pack within the repo (default: repo root)")
     parser.add_argument("--skills", nargs="*", help="Validate only these skills (by directory name)")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
@@ -320,6 +340,15 @@ def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="federation-review-"))
 
     try:
+        ref_check = check_federation_ref(args.ref)
+        report.checks.append(ref_check)
+        if not ref_check.passed:
+            if args.json:
+                print(json.dumps(asdict(report), indent=2))
+            else:
+                print_report(report)
+            return 1
+
         # Step 1: Clone
         clone_result = clone_at_ref(args.repo_url, args.ref, tmp / "repo")
         report.checks.append(clone_result)
@@ -332,9 +361,9 @@ def main() -> int:
 
         pack_dir = tmp / "repo" / args.pack_path
 
-        # Step 2: Lola module schema
+        # Step 2: Lola module schema (+ federation ref when module metadata provided)
         module_meta = json.loads(args.module_json) if args.module_json else None
-        report.checks.append(check_lola_module_schema(module_meta))
+        report.checks.append(check_lola_module_schema(module_meta, ref=args.ref))
 
         # Step 3: Tier 1
         report.checks.append(run_tier1(pack_dir, args.skills))

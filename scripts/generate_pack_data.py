@@ -288,7 +288,34 @@ def parse_docs(pack_dir: str) -> List[Dict[str, Any]]:
     return sorted(docs, key=lambda d: (d['category'], d['title']))
 
 
-def load_federated_packs() -> List[Dict[str, Any]]:
+def detect_repo_license(repo_root: Path, pack_path: str = ".") -> str:
+    """Best-effort SPDX identifier from LICENSE files in a cloned repository."""
+    candidates = [
+        repo_root / pack_path / "LICENSE",
+        repo_root / pack_path / "LICENSE.txt",
+        repo_root / "LICENSE",
+        repo_root / "LICENSE.txt",
+    ]
+    for path in candidates:
+        if not path.is_file():
+            continue
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")[:8000]
+        except OSError:
+            continue
+        upper = text.upper()
+        if "APACHE LICENSE" in upper and "VERSION 2.0" in upper:
+            return "Apache-2.0"
+        if "MIT LICENSE" in upper or "PERMISSION IS HEREBY GRANTED, FREE OF CHARGE" in upper:
+            return "MIT"
+        if "BSD 3-CLAUSE" in upper or "REDISTRIBUTION AND USE IN SOURCE AND BINARY FORMS" in upper:
+            if "3-CLAUSE" in upper or "3 CLAUSE" in upper:
+                return "BSD-3-Clause"
+            return "BSD-2-Clause"
+    return "Unknown"
+
+
+def load_federated_packs(plugin_titles: Dict[str, str] | None = None) -> List[Dict[str, Any]]:
     """
     Fetch federated modules and return them as standalone pack entries.
 
@@ -299,21 +326,32 @@ def load_federated_packs() -> List[Dict[str, Any]]:
     import subprocess
     import tempfile
 
+    titles = plugin_titles if plugin_titles is not None else load_plugin_titles()
     modules = pack_registry.load_federated_modules()
     if not modules:
         return []
 
+    repo_root = Path(__file__).resolve().parent.parent
     packs: List[Dict[str, Any]] = []
     tmp = Path(tempfile.mkdtemp(prefix="federated-build-"))
 
     try:
         for mod in modules:
             name = mod.get("name", "unknown")
+            fed_catalog_dir = f"federation/modules/{name}"
+            maturity = pack_registry.load_pack_maturity(fed_catalog_dir, repo_root)
+            if maturity != pack_registry.DOCS_MATURITY_PUBLISH:
+                label = maturity or "missing catalog"
+                print(
+                    f"  Skipping federated '{name}' for docs site: maturity {label} "
+                    f"(only GREEN is published)"
+                )
+                continue
+
             repository = mod.get("repository", "")
             ref = mod.get("ref", "")
             description = mod.get("description", "")
             version = mod.get("version", "0.0.0")
-            license_id = mod.get("license", "Unknown")
             tags = mod.get("tags", [])
             pack_path = mod.get("path", ".")
             skill_subset = mod.get("skills")
@@ -322,27 +360,27 @@ def load_federated_packs() -> List[Dict[str, Any]]:
                 print(f"  Warning: federated module '{name}' missing repository, skipping")
                 continue
 
+            ref_err = pack_registry.federation_ref_error(ref)
+            if ref_err:
+                print(f"  Warning: federated module '{name}' invalid ref: {ref_err}")
+                continue
+
             clone_dest = tmp / name
             try:
-                if ref:
-                    subprocess.run(
-                        ["git", "clone", "--quiet", "--no-checkout", repository, str(clone_dest)],
-                        check=True, capture_output=True, text=True, timeout=120,
-                    )
-                    subprocess.run(
-                        ["git", "checkout", "--quiet", ref],
-                        check=True, capture_output=True, text=True, cwd=clone_dest, timeout=30,
-                    )
-                else:
-                    subprocess.run(
-                        ["git", "clone", "--quiet", "--depth", "1", repository, str(clone_dest)],
-                        check=True, capture_output=True, text=True, timeout=120,
-                    )
+                subprocess.run(
+                    ["git", "clone", "--quiet", "--no-checkout", repository, str(clone_dest)],
+                    check=True, capture_output=True, text=True, timeout=120,
+                )
+                subprocess.run(
+                    ["git", "checkout", "--quiet", pack_registry.normalize_federation_ref(ref)],
+                    check=True, capture_output=True, text=True, cwd=clone_dest, timeout=30,
+                )
             except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
                 print(f"  Warning: failed to clone '{name}': {exc}")
                 continue
 
             pack_dir = clone_dest / pack_path
+            license_id = detect_repo_license(clone_dest, pack_path)
 
             skills = []
             if skill_subset:
@@ -361,12 +399,13 @@ def load_federated_packs() -> List[Dict[str, Any]]:
             pack = {
                 "name": name,
                 "path": repository,
+                "catalog_dir": fed_catalog_dir,
                 "source": "federated",
                 "repository": repository,
-                "ref": ref[:12],
+                "ref": pack_registry.normalize_federation_ref(ref)[:12],
                 "plugin": {
                     "name": name,
-                    "title": name,
+                    "title": titles.get(name, name.replace("-", " ").title()),
                     "version": version,
                     "description": description,
                     "author": {"name": "External"},
@@ -426,7 +465,7 @@ def generate_pack_data() -> List[Dict[str, Any]]:
         plugin_title = pack['plugin'].get('title', pack_dir)
         print(f"✓ Parsed {plugin_title}: {len(pack['skills'])} skills, {len(pack['agents'])} agents, {len(docs)} docs")
 
-    federated = load_federated_packs()
+    federated = load_federated_packs(plugin_titles)
     if federated:
         packs.extend(federated)
         print(f"✓ Added {len(federated)} federated pack(s)")

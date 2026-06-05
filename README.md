@@ -516,7 +516,7 @@ That CLI checks marketplace/plugin manifests for that workflow, including `plugi
 - **[CLAUDE.md](CLAUDE.md)**: Repository structure and development workflow
 - **[Skill Design Principles](SKILL_DESIGN_PRINCIPLES.md)**: Quality guidelines for skills
 - **[Federation Guide](docs/federation_guide.md)**: How to federate your external pack into the marketplace
-- **[Federation Review Guide](docs/FEDERATION_REVIEW_GUIDE.md)**: How we evaluate external packs for federation
+- **[Federation Review Guide](FEDERATION_REVIEW_GUIDE.md)**: How we evaluate external packs for federation
 - **[VALIDATION_REPORT.md](VALIDATION_REPORT.md)**: Marketplace compliance verification
 - **[Security Policy](SECURITY.md)**: Credential handling and vulnerability reporting
 

@@ -160,6 +160,8 @@ The workflow will:
 - ✅ Required files presence (README.md, mcps.json, etc.)
 - ✅ Plugin metadata completeness
 - ✅ MCP server configurations
+- ✅ Collection catalog compliance (`.catalog/` schema, fragments, JSON mirror)
+- ✅ Federated catalog cross-check (clone external repos at pinned `ref`; roster and marketplace metadata)
 
 **Changed skills validation (`./scripts/ci-validate-changed-skills.sh`):**
 - ✅ Detects which skills were modified in the PR/push

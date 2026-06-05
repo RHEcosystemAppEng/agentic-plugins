@@ -8,6 +8,7 @@ and every key from ``docs/plugins.json``, keeping only directory names that exis
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
@@ -86,6 +87,37 @@ def load_marketplace_module_by_path(
 
 
 MAIN_REPO_URL = "https://github.com/RHEcosystemAppEng/agentic-collections"
+
+FEDERATION_REF_SHA_RE = re.compile(r"^[0-9a-f]{40}$", re.IGNORECASE)
+
+
+def federation_ref_error(ref: Any) -> Optional[str]:
+    """Return an error message when *ref* is missing or not a 40-character commit SHA."""
+    if ref is None or not str(ref).strip():
+        return "ref is required (40-character commit SHA; not a branch or tag name)"
+    value = str(ref).strip()
+    if not FEDERATION_REF_SHA_RE.fullmatch(value):
+        return (
+            f"ref must be a 40-character commit SHA, not a branch or tag (got {value!r})"
+        )
+    return None
+
+
+def normalize_federation_ref(ref: Any) -> str:
+    """Return a lowercase 40-character commit SHA."""
+    err = federation_ref_error(ref)
+    if err:
+        raise ValueError(err)
+    return str(ref).strip().lower()
+
+
+def validate_federated_module_entry(module: Dict[str, Any]) -> List[str]:
+    """Return validation errors for a federated marketplace module entry."""
+    name = module.get("name") or "<unknown>"
+    err = federation_ref_error(module.get("ref"))
+    if err:
+        return [f"{name}: {err}"]
+    return []
 
 
 def load_federated_modules(
@@ -171,3 +203,13 @@ def get_docs_pack_dirs(
         if load_pack_maturity(p, root) == DOCS_MATURITY_PUBLISH:
             out.append(p)
     return out
+
+
+def get_docs_federation_module_dirs(repo_root: Optional[Path] = None) -> List[str]:
+    """Federation module dirs listed on GitHub Pages (catalog maturity GREEN only)."""
+    root = repo_root or _repo_root()
+    return [
+        p
+        for p in get_federation_module_dirs(root)
+        if load_pack_maturity(p, root) == DOCS_MATURITY_PUBLISH
+    ]

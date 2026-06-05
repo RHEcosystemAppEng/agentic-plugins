@@ -103,10 +103,14 @@ jobs:
               name = mod.get('name', 'unknown')
 
               print(f'\n--- Validating: {name} ---')
-              cmd = [sys.executable, 'scripts/validate_federation.py', repo, '--pack-path', pack_path, '--json',
+              if not ref:
+                  print(f'Module {name} missing required ref (40-character commit SHA)')
+                  failed = True
+                  all_results.append({'name': name, 'report': None, 'catalog_report': None})
+                  continue
+
+              cmd = [sys.executable, 'scripts/validate_federation.py', repo, '--ref', ref, '--pack-path', pack_path, '--json',
                      '--module-json', json.dumps(mod)]
-              if ref:
-                  cmd.extend(['--ref', ref])
               if skills:
                   cmd.extend(['--skills'] + skills)
 
@@ -117,12 +121,37 @@ jobs:
 
               try:
                   report = json.loads(result.stdout)
-                  all_results.append({'name': name, 'report': report})
               except json.JSONDecodeError:
-                  all_results.append({'name': name, 'report': None})
+                  report = None
 
               if result.returncode != 0:
                   failed = True
+
+              cat_cmd = [
+                  sys.executable, 'scripts/validate_federation_catalog.py',
+                  '--module-name', name,
+                  '--repo-url', repo,
+                  '--ref', ref,
+                  '--pack-path', pack_path,
+                  '--module-json', json.dumps(mod),
+                  '--json',
+              ]
+              cat_result = subprocess.run(cat_cmd, capture_output=True, text=True)
+              print(cat_result.stdout)
+              if cat_result.stderr:
+                  print(cat_result.stderr, file=sys.stderr)
+              try:
+                  cat_report = json.loads(cat_result.stdout)
+              except json.JSONDecodeError:
+                  cat_report = None
+              if cat_result.returncode != 0:
+                  failed = True
+
+              all_results.append({
+                  'name': name,
+                  'report': report,
+                  'catalog_report': cat_report,
+              })
 
           with open('/tmp/federation-results.json', 'w') as f:
               json.dump(all_results, f)
@@ -142,12 +171,18 @@ jobs:
             const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
 
             const checkLabels = {
-              clone: { name: 'Clone & access', desc: 'Repository cloned (pinned ref or default branch)' },
+              clone: { name: 'Clone & access', desc: 'Repository cloned at pinned commit SHA' },
+              federation_ref: { name: 'Commit SHA', desc: 'ref is a required 40-character commit SHA' },
               lola_structure: { name: 'Lola module schema', desc: 'Required fields: name, description, version, repository' },
               tier1_agentskills: { name: 'Tier 1', desc: 'agentskills.io spec compliance' },
               tier2_design_principles: { name: 'Tier 2', desc: 'Design principles compliance (warning only)' },
               mcp_version_pinning: { name: 'MCP pinning', desc: 'No `:latest` tags, no hardcoded credentials' },
               gitleaks: { name: 'Credential scan', desc: 'gitleaks secret detection' },
+              catalog_present: { name: 'Catalog present', desc: 'federation/modules/<name>/.catalog/collection.yaml exists' },
+              catalog_compliance: { name: 'Catalog compliance', desc: 'Schema, fragments, JSON mirror' },
+              external_skill_roster: { name: 'Catalog roster', desc: 'Catalog skills match external pack at ref' },
+              plugins_json_title: { name: 'plugins.json title', desc: 'Display title matches catalog name/id' },
+              marketplace_catalog_metadata: { name: 'Marketplace alignment', desc: 'Version, description, repository match catalog' },
             };
             // Checks that warn instead of blocking the merge
             const warnOnlyChecks = new Set(['tier2_design_principles']);
@@ -165,11 +200,22 @@ jobs:
                 }
                 moduleSections += '| Check | Description | Status |\n';
                 moduleSections += '|-------|-------------|--------|\n';
-                for (const check of report.checks) {
+                for check of report.checks) {
                   const label = checkLabels[check.name] || { name: check.name, desc: '' };
                   const isWarnOnly = warnOnlyChecks.has(check.name);
                   const statusIcon = check.skipped ? '⚠️' : (check.passed ? '✅' : (isWarnOnly ? '⚠️' : '❌'));
                   moduleSections += `| ${label.name} | ${label.desc} | ${statusIcon} |\n`;
+                }
+                const catReport = mod.catalog_report;
+                if (catReport && catReport.checks) {
+                  moduleSections += '\n**Catalog cross-check**\n\n';
+                  moduleSections += '| Check | Description | Status |\n';
+                  moduleSections += '|-------|-------------|--------|\n';
+                  for (const check of catReport.checks) {
+                    const label = checkLabels[check.name] || { name: check.name, desc: '' };
+                    const statusIcon = check.skipped ? '⚠️' : (check.passed ? '✅' : '❌');
+                    moduleSections += `| ${label.name} | ${label.desc} | ${statusIcon} |\n`;
+                  }
                 }
                 moduleSections += '\n';
               }

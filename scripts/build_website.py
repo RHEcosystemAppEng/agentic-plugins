@@ -60,7 +60,8 @@ def build_website():
     for pack in pack_data:
         pack_name = pack['name']
         pack['icon'] = icons['packs'].get(pack_name, '')
-        cat_bundle, cat_warns = bundle_catalog_for_site(pack_name, root)
+        catalog_dir = pack.get('catalog_dir', pack_name)
+        cat_bundle, cat_warns = bundle_catalog_for_site(catalog_dir, root)
         for w in cat_warns:
             print(f"⚠️  {w}")
         if cat_bundle is not None:

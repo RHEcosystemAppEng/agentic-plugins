@@ -1,7 +1,8 @@
 ---
 name: federation-request
 description: |
-  Guide users step-by-step through creating a federation PR to register an external agentic pack in the marketplace.
+  Guide users through creating a federation PR to register an external agentic pack in the marketplace.
+  Collects only repository URL and pack path, infers other metadata from the repo, and confirms before proceeding.
 
   Use when:
   - "I want to federate my pack"
@@ -20,7 +21,7 @@ allowed-tools: Read Edit Write Bash Glob Grep Skill
 
 # Federation Request
 
-Guide users through creating a complete federation PR — from gathering module metadata to opening the pull request with the `federation` label. Assumes the user has no prior knowledge of the federation process.
+Guide users through creating a complete federation PR — from discovering pack metadata in an external repo to opening the pull request with the `federation` label. Only repository URL and pack path are asked upfront; other fields are inferred and confirmed before any writes.
 
 ## Prerequisites
 
@@ -59,66 +60,89 @@ Do NOT use when:
 
 ## Workflow
 
-### Phase 1: Gather Module Data
+### Phase 1: Discover and confirm module metadata
 
-Ask the user for each field, one at a time. Explain what each field is and provide examples. Validate each answer before moving to the next question.
+Collect only two inputs from the user, then infer the rest from the repository.
 
-**Fields to collect:**
+#### Step 1 — Ask for inputs (only these two)
 
-1. **name** (required)
-   - Ask: "What is the module name? Use kebab-case (e.g., `partner-network-tools`). This will be the identifier in the marketplace."
-   - Validate: kebab-case, 1-64 chars, `a-z0-9-`, no consecutive `--`, no leading/trailing `-`
-   - Validate uniqueness: check it does not already exist in `marketplace/rh-agentic-collection.yml`
+1. **repository** — Git repository URL (e.g., `https://github.com/org/repo`)
+   - Validate: valid URL; must NOT be `https://github.com/RHEcosystemAppEng/agentic-collections` (direct contribution, not federation)
 
-2. **description** (required)
-   - Ask: "Describe the module in 1-2 sentences. What does it do and who is it for?"
-   - Validate: non-empty, under 200 characters
+2. **path** — Path to the Lola pack inside the repo (e.g., `.`, `plugins/claude-code-setup`, `my-pack`)
+   - Validate: non-empty; use `.` only when the pack root is the repo root
 
-3. **version** (required)
-   - Ask: "What version is the module? Use semver format (e.g., `1.0.0`, `0.1.0`)."
-   - Validate: matches semver pattern `X.Y.Z`
+Do **not** ask for name, description, version, ref, tags, or maturity individually — infer them in Step 2.
 
-4. **repository** (required)
-   - Ask: "What is the Git repository URL? (e.g., `https://github.com/org/repo`)"
-   - Validate: valid URL, must NOT be `https://github.com/RHEcosystemAppEng/agentic-collections` (that would be a direct contribution, not federation)
+#### Step 2 — Clone and infer fields automatically
 
-5. **license** (required)
-   - Ask: "What license does the repository use? Must be compatible with Apache 2.0. Compatible licenses: Apache-2.0, MIT, BSD-2-Clause, BSD-3-Clause."
-   - Validate: must be one of the compatible licenses
+After the user provides repository and path:
 
-6. **ref** (optional)
-   - Ask: "Do you want to pin to a specific commit SHA or tag? Leave empty to use the default branch."
-   - If provided, validate format (40-char hex for SHA, or valid tag name)
+1. **Clone** the repository to a temporary directory and resolve the default-branch HEAD commit SHA:
 
-7. **path** (optional, default: `.`)
-   - Ask: "Where is the Lola pack inside the repository? Use `.` if it's at the repo root, or specify a subdirectory path (e.g., `my-pack`)."
-   - Default: `.`
-
-8. **tags** (required)
-   - Ask: "List tags for discoverability, comma-separated (e.g., `networking, sdn, troubleshooting`). The tag `federation` will be added automatically."
-   - Validate: at least 1 tag provided
-   - Always append `federation` tag if not already included
-
-**After collecting all fields**, present a summary table and ask for confirmation:
-
-```
-## Module Summary
-
-| Field       | Value                                         |
-|-------------|-----------------------------------------------|
-| Name        | <name>                                        |
-| Description | <description>                                 |
-| Version     | <version>                                     |
-| Repository  | <repository>                                  |
-| License     | <license>                                     |
-| Ref         | <ref or "default branch">                     |
-| Path        | <path>                                        |
-| Tags        | <tag1>, <tag2>, ..., federation               |
-
-Proceed? (yes/no)
+```bash
+TMP=/tmp/federation-discover-$$
+git clone --quiet --no-checkout "<repository>" "$TMP"
+REF=$(git -C "$TMP" ls-remote origin HEAD | cut -f1)
+git -C "$TMP" checkout --quiet "$REF"
+PACK="$TMP/<path>"
 ```
 
-Wait for explicit user confirmation before continuing.
+2. **Verify** the pack exists:
+
+```bash
+test -d "$PACK/skills" && echo "✓ Pack found" || echo "✗ No skills/ directory at <path>"
+```
+
+If verification fails, report the error and ask the user to correct the repository URL or path. Do not continue.
+
+3. **Infer each field** using this precedence (first match wins):
+
+| Field | Inference rules |
+|-------|-------------------|
+| **name** | 1) `.claude-plugin/plugin.json` → `name` · 2) basename of `path` (if not `.`) · 3) sole `skills/<dir>/` folder name · Must be kebab-case, unique in `marketplace/rh-agentic-collection.yml` |
+| **title** | Human-readable catalog display name · 1) `README.md` first `# ` heading · 2) title-case words from `name` (`claude-code-setup` → `Claude Code Setup`) · 3) short phrase from `plugin.json` `description` · Non-empty, ≤120 chars; used in `collection.yaml` `name:` and `docs/plugins.json` |
+| **description** | 1) `plugin.json` → `description` · 2) `README.md` first substantive sentence · 3) first skill `SKILL.md` frontmatter `description` (flatten to one line, ≤200 chars) |
+| **version** | 1) `plugin.json` → `version` (normalize to semver `X.Y.Z`) · 2) default `0.1.0` |
+| **ref** | `REF` from clone above (40-char commit SHA of default branch HEAD) |
+| **tags** | Derive 3–6 kebab-case tags from skill folder names, `plugin.json` keywords, README headings, and path segments; always append `federation` |
+| **maturity** | Default **`ORANGE`** (recommended for new federations; not listed on public GitHub Pages until promoted to `GREEN`) |
+
+4. **Validate** inferred values before presenting:
+   - **name**: kebab-case, 1–64 chars, not already in `marketplace/rh-agentic-collection.yml`
+   - **title**: non-empty human-readable string; not identical to raw kebab-case `name` unless no better source exists
+   - **description**: non-empty, under 200 characters
+   - **version**: semver `X.Y.Z`
+   - **ref**: 40 hexadecimal characters (run `uv run python -c "import sys; sys.path.insert(0,'scripts'); import pack_registry as pr; print(pr.federation_ref_error('<ref>') or 'ok')"` to verify)
+   - **tags**: at least one tag besides `federation`
+
+If inference fails or produces ambiguous results (e.g., multiple skill dirs with no plugin.json and path is `.`), show what was found and ask the user to clarify **only the conflicting field(s)**, then re-infer.
+
+#### Step 3 — Present summary and wait for confirmation
+
+Show inferred values in one table. Include maturity and note that the user may override any field before confirming:
+
+```
+## Inferred module metadata
+
+| Field       | Value (inferred)                              | Source              |
+|-------------|-----------------------------------------------|---------------------|
+| Name        | <name>                                        | plugin.json / path  |
+| Title       | <human-readable title>                        | README / name       |
+| Description | <description>                                 | README / SKILL.md   |
+| Version     | <version>                                     | plugin.json         |
+| Repository  | <repository>                                  | (user provided)     |
+| Ref         | <40-character commit SHA>                     | default branch HEAD |
+| Path        | <path>                                        | (user provided)     |
+| Tags        | <tag1>, <tag2>, ..., federation               | skills / README     |
+| Maturity    | ORANGE                                        | default (new federation) |
+
+Reply **yes** to proceed, or tell me what to change (e.g., "use GREEN maturity", "title should be …", "name should be foo-bar").
+```
+
+Wait for explicit user confirmation before Phase 2. Apply any corrections the user requests, then confirm again if values changed materially.
+
+Keep the temporary clone at `$TMP` through Phase 2 if no corrections require re-cloning; otherwise re-clone at the confirmed `ref`.
 
 ### Phase 2: Create Marketplace Entry
 
@@ -129,9 +153,8 @@ Wait for explicit user confirmation before continuing.
   - name: "<name>"
     description: "<description>"
     version: "<version>"
-    license: "<license>"
     repository: "<repository>"
-    ref: "<ref>"              # omit this line if no ref was provided
+    ref: "<commit-sha>"         # required project extension: 40-character commit SHA
     path: "<path>"
     tags:
       - "<tag1>"
@@ -141,17 +164,28 @@ Wait for explicit user confirmation before continuing.
 
 3. **Output to user**: "Added module entry to `marketplace/rh-agentic-collection.yml`."
 
-### Phase 3: Generate Collection Files
+4. **Action**: Add a display-title entry to `docs/plugins.json`. Key **must** match the marketplace module `name` (not the repo path):
 
-1. **Action**: Clone the external repository to a temporary directory:
-
-```bash
-git clone --quiet --depth 1 <repository> /tmp/federation-<name>
-# If ref was provided:
-cd /tmp/federation-<name> && git fetch --depth 1 origin <ref> && git checkout <ref>
+```json
+"<name>": {
+  "title": "<human-readable title>"
+}
 ```
 
-2. **Action**: Verify the pack exists at the declared path:
+   - Merge into existing `docs/plugins.json`; preserve JSON formatting (2-space indent, trailing newline).
+   - Skip if the key already exists — update `title` only when the user corrected it in Phase 1.
+   - **Output to user**: "Added `docs/plugins.json` entry for `<name>`."
+
+### Phase 3: Generate Collection Files
+
+1. **Action**: Reuse the Phase 1 clone if still valid at the confirmed `ref`, or clone again:
+
+```bash
+git clone --quiet --no-checkout <repository> /tmp/federation-<name>
+cd /tmp/federation-<name> && git checkout --quiet <commit-sha>
+```
+
+2. **Action**: Verify the pack exists at the declared path (skip if already verified in Phase 1):
 
 ```bash
 test -d /tmp/federation-<name>/<path>/skills && echo "✓ Pack found" || echo "✗ No skills/ directory at <path>"
@@ -170,6 +204,9 @@ mkdir -p federation/modules/<name>
    Since `/create-collection` expects the pack to be a local directory registered in the marketplace, work as follows:
    - Point `/create-collection` to the cloned pack at `/tmp/federation-<name>/<path>/`
    - After generation, copy the resulting `.catalog/` contents to `federation/modules/<name>/.catalog/`
+   - Set **`id:`** to the module `name` (kebab-case marketplace identifier)
+   - Set **`name:`** in `collection.yaml` to the confirmed **`title`** (must match `docs/plugins.json` → `title`)
+   - Set **`maturity:`** in `collection.yaml` to the value confirmed in Phase 1 (default `ORANGE`), then regenerate `collection.json` with `uv run python scripts/catalog_yaml_to_json.py --pack federation/modules/<name>`
 
 ```bash
 mkdir -p federation/modules/<name>/.catalog
@@ -198,7 +235,7 @@ git checkout -b feat/federate-<name>
 2. **Action**: Stage all changes:
 
 ```bash
-git add marketplace/rh-agentic-collection.yml federation/modules/<name>/
+git add marketplace/rh-agentic-collection.yml docs/plugins.json federation/modules/<name>/
 ```
 
 3. **Action**: Show the user what will be committed:
@@ -235,19 +272,20 @@ Adds **<name>** as a federated module from [<repository>](<repository>).
 | Field       | Value            |
 |-------------|------------------|
 | Name        | <name>           |
+| Title       | <title>          |
 | Version     | <version>        |
-| License     | <license>        |
 | Path        | <path>           |
-| Ref         | <ref or default> |
+| Ref         | <commit-sha>     |
 
 ### What's Included
 
 - Module entry in `marketplace/rh-agentic-collection.yml`
+- Display title in `docs/plugins.json`
 - Collection catalog at `federation/modules/<name>/.catalog/`
 
 ### Validation
 
-CI will run automated federation validation (license, Tier 1, Tier 2, MCP pinning, credential scan) when the `federation` label is detected.
+CI will run automated federation validation (repo LICENSE check, Tier 1, Tier 2, MCP pinning, credential scan) when the `federation` label is detected.
 EOF
 )" \
   --label "federation"
@@ -265,6 +303,7 @@ Present final summary:
 | Item                  | Status |
 |-----------------------|--------|
 | Marketplace entry     | ✅ Added to marketplace/rh-agentic-collection.yml |
+| plugins.json title    | ✅ Added to docs/plugins.json |
 | Collection files      | ✅ Generated at federation/modules/<name>/.catalog/ |
 | Pull request          | ✅ <PR-URL> |
 | CI validation         | ⏳ Will run automatically (federation label applied) |
@@ -294,7 +333,7 @@ None — no MCP tools are invoked.
 ### Reference Documentation
 
 **Internal:**
-- [Federation Review Guide](../../../docs/FEDERATION_REVIEW_GUIDE.md) — evaluation criteria for federated packs
+- [Federation Review Guide](../../../FEDERATION_REVIEW_GUIDE.md) — evaluation criteria for federated packs
 - [COLLECTION_SPEC.md](../../../COLLECTION_SPEC.md) — collection catalog specification
 - [CONTRIBUTING.md](../../../CONTRIBUTING.md) — contribution paths overview
 
@@ -302,14 +341,14 @@ None — no MCP tools are invoked.
 
 **MUST confirm before:**
 
-1. **Module data** (Phase 1): Present summary table, wait for "yes"
+1. **Inferred metadata** (Phase 1): Present summary table with all inferred fields (including maturity); wait for **yes** or apply user corrections first
 2. **Commit** (Phase 4): Show staged changes and proposed message, wait for approval
 3. **Push & PR** (Phase 4): Confirm before pushing and creating the PR
 
 **NEVER:**
 - Push without explicit approval
 - Create commits without confirmation
-- Skip the summary confirmation in Phase 1
+- Skip the Phase 1 confirmation step
 - Proceed if the pack is not found at the declared path
 
 ## Example Usage
@@ -317,60 +356,35 @@ None — no MCP tools are invoked.
 ```
 User: /federation-request
 
-Skill: Let's set up a federation request to add your external pack to the marketplace.
-       I'll guide you through each step.
-
-       First — what is the module name? Use kebab-case (e.g., partner-network-tools).
-
-User: network-diagnostics
-
-Skill: Got it. Now describe the module in 1-2 sentences.
-
-User: Network troubleshooting skills for SDN and OVN diagnostics on OpenShift clusters.
-
-Skill: What version? Use semver (e.g., 1.0.0).
-
-User: 0.2.0
-
-Skill: Repository URL?
+Skill: I'll add your external pack to the marketplace. I only need two things:
+       1. Git repository URL
+       2. Path to the Lola pack inside the repo (use "." if it's at the repo root)
 
 User: https://github.com/partner-org/net-diag-skills
+       plugins/network-diagnostics
 
-Skill: License? Must be compatible with Apache 2.0 (Apache-2.0, MIT, BSD-2-Clause, BSD-3-Clause).
+Skill: Cloning and inspecting the repository...
 
-User: MIT
+       ## Inferred module metadata
 
-Skill: Pin to a specific commit or tag? Leave empty for default branch.
+       | Field       | Value                                          | Source              |
+       |-------------|------------------------------------------------|---------------------|
+       | Name        | network-diagnostics                            | plugin.json         |
+       | Title       | Network Diagnostics                            | README.md           |
+       | Description | Network troubleshooting skills for SDN and ... | README.md           |
+       | Version     | 0.2.0                                          | plugin.json         |
+       | Repository  | https://github.com/partner-org/net-diag-skills | (user provided)     |
+       | Ref         | a1b2c3d4e5f6789012345678901234567890abcd       | default branch HEAD |
+       | Path        | plugins/network-diagnostics                    | (user provided)     |
+       | Tags        | networking, sdn, ovn, troubleshooting, federation | skills / README  |
+       | Maturity    | ORANGE                                         | default             |
 
-User: v0.2.0
-
-Skill: Path inside the repo where the pack lives? Use "." for repo root.
-
-User: .
-
-Skill: Tags for discoverability (comma-separated)? "federation" will be added automatically.
-
-User: networking, sdn, ovn, troubleshooting
-
-Skill: ## Module Summary
-       | Field       | Value                                          |
-       |-------------|------------------------------------------------|
-       | Name        | network-diagnostics                            |
-       | Description | Network troubleshooting skills for SDN and ... |
-       | Version     | 0.2.0                                          |
-       | Repository  | https://github.com/partner-org/net-diag-skills |
-       | License     | MIT                                            |
-       | Ref         | v0.2.0                                         |
-       | Path        | .                                              |
-       | Tags        | networking, sdn, ovn, troubleshooting, federation |
-
-       Proceed? (yes/no)
+       Reply **yes** to proceed, or tell me what to change.
 
 User: yes
 
 Skill: ✅ Added module to marketplace/rh-agentic-collection.yml
-       ✅ Cloned repository, pack found at root
+       ✅ Added docs/plugins.json entry
        ✅ Generated collection files at federation/modules/network-diagnostics/.catalog/
-       ✅ Created PR: https://github.com/RHEcosystemAppEng/agentic-collections/pull/42
-          Label: federation — CI validation will run automatically.
+       ...
 ```

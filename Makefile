@@ -5,13 +5,13 @@ help:
 	@echo ""
 	@echo "Available targets:"
 	@echo "  install                       - Install Python dependencies (requires uv)"
-	@echo "  validate                      - Pack structure + collection compliance (.catalog/)"
+	@echo "  validate                      - Pack structure + collection compliance + federated catalog cross-check"
 	@echo "  validate-collection-schema    - Schema + roster + banners (subset of compliance)"
 	@echo "  validate-collection-compliance - Full .catalog compliance (includes collection.json drift)"
 	@echo "  catalog-mirror-json           - Regenerate all .catalog/collection.json from YAML"
 	@echo "  validate-skill-design         - Validate all skills (use PACK=rh-sre for a specific pack)"
 	@echo "  validate-skill-design-changed - Validate only changed skills (staged + unstaged, for local dev)"
-	@echo "  validate-federated            - Validate federated modules from marketplace YAML"
+	@echo "  validate-federated            - Tier 1 skill lint on external federated packs (heavy; catalog cross-check is in validate)"
 	@echo "  validate-mcp-tools            - Validate allowed-tools against live MCP servers (requires podman)"
 	@echo "  generate    - Generate docs/data.json"
 	@echo "  serve       - Start local server on http://localhost:8000"
@@ -48,6 +48,8 @@ validate: check-uv
 	@uv run python scripts/validate_docs_tree_links.py
 	@echo "Validating collection compliance (.catalog/)..."
 	@uv run python scripts/validate_collection_compliance.py
+	@echo "Validating federated catalog cross-check (clone external repos at pinned ref)..."
+	@uv run python scripts/validate_federation_catalog_all.py
 	@echo "Validating MCP tool references (skips gracefully without podman)..."
 	@uv run python scripts/validate_mcp_tools.py
 	@echo "✓ Validation complete!"
@@ -73,7 +75,7 @@ validate-mcp-tools: check-uv
 	@echo "✓ MCP tool validation complete!"
 
 validate-federated: check-uv
-	@echo "Validating federated modules..."
+	@echo "Validating federated module skills (Tier 1, external clone)..."
 	@uv run python scripts/fetch_federated_skills.py
 
 generate: check-uv

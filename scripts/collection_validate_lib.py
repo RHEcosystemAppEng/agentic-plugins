@@ -119,6 +119,127 @@ def read_yaml_catalog(pack_dir: str, root: Optional[Path] = None) -> Tuple[Optio
         return None, [f"{pack_dir}: failed to parse collection.yaml: {e}"]
 
 
+def catalog_yaml_path(pack_dir: str, root: Optional[Path] = None) -> Path:
+    root = root or REPO_ROOT
+    return root / pack_dir / ".catalog" / "collection.yaml"
+
+
+def _parse_yaml_scalar(value: str) -> str:
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+        return value[1:-1]
+    return value
+
+
+def _find_top_level_key_line(yaml_path: Path, key: str) -> Optional[int]:
+    pattern = re.compile(rf"^{re.escape(key)}:\s")
+    for line_no, line in enumerate(yaml_path.read_text(encoding="utf-8").splitlines(), 1):
+        if pattern.match(line):
+            return line_no
+    return None
+
+
+def catalog_skill_name_line_map(yaml_path: Path) -> Dict[str, int]:
+    """Map skill name to 1-based line number in contents.skills / orchestration_skills."""
+    lines = yaml_path.read_text(encoding="utf-8").splitlines()
+    section: Optional[str] = None
+    result: Dict[str, int] = {}
+    for line_no, line in enumerate(lines, 1):
+        if re.match(r"^  skills:\s*$", line):
+            section = "skills"
+            continue
+        if re.match(r"^  orchestration_skills:\s*$", line):
+            section = "orchestration_skills"
+            continue
+        if section and re.match(r"^  \S", line) and not line.startswith("    "):
+            section = None
+        match = re.match(r"^    - name:\s*(.+?)\s*$", line)
+        if match and section in {"skills", "orchestration_skills"}:
+            result[_parse_yaml_scalar(match.group(1))] = line_no
+    return result
+
+
+def catalog_decision_guide_skill_line_map(yaml_path: Path) -> Dict[str, int]:
+    """Map skill_to_use value to 1-based line number in skills_decision_guide."""
+    lines = yaml_path.read_text(encoding="utf-8").splitlines()
+    in_guide = False
+    result: Dict[str, int] = {}
+    for line_no, line in enumerate(lines, 1):
+        if re.match(r"^  skills_decision_guide:\s*$", line):
+            in_guide = True
+            continue
+        if in_guide and re.match(r"^  \S", line) and not line.startswith("    "):
+            in_guide = False
+        match = re.match(r"^      skill_to_use:\s*(.+?)\s*$", line)
+        if match and in_guide:
+            result[_parse_yaml_scalar(match.group(1))] = line_no
+    return result
+
+
+def _yaml_loc(pack_dir: str, yaml_path: Path, line: Optional[int], root: Path) -> str:
+    rel = yaml_path.relative_to(root)
+    return f"{rel}:{line}" if line else str(rel)
+
+
+def describe_json_mirror_drift(
+    pack_dir: str, yaml_data: Dict[str, Any], root: Optional[Path] = None,
+) -> List[str]:
+    """Explain how collection.json differs from collection.yaml with field paths and line numbers."""
+    root = root or REPO_ROOT
+    yaml_path = catalog_yaml_path(pack_dir, root)
+    json_path = root / pack_dir / ".catalog" / "collection.json"
+    try:
+        json_data = json.loads(json_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [f"{pack_dir}: .catalog/collection.json is invalid JSON: {exc}"]
+
+    errs: List[str] = []
+    skill_lines = catalog_skill_name_line_map(yaml_path)
+    reg_y, orch_y = catalog_skill_names(yaml_data)
+    reg_j, orch_j = catalog_skill_names(json_data)
+
+    for group, ylist, jlist in (
+        ("contents.skills", reg_y, reg_j),
+        ("contents.orchestration_skills", orch_y, orch_j),
+    ):
+        if ylist == jlist:
+            continue
+        max_len = max(len(ylist), len(jlist))
+        for i in range(max_len):
+            yn = ylist[i] if i < len(ylist) else None
+            jn = jlist[i] if i < len(jlist) else None
+            if yn == jn:
+                continue
+            line = skill_lines.get(str(yn or "")) or skill_lines.get(str(jn or ""))
+            loc = _yaml_loc(pack_dir, yaml_path, line, root)
+            errs.append(
+                f"{pack_dir}: {loc} {group}[{i}].name out of sync: "
+                f"collection.yaml={yn!r}, collection.json={jn!r}"
+            )
+
+    for key in ("version", "description", "name", "id", "maturity"):
+        yv = yaml_data.get(key)
+        jv = json_data.get(key)
+        if yv != jv:
+            line = _find_top_level_key_line(yaml_path, key)
+            loc = _yaml_loc(pack_dir, yaml_path, line, root)
+            errs.append(
+                f"{pack_dir}: {loc} {key} out of sync: "
+                f"collection.yaml={yv!r}, collection.json={jv!r}"
+            )
+
+    if not errs:
+        errs.append(
+            f"{pack_dir}: .catalog/collection.json content differs from collection.yaml "
+            "(run diff or regenerate JSON to inspect)"
+        )
+    errs.append(
+        f"{pack_dir}: regenerate mirror with: "
+        f"uv run python scripts/catalog_yaml_to_json.py --pack {pack_dir}"
+    )
+    return errs
+
+
 def validate_yaml_banner(pack_dir: str, root: Optional[Path] = None) -> List[str]:
     root = root or REPO_ROOT
     p = root / pack_dir / ".catalog" / "collection.yaml"
@@ -217,6 +338,94 @@ def list_disk_skill_names(pack_dir: str, root: Optional[Path] = None) -> List[st
     return names
 
 
+def list_external_pack_skill_names(
+    pack_root: Path,
+    skill_subset: Optional[List[str]] = None,
+) -> List[str]:
+    """Return skill directory names from an external pack checkout."""
+    if skill_subset:
+        names: List[str] = []
+        for sp in skill_subset:
+            p = Path(sp)
+            if sp.endswith("/SKILL.md"):
+                names.append(p.parent.name)
+            elif (pack_root / sp / "SKILL.md").is_file():
+                names.append(Path(sp).name)
+            elif (pack_root / "skills" / sp / "SKILL.md").is_file():
+                names.append(sp.strip("/").split("/")[-1])
+        return sorted(set(names))
+
+    skills_dir = pack_root / "skills"
+    if not skills_dir.is_dir():
+        return []
+    return sorted(
+        p.name for p in skills_dir.iterdir() if p.is_dir() and (p / "SKILL.md").is_file()
+    )
+
+
+def validate_external_skill_roster(
+    label: str,
+    data: Dict[str, Any],
+    external_skills: Set[str],
+    yaml_path: Optional[Path] = None,
+    root: Optional[Path] = None,
+) -> List[str]:
+    """Compare catalog YAML skill names to skills present in an external pack checkout."""
+    root = root or REPO_ROOT
+    reg, orch = catalog_skill_names(data)
+    yaml_names = reg + orch
+    errs: List[str] = []
+    skill_lines = catalog_skill_name_line_map(yaml_path) if yaml_path and yaml_path.is_file() else {}
+    guide_lines = (
+        catalog_decision_guide_skill_line_map(yaml_path) if yaml_path and yaml_path.is_file() else {}
+    )
+
+    if len(yaml_names) != len(set(yaml_names)):
+        errs.append(f"{label}: duplicate skill name in contents.skills / orchestration_skills")
+
+    seen = set(reg) | set(orch)
+    for n in reg + orch:
+        if n not in external_skills:
+            line = skill_lines.get(n)
+            loc = _yaml_loc(label, yaml_path, line, root) if yaml_path and line else label
+            expected = sorted(external_skills)
+            hint = f" (external pack skills at ref: {', '.join(expected)})" if expected else ""
+            errs.append(
+                f"{label}: {loc} lists skill {n!r} but external pack has no skills/{n}/SKILL.md at ref{hint}"
+            )
+
+    for d in external_skills:
+        if d not in seen:
+            errs.append(
+                f"{label}: external pack skill {d!r} missing from collection.yaml "
+                f"contents.skills / orchestration_skills"
+            )
+
+    contents = data.get("contents") or {}
+    guide = (contents or {}).get("skills_decision_guide") or []
+    if not external_skills and guide:
+        errs.append(f"{label}: skills_decision_guide must be empty when the external pack has no skills/")
+    for i, row in enumerate(guide):
+        if not isinstance(row, dict):
+            continue
+        st = row.get("skill_to_use")
+        if external_skills and st and st not in external_skills:
+            line = guide_lines.get(str(st))
+            loc = _yaml_loc(label, yaml_path, line, root) if yaml_path and line else label
+            errs.append(
+                f"{label}: {loc} skills_decision_guide[{i}] skill_to_use {st!r} "
+                f"not in external pack skills/ at ref"
+            )
+        if external_skills and st and st not in seen:
+            line = guide_lines.get(str(st))
+            loc = _yaml_loc(label, yaml_path, line, root) if yaml_path and line else label
+            errs.append(
+                f"{label}: {loc} skills_decision_guide[{i}] skill_to_use {st!r} "
+                f"not listed in contents.skills / orchestration_skills"
+            )
+    return errs
+
+
 def catalog_skill_names(data: Dict[str, Any]) -> Tuple[List[str], List[str]]:
     contents = data.get("contents") or {}
     if not isinstance(contents, dict):
@@ -260,10 +469,7 @@ def validate_json_mirror(pack_dir: str, data: Dict[str, Any], root: Optional[Pat
     expected = collection_json_dumps(data)
     actual = json_path.read_text(encoding="utf-8")
     if actual != expected:
-        return [
-            f"{pack_dir}: .catalog/collection.json is out of sync with collection.yaml "
-            f"(run: uv run python scripts/catalog_yaml_to_json.py --pack {pack_dir})"
-        ]
+        return describe_json_mirror_drift(pack_dir, data, root)
     return []
 
 
@@ -372,7 +578,6 @@ def validate_pack_catalog_compliance_extra(
 
     errs.extend(validate_embedded_docs(pack_dir, data, root))
     errs.extend(validate_catalog_inline_length(pack_dir, data))
-    errs.extend(validate_json_mirror(pack_dir, data, root))
     return errs
 
 

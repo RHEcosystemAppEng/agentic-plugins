@@ -45,7 +45,7 @@ There are two ways to add skills to this project:
 
 **Direct Contribution** — Skills are added directly to this repository, inside an existing pack. The contributor opens a PR, skills are reviewed and merged, and maintainers own them from that point. Use `/agentic-contribution-skill` in Claude Code or follow [CONTRIBUTING.md](CONTRIBUTING.md).
 
-**Federation** — An external repository containing a complete, independent Lola pack is referenced in our catalog. The code stays in the external repo; users install it directly via Lola. The external owner maintains their pack. To request federation, open a PR adding the module to `marketplace/rh-agentic-collection.yml` with the `federation` label. Maintainers evaluate the pack using the [Federation Review Guide](docs/FEDERATION_REVIEW_GUIDE.md) and the `/federation-review` skill.
+**Federation** — An external repository containing a complete, independent Lola pack is referenced in our catalog. The code stays in the external repo; users install it directly via Lola. The external owner maintains their pack. To request federation, open a PR adding the module to `marketplace/rh-agentic-collection.yml` with the `federation` label. Maintainers evaluate the pack using the [Federation Review Guide](FEDERATION_REVIEW_GUIDE.md) and the `/federation-review` skill.
 
 ## Working with Agentic Collections
 

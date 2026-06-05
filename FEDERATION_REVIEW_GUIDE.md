@@ -20,23 +20,37 @@ CI also runs automated validation on any PR with the `federation` label (see [CI
 Steps 1–6 can be run with a single command from the agentic-collections repo root:
 
 ```bash
-# Full pack at repo root (default branch)
-uv run python scripts/validate_federation.py <repo-url>
-
-# At a specific ref
-uv run python scripts/validate_federation.py <repo-url> --ref <ref>
+# Full pack at repo root, pinned to a commit SHA
+uv run python scripts/validate_federation.py <repo-url> --ref <40-character-commit-sha>
 
 # Pack in a subdirectory
-uv run python scripts/validate_federation.py <repo-url> --pack-path <path>
+uv run python scripts/validate_federation.py <repo-url> --ref <commit-sha> --pack-path <path>
 
 # Only specific skills
-uv run python scripts/validate_federation.py <repo-url> --skills <skill1> <skill2>
+uv run python scripts/validate_federation.py <repo-url> --ref <commit-sha> --skills <skill1> <skill2>
 
 # JSON output (for CI)
-uv run python scripts/validate_federation.py <repo-url> --json
+uv run python scripts/validate_federation.py <repo-url> --ref <commit-sha> --json
 ```
 
-The script checks: clone access, Lola module schema, Tier 1, Tier 2, MCP version pinning, and gitleaks. If all pass, the pack is ready for manual review (steps 7–8).
+The script checks: commit SHA format, clone access at the pinned commit, Lola module schema, Tier 1, Tier 2, MCP version pinning, and gitleaks.
+
+### Catalog cross-check (in-repo federation artifacts)
+
+When the PR includes `federation/modules/<name>/.catalog/`, verify the catalog matches the external pack at `ref`:
+
+```bash
+uv run python scripts/validate_federation_catalog.py \
+  --module-name <name> \
+  --repo-url <repo-url> \
+  --ref <commit-sha> \
+  --pack-path <path> \
+  --module-json '<marketplace-module-json>'
+```
+
+This checks collection compliance, **skill roster parity** with the linked repo at `ref`, `docs/plugins.json` title alignment, and marketplace version/description/repository consistency.
+
+If all pass, the pack is ready for manual review (steps 7–8).
 
 ---
 
@@ -45,14 +59,14 @@ The script checks: clone access, Lola module schema, Tier 1, Tier 2, MCP version
 ### Step 1: Verify access and basic info
 
 - [ ] Repository URL is reachable and public
-- [ ] If a specific ref (SHA or tag) is declared, it exists: `git ls-remote <repo-url> <ref>`
+- [ ] `ref` is a 40-character commit SHA (not a branch or tag) and exists: `git ls-remote <repo-url> <commit-sha>`
 - [ ] Owner/contact information is provided
 - [ ] License file exists in the repo and is compatible with Apache 2.0 (e.g., Apache-2.0, MIT, BSD-2-Clause, BSD-3-Clause)
 
 ```bash
 git clone --no-checkout <repo-url> /tmp/federation-review
 cd /tmp/federation-review
-git checkout <ref>
+git checkout <commit-sha>
 ```
 
 ### Step 2: Verify Lola module schema
@@ -65,6 +79,7 @@ The module entry in `marketplace/rh-agentic-collection.yml` must have the requir
 | `description` | Yes | Brief description |
 | `version` | Yes | Module version |
 | `repository` | Yes | Git URL to the external repo |
+| `ref` | Yes (project extension) | 40-character commit SHA pinning the pack (not a Lola field; required by this repo) |
 
 If the request is for a **subset of skills** (not the full pack), verify only the listed skill paths exist.
 
@@ -129,7 +144,7 @@ Verify the declared AI agent compatibility from the issue:
 | Minor issues | Comment on issue with specific fixes, label `federation/changes-requested` |
 | Major issues | Reject with explanation, label `federation/rejected`, close issue |
 
-When approving, add the pack as a new entry in `modules` in `marketplace/rh-agentic-collection.yml` (include the `license` field from the issue, and use the external repository URL) and link back to the issue.
+When approving, add the pack as a new entry in `modules` in `marketplace/rh-agentic-collection.yml` (use the external repository URL; license compatibility is verified from the repo's LICENSE file during review) and link back to the issue.
 
 ---
 
@@ -150,14 +165,17 @@ The label-based trigger ensures validation only runs on federation PRs, not on e
 After merging a federation PR, verify the module is visible in the marketplace:
 
 ```bash
+# Use a unique ephemeral market name for each verification run
+MARKET="federation-review-$(openssl rand -hex 4)"
+
 # Add the marketplace (use the raw YAML URL for a specific branch or main)
-lola market add test-federation https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-collections/main/marketplace/rh-agentic-collection.yml
+lola market add "$MARKET" https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-collections/main/marketplace/rh-agentic-collection.yml
 
 # List modules — the federated pack should appear alongside internal packs
-lola market ls test-federation
+lola market ls "$MARKET"
 
 # Clean up when done
-lola market rm test-federation
+lola market rm "$MARKET"
 ```
 
 To test a PR branch before merging, replace `main` with the branch name in the URL.
@@ -177,6 +195,7 @@ rm -rf /tmp/federation-review
 | Public access | Yes | Yes | `git ls-remote` |
 | License compatibility | Yes | No | Manual review |
 | Lola module schema | Yes | Yes | `scripts/validate_federation.py` |
+| Federation catalog cross-check | Yes | Yes | `scripts/validate_federation_catalog.py` |
 | Tier 1 (agentskills.io) | Yes | Yes | `scripts/validate_federation.py` |
 | Tier 2 (design principles) | Yes | Yes | `scripts/validate_federation.py` |
 | MCP version pinning | Yes | Yes | `scripts/validate_federation.py` |

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
+import re
 import shutil
 import subprocess
 import sys
@@ -49,23 +49,55 @@ class ModuleResult:
     clone_path: str = ""
 
 
-def clone_at_ref(repository: str, ref: Optional[str], dest: Path) -> Optional[str]:
-    """Clone a repository and optionally checkout a pinned ref. Returns error string or None."""
+def _strip_ansi(text: str) -> str:
+    return re.sub(r"\x1b\[[0-9;]*m", "", text)
+
+
+def format_linter_lines(output: str, marker: str) -> List[str]:
+    """Extract linter lines containing marker (e.g. [FAIL], [WARN])."""
+    cleaned = _strip_ansi(output)
+    return [line.strip() for line in cleaned.splitlines() if marker in line]
+
+
+def print_skill_validation_details(sr: SkillResult) -> None:
+    """Print Tier 1 linter details to the console (human-readable mode)."""
+    if sr.passed:
+        if sr.warnings:
+            for line in format_linter_lines(sr.output, "[WARN]"):
+                print(f"      {line}")
+        return
+
+    fail_lines = format_linter_lines(sr.output, "[FAIL]")
+    if fail_lines:
+        for line in fail_lines:
+            print(f"      {line}")
+        return
+
+    if sr.output.strip():
+        for line in _strip_ansi(sr.output).splitlines():
+            stripped = line.strip()
+            if stripped:
+                print(f"      {stripped}")
+        return
+
+    print("      (no linter output captured)")
+
+
+def clone_at_ref(repository: str, ref: str, dest: Path) -> Optional[str]:
+    """Clone a repository and checkout a pinned commit SHA. Returns error string or None."""
+    err = pack_registry.federation_ref_error(ref)
+    if err:
+        return err
+    sha = pack_registry.normalize_federation_ref(ref)
     try:
-        if ref:
-            subprocess.run(
-                ["git", "clone", "--quiet", "--no-checkout", repository, str(dest)],
-                check=True, capture_output=True, text=True, timeout=120,
-            )
-            subprocess.run(
-                ["git", "checkout", "--quiet", ref],
-                check=True, capture_output=True, text=True, cwd=dest, timeout=30,
-            )
-        else:
-            subprocess.run(
-                ["git", "clone", "--quiet", "--depth", "1", repository, str(dest)],
-                check=True, capture_output=True, text=True, timeout=120,
-            )
+        subprocess.run(
+            ["git", "clone", "--quiet", "--no-checkout", repository, str(dest)],
+            check=True, capture_output=True, text=True, timeout=120,
+        )
+        subprocess.run(
+            ["git", "checkout", "--quiet", sha],
+            check=True, capture_output=True, text=True, cwd=dest, timeout=30,
+        )
         return None
     except subprocess.CalledProcessError as exc:
         return exc.stderr.strip() or str(exc)
@@ -93,11 +125,14 @@ def validate_skill(skill_dir: Path, repo_root: Path) -> SkillResult:
             timeout=30,
         )
         has_warnings = "[WARN]" in result.stdout
+        combined = result.stdout
+        if result.stderr.strip():
+            combined = f"{combined}\n{result.stderr}".strip()
         return SkillResult(
             path=rel_path,
             passed=result.returncode == 0,
             warnings=has_warnings,
-            output=result.stdout.strip(),
+            output=combined.strip(),
         )
     except subprocess.TimeoutExpired:
         return SkillResult(path=rel_path, passed=False, output="Linter timed out")
@@ -119,6 +154,11 @@ def process_module(
 
     if not repository:
         result.error = "Missing repository"
+        return result
+
+    ref_err = pack_registry.federation_ref_error(ref)
+    if ref_err:
+        result.error = ref_err
         return result
 
     clone_dest = base_dir / name
@@ -190,7 +230,7 @@ def main() -> int:
             print(f"\n{'='*60}")
             print(f"Module: {mod.get('name', '?')}")
             print(f"  Repository: {mod.get('repository', '?')}")
-            print(f"  Ref: {mod.get('ref', '?')}")
+            print(f"  Ref: {mod.get('ref') or '(missing — required 40-character commit SHA)'}")
             print(f"  Pack path: {mod.get('path', '.')}")
             print(f"{'='*60}")
 
@@ -213,6 +253,8 @@ def main() -> int:
                 status = "PASS" if sr.passed else "FAIL"
                 warn = " (warnings)" if sr.warnings else ""
                 print(f"  [{status}{warn}] {sr.path}")
+                if not sr.passed or sr.warnings:
+                    print_skill_validation_details(sr)
                 if not sr.passed:
                     any_failure = True
 
@@ -235,6 +277,8 @@ def main() -> int:
         passed = sum(1 for r in results for s in r.skills if s.passed)
         failed = sum(1 for r in results for s in r.skills if not s.passed)
         print(f"Summary: {passed}/{total_skills} skills passed, {failed} failed")
+        if failed:
+            print("See [FAIL] lines above for Tier 1 linter details (or re-run with --json).")
 
     return 1 if any_failure else 0
 

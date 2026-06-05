@@ -55,8 +55,8 @@
 
 - **Repository URL:** <!-- https://github.com/org/repo -->
 - **Pack path:** <!-- Subdirectory within the repo, or "." for root -->
-- **Ref:** <!-- Commit SHA or tag, or "default branch" -->
-- **License:** <!-- Must be compatible with Apache 2.0 (Apache-2.0, MIT, BSD-2-Clause, BSD-3-Clause) -->
+- **Ref:** <!-- Required 40-character commit SHA (not a branch or tag) -->
+- **License:** <!-- Verified from repo LICENSE during review; must be compatible with Apache 2.0 -->
 - **Contact:** <!-- @github-handle or email of the pack owner -->
 
 ## Validation
