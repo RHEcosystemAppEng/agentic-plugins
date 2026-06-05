@@ -35,8 +35,9 @@ When the user wants to add the Red Hat Security MCP server to their project to e
 
 1. Determine the MCP configuration file supported by this client. 
 2. If this client supports project scope, ask the user:
-   "Install the Red Hat Security MCP server for this project only, or globally for all projects?"
+   "Install the Red Hat Security MCP server for this project only or globally for all projects?"
    Wait for the user's answer before proceeding.
+   Do not infer scope from context.
 3. Add or update the `red-hat-security` server entry with:
    - `type: http`
    - `url: https://security-mcp.api.redhat.com/mcp`
