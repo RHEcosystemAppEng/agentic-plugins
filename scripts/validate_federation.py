@@ -12,7 +12,7 @@ Automates the mechanical checks from FEDERATION_REVIEW_GUIDE.md:
   7. Credential leak scan (gitleaks)
 
 Usage:
-    python scripts/validate_federation.py <repo-url> --ref <commit-sha> [--pack-path <path>] [--skills skill1 skill2]
+    python scripts/validate_federation.py <repo-url> --ref <commit-sha> [--pack-path <path>] [--json]
     python scripts/validate_federation.py <repo-url> --ref <commit-sha> --json
 
 Examples:
@@ -21,9 +21,6 @@ Examples:
 
     # Pack lives in a subdirectory
     python scripts/validate_federation.py https://github.com/org/repo --ref a1b2c3... --pack-path my-pack
-
-    # Validate only specific skills
-    python scripts/validate_federation.py https://github.com/org/repo --ref a1b2c3... --skills sdn-diagnostics ovn-trace
 """
 
 from __future__ import annotations
@@ -132,7 +129,7 @@ def check_lola_module_schema(module_meta: dict | None, ref: str | None = None) -
     return check
 
 
-def run_tier1(pack_dir: Path, skill_subset: list[str] | None = None) -> CheckResult:
+def run_tier1(pack_dir: Path) -> CheckResult:
     check = CheckResult(name="tier1_agentskills")
     linter = REPO_ROOT / ".claude" / "skills" / "skill-linter" / "scripts" / "validate-skill.sh"
     if not linter.exists():
@@ -141,10 +138,10 @@ def run_tier1(pack_dir: Path, skill_subset: list[str] | None = None) -> CheckRes
         return check
 
     skills_dir = pack_dir / "skills"
-    if skill_subset:
-        skill_dirs = [skills_dir / s for s in skill_subset]
-    else:
-        skill_dirs = sorted(d for d in skills_dir.iterdir() if d.is_dir() and (d / "SKILL.md").exists())
+    skill_dirs = sorted(
+        d for d in skills_dir.iterdir()
+        if d.is_dir() and (d / "SKILL.md").exists()
+    ) if skills_dir.is_dir() else []
 
     if not skill_dirs:
         check.passed = False
@@ -330,7 +327,6 @@ def main() -> int:
         help="Required 40-character commit SHA (not a branch or tag name)",
     )
     parser.add_argument("--pack-path", default=".", help="Path to the pack within the repo (default: repo root)")
-    parser.add_argument("--skills", nargs="*", help="Validate only these skills (by directory name)")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     parser.add_argument("--module-json", default=None, help="Module entry from marketplace YAML as JSON (for Lola schema validation)")
     parser.add_argument("--keep-clone", action="store_true", help="Don't delete the cloned repo after validation")
@@ -366,7 +362,7 @@ def main() -> int:
         report.checks.append(check_lola_module_schema(module_meta, ref=args.ref))
 
         # Step 3: Tier 1
-        report.checks.append(run_tier1(pack_dir, args.skills))
+        report.checks.append(run_tier1(pack_dir))
 
         # Step 4: Tier 2
         report.checks.append(run_tier2(pack_dir))

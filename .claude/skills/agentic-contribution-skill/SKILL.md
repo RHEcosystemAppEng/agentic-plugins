@@ -411,7 +411,7 @@ See [Prerequisites](#prerequisites) section for required system tools (git, uv, 
 **External**:
 - [agentskills.io Specification](https://agentskills.io/specification) - Base skill standard
 - [Conventional Commits](https://www.conventionalcommits.org/) - Commit message format
-- [Lola Package Manager](https://github.com/RedHatProductSecurity/lola) - AI skills package manager
+- [Lola Package Manager](https://github.com/LobsterTrap/lola) - AI skills package manager
 
 ## Critical: Human-in-the-Loop Requirements
 

@@ -41,7 +41,7 @@ The ocp-admin collection provides specialized tools for managing OpenShift clust
 
 ### Installation (Lola)
 
-Install the pack with [Lola](https://github.com/RedHatProductSecurity/lola):
+Install the pack with [Lola](https://github.com/LobsterTrap/lola):
 
 ```bash
 lola market add rh-agentic-collections https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-collections/main/marketplace/rh-agentic-collection.yml
@@ -789,7 +789,7 @@ ocp-admin/
         └── scan_newer_images.py      # Patched image scanning
 ```
 
-*Optional:* `.claude-plugin/plugin.json` — only if publishing via Claude Code’s plugin format; not required for [Lola](https://github.com/RedHatProductSecurity/lola) install.
+*Optional:* `.claude-plugin/plugin.json` — only if publishing via Claude Code’s plugin format; not required for [Lola](https://github.com/LobsterTrap/lola) install.
 
 ### Key Patterns
 

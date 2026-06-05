@@ -32,7 +32,7 @@ If you build the OpenShift MCP image locally instead of pulling a published imag
 
 ### Installation (Lola)
 
-From a checkout of this repository, install the pack with [Lola](https://github.com/RedHatProductSecurity/lola):
+From a checkout of this repository, install the pack with [Lola](https://github.com/LobsterTrap/lola):
 
 ```bash
 lola install -f rh-virt

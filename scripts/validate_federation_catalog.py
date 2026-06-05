@@ -109,7 +109,6 @@ def check_catalog_compliance(module_name: str, repo_root: Optional[Path] = None)
 def check_external_skill_roster(
     module_name: str,
     external_pack_root: Path,
-    skill_subset: Optional[List[str]] = None,
     repo_root: Optional[Path] = None,
 ) -> CheckResult:
     check = CheckResult(name="external_skill_roster")
@@ -120,7 +119,7 @@ def check_external_skill_roster(
         check.details.extend(errs)
         return check
 
-    external = set(cvl.list_external_pack_skill_names(external_pack_root, skill_subset))
+    external = set(cvl.list_external_pack_skill_names(external_pack_root))
     yaml_path = root / cat_dir / ".catalog" / "collection.yaml"
     roster_errs = cvl.validate_external_skill_roster(
         cat_dir, data, external, yaml_path=yaml_path, root=root,
@@ -271,14 +270,8 @@ def run_catalog_validation(
             shutil.rmtree(tmp, ignore_errors=True)
         return report
 
-    skill_subset = None
-    if module_meta and module_meta.get("skills"):
-        skill_subset = module_meta.get("skills")
-
     report.checks.append(check_catalog_compliance(module_name, root))
-    report.checks.append(
-        check_external_skill_roster(module_name, pack_root, skill_subset, root)
-    )
+    report.checks.append(check_external_skill_roster(module_name, pack_root, root))
     report.checks.append(check_plugins_json_title(module_name, root))
     if module_meta:
         report.checks.append(check_marketplace_catalog_metadata(module_name, module_meta, root))

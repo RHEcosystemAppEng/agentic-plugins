@@ -99,7 +99,6 @@ jobs:
               repo = mod.get('repository', '')
               ref = mod.get('ref', '')
               pack_path = mod.get('path', '.')
-              skills = mod.get('skills')
               name = mod.get('name', 'unknown')
 
               print(f'\n--- Validating: {name} ---')
@@ -111,8 +110,6 @@ jobs:
 
               cmd = [sys.executable, 'scripts/validate_federation.py', repo, '--ref', ref, '--pack-path', pack_path, '--json',
                      '--module-json', json.dumps(mod)]
-              if skills:
-                  cmd.extend(['--skills'] + skills)
 
               result = subprocess.run(cmd, capture_output=True, text=True)
               print(result.stdout)

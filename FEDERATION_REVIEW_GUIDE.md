@@ -4,6 +4,10 @@ Step-by-step guide for maintainers evaluating a federation PR.
 
 Federation means referencing an **external agentic pack** in our catalog. The code stays in the external repo — we don't copy or modify it. Users install federated packs directly from the external repo via Lola.
 
+Contributors: see [FEDERATION_REQUEST_GUIDE.md](FEDERATION_REQUEST_GUIDE.md) for how to open a federation PR.
+
+> **Lola `ref` field:** Marketplace `ref` is required here for validation and catalog pinning, but **Lola ignores it at install time** until [LobsterTrap/lola#180](https://github.com/LobsterTrap/lola/issues/180) is fixed.
+
 ## Two ways to review
 
 | Method | When to use |
@@ -25,9 +29,6 @@ uv run python scripts/validate_federation.py <repo-url> --ref <40-character-comm
 
 # Pack in a subdirectory
 uv run python scripts/validate_federation.py <repo-url> --ref <commit-sha> --pack-path <path>
-
-# Only specific skills
-uv run python scripts/validate_federation.py <repo-url> --ref <commit-sha> --skills <skill1> <skill2>
 
 # JSON output (for CI)
 uv run python scripts/validate_federation.py <repo-url> --ref <commit-sha> --json
@@ -79,9 +80,9 @@ The module entry in `marketplace/rh-agentic-collection.yml` must have the requir
 | `description` | Yes | Brief description |
 | `version` | Yes | Module version |
 | `repository` | Yes | Git URL to the external repo |
-| `ref` | Yes (project extension) | 40-character commit SHA pinning the pack (not a Lola field; required by this repo) |
+| `ref` | Yes (project extension) | 40-character commit SHA (required by this repo; **Lola ignores until [lola#180](https://github.com/LobsterTrap/lola/issues/180)**) |
 
-If the request is for a **subset of skills** (not the full pack), verify only the listed skill paths exist.
+All skills under the pack's `path` are validated and installed — the same scope as in-repo marketplace modules.
 
 ### Step 3: Validate skills — Tier 1 (agentskills.io spec)
 

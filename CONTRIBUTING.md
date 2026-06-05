@@ -72,7 +72,8 @@ Both tiers must pass before submitting a PR.
 ## Resources
 
 - [SKILL_DESIGN_PRINCIPLES.md](SKILL_DESIGN_PRINCIPLES.md) -- Design principles and templates
-- [Federation Review Guide](FEDERATION_REVIEW_GUIDE.md) -- How external packs are evaluated for federation
+- [FEDERATION_REQUEST_GUIDE.md](FEDERATION_REQUEST_GUIDE.md) -- How to federate an external pack into the marketplace
+- [FEDERATION_REVIEW_GUIDE.md](FEDERATION_REVIEW_GUIDE.md) -- How external packs are evaluated for federation
 - [agentskills.io specification](https://agentskills.io/specification) -- Base skill standard
 - [Documentation site](https://rhecosystemappeng.github.io/agentic-collections) -- Browse all collections
 - [GitHub Issues](https://github.com/RHEcosystemAppEng/agentic-collections/issues) -- Report bugs or ask questions

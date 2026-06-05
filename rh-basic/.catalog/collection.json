@@ -137,7 +137,7 @@
     {
       "description": "Package manager used to install agentic collections.",
       "title": "Lola Package Manager",
-      "url": "https://github.com/RedHatProductSecurity/lola"
+      "url": "https://github.com/LobsterTrap/lola"
     }
   ],
   "sample_workflows": [
