@@ -22,6 +22,10 @@ metadata:
 
 Validate an external agentic pack proposed for federation in a PR. Checks license compatibility, runs automated validation, and verifies the module is loadable by Lola.
 
+Federated modules install as **complete Lola packs** — all skills under the declared `path`, same as in-repo marketplace modules. There is no per-skill marketplace filter.
+
+Federated modules install as **complete Lola packs** — all skills under the declared `path`, same as in-repo marketplace modules. There is no per-skill marketplace filter.
+
 ## Prerequisites
 
 - Access to the agentic-collections repository
@@ -116,7 +120,8 @@ lola market rm "$MARKET"
 ```
 
 2. **Check:** The federated module appears in the module list with correct name, version, and description.
-3. **Output to user:** Lola verification result (visible or not, with details).
+3. **Note:** Lola does not yet honor marketplace `ref` at install time ([lola#180](https://github.com/LobsterTrap/lola/issues/180)); verify listing only, not revision pinning.
+4. **Output to user:** Lola verification result (visible or not, with details).
 
 ### Phase 5: Summary
 

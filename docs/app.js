@@ -911,7 +911,7 @@ lola install -f ${moduleName}`;
     lolaLink.style.marginTop = '0.5rem';
     lolaLink.style.fontSize = '0.85rem';
     const lolaAnchor = document.createElement('a');
-    lolaAnchor.href = 'https://github.com/RedHatProductSecurity/lola';
+    lolaAnchor.href = 'https://github.com/LobsterTrap/lola';
     lolaAnchor.target = '_blank';
     lolaAnchor.textContent = 'Lola →';
     lolaAnchor.style.color = 'var(--primary)';

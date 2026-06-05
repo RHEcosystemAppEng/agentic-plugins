@@ -23,6 +23,10 @@ allowed-tools: Read Edit Write Bash Glob Grep Skill
 
 Guide users through creating a complete federation PR — from discovering pack metadata in an external repo to opening the pull request with the `federation` label. Only repository URL and pack path are asked upfront; other fields are inferred and confirmed before any writes.
 
+**Install scope:** Federated modules are full Lola packs. `lola install -f <name>` installs **every skill** in the pack, the same as in-repo modules (`rh-sre`, `rh-developer`, etc.). There is no marketplace field to install a subset.
+
+**`ref` pinning:** Marketplace `ref` is required for CI/catalog in this repo but **ignored by Lola at install** until [lola#180](https://github.com/LobsterTrap/lola/issues/180).
+
 ## Prerequisites
 
 **Required Tools**:
@@ -154,7 +158,7 @@ Keep the temporary clone at `$TMP` through Phase 2 if no corrections require re-
     description: "<description>"
     version: "<version>"
     repository: "<repository>"
-    ref: "<commit-sha>"         # required project extension: 40-character commit SHA
+    ref: "<commit-sha>"         # required project extension: 40-character commit SHA (Lola ignores until lola#180)
     path: "<path>"
     tags:
       - "<tag1>"
@@ -333,6 +337,7 @@ None — no MCP tools are invoked.
 ### Reference Documentation
 
 **Internal:**
+- [Federation Request Guide](../../../FEDERATION_REQUEST_GUIDE.md) — contributor guide for federation requests
 - [Federation Review Guide](../../../FEDERATION_REVIEW_GUIDE.md) — evaluation criteria for federated packs
 - [COLLECTION_SPEC.md](../../../COLLECTION_SPEC.md) — collection catalog specification
 - [CONTRIBUTING.md](../../../CONTRIBUTING.md) — contribution paths overview

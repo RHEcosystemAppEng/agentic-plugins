@@ -4,7 +4,7 @@
 
 ## Installation (Lola package manager)
 
-Install collections using [Lola](https://github.com/RedHatProductSecurity/lola), the AI skills package manager. **Installation applies to the current folder only** — run commands from your project directory.
+Install collections using [Lola](https://github.com/LobsterTrap/lola), the AI skills package manager. **Installation applies to the current folder only** — run commands from your project directory.
 
 ### One-time setup: add marketplace
 
@@ -144,7 +144,7 @@ Each plugin has additional requirements:
 
 **New skill idea?** Run `/agentic-contribution-skill` in Claude Code.
 **Have an existing skill?** Run `/agentic-contribution-skill` and choose import mode.
-**Want to federate your own pack?** Follow the [Federation Guide](docs/federation_guide.md).
+**Want to federate your own pack?** Follow the [Federation Request Guide](FEDERATION_REQUEST_GUIDE.md).
 **Full guide:** [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ---
@@ -515,7 +515,7 @@ That CLI checks marketplace/plugin manifests for that workflow, including `plugi
 - **[Documentation Site](https://rhecosystemappeng.github.io/agentic-collections)**: Browse all collections, skills, and MCP servers
 - **[CLAUDE.md](CLAUDE.md)**: Repository structure and development workflow
 - **[Skill Design Principles](SKILL_DESIGN_PRINCIPLES.md)**: Quality guidelines for skills
-- **[Federation Guide](docs/federation_guide.md)**: How to federate your external pack into the marketplace
+- **[Federation Request Guide](FEDERATION_REQUEST_GUIDE.md)**: How to federate your external pack into the marketplace
 - **[Federation Review Guide](FEDERATION_REVIEW_GUIDE.md)**: How we evaluate external packs for federation
 - **[VALIDATION_REPORT.md](VALIDATION_REPORT.md)**: Marketplace compliance verification
 - **[Security Policy](SECURITY.md)**: Credential handling and vulnerability reporting

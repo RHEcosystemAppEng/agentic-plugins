@@ -108,10 +108,12 @@ modules:
   # Federated modules — complete Lola packs hosted in external repositories.
   # Add them as regular module entries with a different repository URL.
   # The build identifies federated packs by comparing the repository field
-  # against this repo's URL. Extra fields (ref, skills) are
-  # project extensions that Lola silently ignores. Federated modules
-  # MUST declare ref as a 40-character commit SHA.
+  # against this repo's URL. Extra field (ref) is a project extension: required
+  # here for CI/catalog pinning (40-character commit SHA). Lola ignores ref at
+  # install time until https://github.com/LobsterTrap/lola/issues/180 — installs
+  # use the repository default branch. Lola installs the full pack at path.
   # To request federation, open a PR adding the module entry with the "federation" label.
+  # See FEDERATION_REQUEST_GUIDE.md.
   #
   # Example:
   # - name: "partner-network-tools"
@@ -119,11 +121,7 @@ modules:
   #   version: "1.2.0"
   #   repository: "https://github.com/partner-org/network-skills"
   #   ref: "a1b2c3d4e5f6789012345678901234567890abcd"  # required: 40-character commit SHA
-  #   path: "."                   # path within the repo where the Lola pack lives (default: repo root)
-  #   skills:                     # optional: federate only these skills (omit to include all)
-  #     - "skills/sdn-diagnostics/SKILL.md"
-  #     - "skills/ovn-trace/SKILL.md"
-  #     - "skills/network-policy-audit/SKILL.md"
+  #   path: "."                   # Lola pack root; all skills/ here are installed
   #   tags:
   #     - "networking"
   #     - "sdn"

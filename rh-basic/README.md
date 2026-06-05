@@ -163,5 +163,5 @@ rh-basic/
 - [Red Hat Customer Portal](https://access.redhat.com/)
 - [Red Hat Product Lifecycle](https://access.redhat.com/product-life-cycles/)
 - [Red Hat CVE Database](https://access.redhat.com/security/security-updates/#/cve)
-- [Lola Package Manager](https://github.com/RedHatProductSecurity/lola)
+- [Lola Package Manager](https://github.com/LobsterTrap/lola)
 - [Main Repository](https://github.com/RHEcosystemAppEng/agentic-collections)

@@ -338,23 +338,8 @@ def list_disk_skill_names(pack_dir: str, root: Optional[Path] = None) -> List[st
     return names
 
 
-def list_external_pack_skill_names(
-    pack_root: Path,
-    skill_subset: Optional[List[str]] = None,
-) -> List[str]:
+def list_external_pack_skill_names(pack_root: Path) -> List[str]:
     """Return skill directory names from an external pack checkout."""
-    if skill_subset:
-        names: List[str] = []
-        for sp in skill_subset:
-            p = Path(sp)
-            if sp.endswith("/SKILL.md"):
-                names.append(p.parent.name)
-            elif (pack_root / sp / "SKILL.md").is_file():
-                names.append(Path(sp).name)
-            elif (pack_root / "skills" / sp / "SKILL.md").is_file():
-                names.append(sp.strip("/").split("/")[-1])
-        return sorted(set(names))
-
     skills_dir = pack_root / "skills"
     if not skills_dir.is_dir():
         return []

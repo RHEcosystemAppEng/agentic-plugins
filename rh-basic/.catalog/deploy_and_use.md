@@ -16,7 +16,7 @@ No environment variables are required for this pack's MCP server. Authentication
 
 ### Installation (Lola)
 
-From a checkout of this repository, install the pack with [Lola](https://github.com/RedHatProductSecurity/lola):
+From a checkout of this repository, install the pack with [Lola](https://github.com/LobsterTrap/lola):
 
 ```bash
 lola install -f rh-basic

@@ -148,7 +148,6 @@ def process_module(
     repository = module.get("repository", "")
     ref = module.get("ref", "")
     pack_path = module.get("path", ".")
-    skill_paths = module.get("skills", [])
 
     result = ModuleResult(name=name, repository=repository, ref=ref, pack_path=pack_path)
 
@@ -174,20 +173,11 @@ def process_module(
     if not validate:
         return result
 
-    if skill_paths:
-        skill_dirs = []
-        for sp in skill_paths:
-            if sp.endswith("/SKILL.md"):
-                skill_dirs.append(pack_root / Path(sp).parent)
-            else:
-                d = pack_root / sp
-                skill_dirs.append(d.parent if d.is_file() else d)
-    else:
-        skills_dir = pack_root / "skills"
-        skill_dirs = sorted(
-            d for d in skills_dir.iterdir()
-            if d.is_dir() and (d / "SKILL.md").exists()
-        ) if skills_dir.is_dir() else []
+    skills_dir = pack_root / "skills"
+    skill_dirs = sorted(
+        d for d in skills_dir.iterdir()
+        if d.is_dir() and (d / "SKILL.md").exists()
+    ) if skills_dir.is_dir() else []
 
     for skill_dir in skill_dirs:
         sr = validate_skill(skill_dir, pack_root)

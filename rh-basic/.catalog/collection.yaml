@@ -158,7 +158,7 @@ resources:
   url: https://access.redhat.com/support/policy/support_process
   description: Official severity levels and SLA commitments for Red Hat support subscriptions.
 - title: Lola Package Manager
-  url: https://github.com/RedHatProductSecurity/lola
+  url: https://github.com/LobsterTrap/lola
   description: Package manager used to install agentic collections.
 legal_resources:
   license_agreement_url: https://github.com/RHEcosystemAppEng/agentic-collections/blob/main/LICENSE

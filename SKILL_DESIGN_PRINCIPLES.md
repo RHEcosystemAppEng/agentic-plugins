@@ -4,7 +4,7 @@ Repository-specific design principles for creating skills and agents in agentic 
 
 **Scope**: Tier 2 requirements - repository enhancements beyond base agentskills.io specification (Tier 1 validated by linter).
 
-**Distribution (Lola):** Packs are installed with the [Lola](https://github.com/RedHatProductSecurity/lola) package manager from the registry in [`marketplace/rh-agentic-collection.yml`](marketplace/rh-agentic-collection.yml). Layout and install flow are documented in [CLAUDE.md](CLAUDE.md) and the root [README.md](README.md).
+**Distribution (Lola):** Packs are installed with the [Lola](https://github.com/LobsterTrap/lola) package manager from the registry in [`marketplace/rh-agentic-collection.yml`](marketplace/rh-agentic-collection.yml). Layout and install flow are documented in [CLAUDE.md](CLAUDE.md) and the root [README.md](README.md).
 
 **Collection catalog (pack-local):** Each pack may include **`<pack>/.catalog/collection.yaml`** and a **`collection.json`** mirror so tooling and docs can show a structured view of the collection. Authors follow [COLLECTION_SPEC.md](COLLECTION_SPEC.md) and the **create-collection** skill; field constraints are defined in **[`catalog/schema.yaml`](catalog/schema.yaml)** (JSON Schema in YAML). Pack **`SKILL.md`**, **`README.md`**, **`CLAUDE.md`**, and **`marketplace/rh-agentic-collection.yml`** stay the **sources of truth**; the catalog aggregates and summarizes them and does **not** replace or regenerate README or marketplace content.
 

@@ -27,7 +27,7 @@ export AAP_API_TOKEN="your-api-token"
 
 ### Installation (Lola)
 
-From a checkout of this repository, install the pack with [Lola](https://github.com/RedHatProductSecurity/lola) using the registry file at the repo root:
+From a checkout of this repository, install the pack with [Lola](https://github.com/LobsterTrap/lola) using the registry file at the repo root:
 
 ```bash
 lola install -f rh-sre

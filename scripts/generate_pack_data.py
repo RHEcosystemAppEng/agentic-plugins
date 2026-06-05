@@ -354,7 +354,6 @@ def load_federated_packs(plugin_titles: Dict[str, str] | None = None) -> List[Di
             version = mod.get("version", "0.0.0")
             tags = mod.get("tags", [])
             pack_path = mod.get("path", ".")
-            skill_subset = mod.get("skills")
 
             if not repository:
                 print(f"  Warning: federated module '{name}' missing repository, skipping")
@@ -381,20 +380,7 @@ def load_federated_packs(plugin_titles: Dict[str, str] | None = None) -> List[Di
 
             pack_dir = clone_dest / pack_path
             license_id = detect_repo_license(clone_dest, pack_path)
-
-            skills = []
-            if skill_subset:
-                for sp in skill_subset:
-                    skill_file = pack_dir / sp if sp.endswith("/SKILL.md") else pack_dir / sp / "SKILL.md"
-                    if skill_file.exists():
-                        fm = parse_yaml_frontmatter(skill_file)
-                        skill_name = fm.get("name", skill_file.parent.name)
-                        desc = fm.get("description", "")
-                        if isinstance(desc, str):
-                            desc = " ".join(desc.split())
-                        skills.append({"name": skill_name, "description": desc, "file_path": sp})
-            else:
-                skills = parse_skills(str(pack_dir))
+            skills = parse_skills(str(pack_dir))
 
             pack = {
                 "name": name,
