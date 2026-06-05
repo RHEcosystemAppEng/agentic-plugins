@@ -16,7 +16,6 @@
 - [ ] `rh-basic`
 - [ ] `rh-developer`
 - [ ] `rh-sre`
-- [ ] `rh-support-engineer`
 - [ ] `rh-virt`
 - [ ] Other / repo-wide
 

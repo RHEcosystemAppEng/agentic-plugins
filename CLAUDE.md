@@ -13,7 +13,6 @@ agentic-collections/
 ├── rh-sre/              # Site Reliability Engineering pack (reference implementation)
 ├── rh-developer/        # Developer tools pack
 ├── ocp-admin/           # OpenShift administration pack
-├── rh-support-engineer/ # Technical support pack
 └── rh-virt/             # Virtualization management pack
 ```
 

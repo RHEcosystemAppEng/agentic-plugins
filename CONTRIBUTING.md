@@ -42,8 +42,7 @@ Each pack targets a specific persona. Choose the one that matches your skill:
 | `ocp-admin` | OpenShift Administrators | Cluster management, health reports, monitoring |
 | `rh-ai-engineer` | AI/ML Engineers | Model serving, vLLM, KServe, NVIDIA NIM |
 | `rh-automation` | Automation Leads | Ansible AAP governance, safety checks |
-| `rh-basic` | General Red Hat Users | CVE diagnostics, lifecycle, patching |
-| `rh-support-engineer` | Support Engineers | Technical support, troubleshooting |
+| `rh-basic` | General Red Hat Users | CVE diagnostics, lifecycle, patching, support cases, troubleshooting |
 
 Not sure which pack? The skill will suggest one based on your skill's content.
 

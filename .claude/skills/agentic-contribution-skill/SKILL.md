@@ -136,8 +136,7 @@ Ask concisely, validate before proceeding. Make additional questions if needed t
    | cluster, install, Assisted Installer, multi-cluster, ROSA | ocp-admin |
    | model, inference, GPU, vLLM, KServe, RHOAI, workbench | rh-ai-engineer |
    | Ansible, AAP, playbook, governance, job template | rh-automation |
-   | CVE explanation, product lifecycle, support severity, diagnostics, patching | rh-basic |
-   | support case, troubleshooting, customer issue, knowledge base, must-gather | rh-support-engineer |
+   | CVE explanation, product lifecycle, support severity, diagnostics, patching, support case, troubleshooting, customer issue, knowledge base, must-gather | rh-basic |
 
    - Present top match with reasoning: "This skill mentions X, Y, Z which aligns with `<pack>` (persona: <role>)"
    - Ask user to confirm or override
