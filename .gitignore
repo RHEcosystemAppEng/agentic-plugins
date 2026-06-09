@@ -84,6 +84,8 @@ temp/
 *.bak
 *.swp
 .cache/
+eval-report-claude.txt
+**/test-project-*/
 
 # Local Configuration
 *.local.md
