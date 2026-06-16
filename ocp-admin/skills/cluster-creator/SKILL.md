@@ -124,11 +124,9 @@ TaskCreate(subject: "#12 Retrieve credentials", description: "Download kubeconfi
 
 **TaskUpdate**: Mark task #1 as `in_progress`
 
-**Check for interactive UI**: If the `open_cluster_creator` tool is available, call it immediately. The interactive Creator form handles Steps 2 through 6 (prerequisites, parameter gathering, networking, review, and cluster creation). Once the cluster is created via the form, resume this workflow from **Step 7** (Apply Platform Configuration) using the cluster ID returned by the form.
+**Check for interactive UI**: If the `open_cluster_creator` tool is available, call it immediately. The interactive Creator form handles Steps 2 through 6. Once the cluster is created via the form, resume from **Step 7** using the cluster ID returned by the form.
 
-**Otherwise (text-only environment)**: Execute the prerequisites verification from the Prerequisites section above, then continue to Step 2.
-
-**On Failure**: If prerequisites fail, consult [troubleshooting.md](docs/troubleshooting.md) for common setup issues, then stop and report error to user.
+**Otherwise (text-only)**: Execute prerequisites verification from the Prerequisites section above, then continue to Step 2. On failure, consult [troubleshooting.md](docs/troubleshooting.md) and stop.
 
 ---
 

@@ -8,6 +8,20 @@ ALWAYS use the appropriate skill for OpenShift cluster administration and securi
 
 To invoke a skill, use the Skill tool with the skill name (e.g., `/cluster-creator`).
 
+## UI Widget Policy
+
+When interactive UI widgets are available, prefer calling UI-opening tools immediately without gathering parameters first. The interactive form will collect all required information from the user.
+
+| User intent | Tool to call | What happens |
+|---|---|---|
+| Create a cluster, install OpenShift, deploy SNO/HA | `open_cluster_creator` | Opens the Cluster Creator form |
+| List clusters, show my clusters, cluster status | `list_clusters` | Opens the Cluster Inventory dashboard |
+| Set up a cluster, configure hosts, assign roles, install | `get_cluster_hosts` with the cluster ID | Opens the Cluster Setup dashboard |
+
+Do NOT call `create_cluster` to open the UI — it requires cluster parameters and is used for actually creating the cluster after parameters are known. For UI-based creation, always call `open_cluster_creator`.
+
+In text-only environments where these tools do not render UI widgets, follow the skill workflows for step-by-step parameter gathering instead.
+
 ## Intent Routing
 
 Match the user's request to the correct skill:
@@ -23,6 +37,8 @@ Match the user's request to the correct skill:
 | Inspect container image metadata, labels, SBOM reference, registry ownership | `/image-inspect` |
 
 If the request doesn't clearly match one skill, ask the user to clarify.
+
+When starting a skill workflow, read the corresponding Knowledge file for the detailed step-by-step instructions — but always respect the UI Widget Policy above for the three widget flows.
 
 ## Skill Chaining
 
