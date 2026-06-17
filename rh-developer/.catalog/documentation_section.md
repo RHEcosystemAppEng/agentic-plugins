@@ -1,6 +1,6 @@
 <!--
   Catalog fragment — maintain via create-collection workflow (assistant + maintainer + PR review).
-  Golden sources: skills/*/SKILL.md, README.md, CLAUDE.md, marketplace/rh-agentic-collection.yml
+  Golden sources: skills/*/SKILL.md, README.md, AGENTS.md, marketplace/rh-agentic-collection.yml
 -->
 
 ### Why use skills instead of raw MCP tools?
@@ -15,4 +15,4 @@ See **`docs/`** for deep dives: `prerequisites.md`, `human-in-the-loop.md`, `ima
 
 ### Routing
 
-Use **`CLAUDE.md`** intent routing to pick a single skill; use **`/containerize-deploy`** when the user wants an end-to-end guided path with checkpoints.
+Use **`AGENTS.md`** intent routing to pick a single skill; use **`/containerize-deploy`** when the user wants an end-to-end guided path with checkpoints.

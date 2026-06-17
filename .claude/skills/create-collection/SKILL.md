@@ -1,7 +1,7 @@
 ---
 name: create-collection
 description: |
-  Author or refresh `<pack>/.catalog/collection.yaml` and related `.catalog/` artifacts from golden sources (SKILL.md, README, CLAUDE.md, Lola marketplace). Use when:
+  Author or refresh `<pack>/.catalog/collection.yaml` and related `.catalog/` artifacts from golden sources (SKILL.md, README, AGENTS.md, Lola marketplace). Use when:
   - Adding a new pack or refreshing the collection catalog for GitHub Pages / tooling
   - Aligning catalog narrative, sample workflows, and decision guide with skills on disk
   - Preparing a PR after changing skills or marketplace metadata
@@ -37,7 +37,7 @@ allowed-tools: Read Glob Grep Bash
 2. **Read sources in order** (precedence):
    - `skills/*/SKILL.md` (frontmatter + body for summaries and orchestration hints)
    - `<pack>/README.md`
-   - `<pack>/CLAUDE.md` (intent routing → `skills_decision_guide` ideas)
+   - `<pack>/AGENTS.md` (intent routing → `skills_decision_guide` ideas)
    - Matching row in `marketplace/rh-agentic-collection.yml` (`path` == pack)
 
 3. **Classify skills** — place each skill in `contents.skills` or `contents.orchestration_skills` using maintainer judgment. Optional hint: `metadata.collection.role: orchestration` in `SKILL.md` frontmatter. Names in YAML **must** match the `skills/<name>/` directory name.

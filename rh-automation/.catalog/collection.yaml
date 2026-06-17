@@ -1,5 +1,5 @@
 # Catalog: maintained via create-collection workflow (assistant + maintainer + PR review).
-# Golden sources: skills/*/SKILL.md, README.md, CLAUDE.md, marketplace/rh-agentic-collection.yml
+# Golden sources: skills/*/SKILL.md, README.md, AGENTS.md, marketplace/rh-agentic-collection.yml
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: rh-automation
@@ -23,10 +23,10 @@ support_level: Unknown
 maturity: ORANGE
 description: "Ansible Automation Platform governance, execution safety, and forensic troubleshooting tools for Red Hat automation engineers."
 summary: |
-  The rh-automation collection ships 11 catalogued skills for Red Hat automation workflows described in README and CLAUDE.md; orchestration entries coordinate sub-skills with explicit approvals.
+  The rh-automation collection ships 11 catalogued skills for Red Hat automation workflows described in README and AGENTS.md; orchestration entries coordinate sub-skills with explicit approvals.
 contents:
   description: |
-    The pack provides 8 skills and 3 orchestration skills for rh automation workflows on Red Hat platforms; see CLAUDE.md for intent routing.
+    The pack provides 8 skills and 3 orchestration skills for rh automation workflows on Red Hat platforms; see AGENTS.md for intent routing.
   skills:
   - name: aap-mcp-validator
     description: "Validate that required AAP MCP servers are accessible before executing automation skills."
@@ -35,10 +35,10 @@ contents:
       **Use when:**
       - "Validate AAP MCP"
       - "Verify AAP connection"
-      - "See CLAUDE.md intent routing"
+      - "See AGENTS.md intent routing"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: execution-risk-analyzer
     description: "Analyze execution risk by classifying inventory, scanning extra_vars for secrets, and assessing scope."
     summary_markdown: |
@@ -50,7 +50,7 @@ contents:
       - "Validate the execution target"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: execution-summary
     description: "Generate concise execution audit reports tracking documents consulted, MCP tools used, decisions made, and outcomes."
     summary_markdown: |
@@ -61,7 +61,7 @@ contents:
       - "Show workflow audit trail"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: governance-readiness-assessor
     description: "Assess AAP platform governance readiness -- full 7-domain audit or scoped to specific domains."
     summary_markdown: |
@@ -69,10 +69,10 @@ contents:
       **Use when:**
       - "What should I fix before executing jobs?"
       - "Assess my AAP configuration"
-      - "See CLAUDE.md intent routing"
+      - "See AGENTS.md intent routing"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: governed-job-launcher
     description: "Execute governed job launches with check mode, approval gates, phased rollout, and rollback."
     summary_markdown: |
@@ -83,7 +83,7 @@ contents:
       - "Rollback the failed job"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: host-fact-inspector
     description: "Correlate job failures with host system facts to determine platform drift and resource issues."
     summary_markdown: |
@@ -94,7 +94,7 @@ contents:
       - "Why is the service failing on this host?"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: job-failure-analyzer
     description: "Extract and analyze failure events from AAP jobs to classify errors and reconstruct failure timelines."
     summary_markdown: |
@@ -105,7 +105,7 @@ contents:
       - "Show me the failure details"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: resolution-advisor
     description: "Provide Red Hat documentation-backed resolution recommendations for classified job errors."
     summary_markdown: |
@@ -116,7 +116,7 @@ contents:
       - "Is this a known AAP issue?"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   orchestration_skills:
   - name: forensic-troubleshooter
     description: "Orchestrates forensic analysis of failed jobs with event extraction, host correlation, and resolution advisory."
@@ -128,29 +128,29 @@ contents:
       - "Root cause analysis of job #X"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: governance-assessor
     description: "Orchestrates AAP governance readiness assessments -- full platform audit or scoped to specific domains."
     summary_markdown: |
       Orchestrates AAP governance readiness assessments -- full platform audit or scoped to specific domains.
       **Use when:**
       - "What should I fix before executing jobs?"
-      - "See CLAUDE.md intent routing"
-      - "See CLAUDE.md intent routing"
+      - "See AGENTS.md intent routing"
+      - "See AGENTS.md intent routing"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: governance-executor
     description: "Orchestrates governed job execution with risk analysis, check mode, approval, and rollback."
     summary_markdown: |
       Orchestrates governed job execution with risk analysis, check mode, approval, and rollback.
       **Use when:**
       - "Execute job template X"
-      - "See CLAUDE.md intent routing"
-      - "See CLAUDE.md intent routing"
+      - "See AGENTS.md intent routing"
+      - "See AGENTS.md intent routing"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   skills_decision_guide:
   - user_request: "\"Governance audit\" or \"production readiness\""
     skill_to_use: governance-assessor

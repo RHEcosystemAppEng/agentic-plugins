@@ -147,7 +147,7 @@ Provides CVE, advisory, and errata data from the Red Hat Security API.
 ```
 rh-basic/
 ├── README.md
-├── CLAUDE.md
+├── AGENTS.md
 ├── mcps.json
 └── skills/
     ├── red-hat-cve-explainer/SKILL.md

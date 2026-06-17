@@ -493,7 +493,7 @@ lola install -f rh-sre
 ### Validate packs (recommended)
 
 ```bash
-# Structure, mcps.json, CLAUDE.md, skill frontmatter; validates plugin.json only when present
+# Structure, mcps.json, AGENTS.md, skill frontmatter; validates plugin.json only when present
 make validate
 ```
 

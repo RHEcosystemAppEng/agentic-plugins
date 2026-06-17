@@ -98,7 +98,7 @@ Reading SKILL_DESIGN_PRINCIPLES.md for compliant generation...
 Generating skill with production-ready quality...
 
 ✅ Generated: rh-virt/skills/vm-backup-create/SKILL.md
-✅ Updated: rh-virt/CLAUDE.md (intent routing)
+✅ Updated: rh-virt/AGENTS.md (intent routing)
 
 Running validation...
 
@@ -182,7 +182,7 @@ Adapting skill:
 ✅ Fixed section ordering per DP7
 
 Placing file: ocp-admin/skills/cluster-backup/SKILL.md
-Updating: ocp-admin/CLAUDE.md (intent routing)
+Updating: ocp-admin/AGENTS.md (intent routing)
 
 Summary of changes:
 - Frontmatter: added model, color, metadata
@@ -202,7 +202,7 @@ Running validation...
 
 Files:
 ✅ ocp-admin/skills/cluster-backup/SKILL.md (210 lines)
-✅ ocp-admin/CLAUDE.md (intent routing updated)
+✅ ocp-admin/AGENTS.md (intent routing updated)
 
 Ready to commit? (yes/no)
 > yes

@@ -363,7 +363,7 @@ gh workflow run skill-security-scan.yml -f pr_number=42
 
 ### 5. `skill-code-review.yml` - Skill Code Review
 
-**Purpose**: Automated code review using Google Gemini, validating PR diffs against project rules (`CLAUDE.md`, `SKILL_DESIGN_PRINCIPLES.md`, and pack-level `CLAUDE.md` files).
+**Purpose**: Automated code review using Google Gemini, validating PR diffs against project rules (`CLAUDE.md`, `SKILL_DESIGN_PRINCIPLES.md`, and pack-level `AGENTS.md` files).
 
 **Trigger methods**:
 
@@ -378,7 +378,7 @@ Both `/skill-code-review` and `/skill-security-scan` can be written in **a singl
 
 **What it does**:
 1. Fetches the PR diff (truncated to 200KB if larger)
-2. Collects project rules: root `CLAUDE.md`, `SKILL_DESIGN_PRINCIPLES.md`, and pack-level `CLAUDE.md` for changed packs
+2. Collects project rules: root `CLAUDE.md`, `SKILL_DESIGN_PRINCIPLES.md`, and pack-level `AGENTS.md` for changed packs
 3. Sends diff + rules to Gemini with the review prompt (`.github/gemini-review-prompt.md`)
 4. Posts review as a collapsible PR comment (updates the same comment on re-runs)
 

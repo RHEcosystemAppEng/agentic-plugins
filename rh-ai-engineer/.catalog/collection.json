@@ -15,7 +15,7 @@
     "GPU"
   ],
   "contents": {
-    "description": "The pack provides 10 skills and 1 orchestration skill for OpenShift AI workflows on Red Hat platforms; see CLAUDE.md\nfor intent routing.\n",
+    "description": "The pack provides 10 skills and 1 orchestration skill for OpenShift AI workflows on Red Hat platforms; see AGENTS.md\nfor intent routing.\n",
     "orchestration_skills": [
       {
         "description": "Configure TrustyAI Guardrails Orchestrator for LLM input/output content safety on OpenShift AI.",

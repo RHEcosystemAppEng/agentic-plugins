@@ -1,6 +1,6 @@
 <!--
   TIP: Run /agentic-contribution-skill in Claude Code to create or import skills.
-  It handles validation, pack selection, and CLAUDE.md routing automatically.
+  It handles validation, pack selection, and AGENTS.md routing automatically.
   See CONTRIBUTING.md for details.
 -->
 
@@ -39,7 +39,7 @@
 
 <!-- Why does this skill belong in the selected pack? (1-2 sentences) -->
 
-## CLAUDE.md compliance
+## AGENTS.md compliance
 
 - [ ] Agents orchestrate skills; no direct MCP/tool calls in agents
 - [ ] Skills are single-purpose task executors

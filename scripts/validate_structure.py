@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Validate agentic collection pack structure (mcps.json, CLAUDE.md; plugin.json optional).
+Validate agentic collection pack structure (mcps.json, AGENTS.md; plugin.json optional).
 
 Skill-level validation (frontmatter, sections, security) is handled by
 validate-skills.sh and run-skill-linter.sh.
@@ -16,6 +16,9 @@ import pack_registry
 
 # Union of Lola marketplace paths and docs/plugins.json keys (existing dirs only)
 PACK_DIRS = pack_registry.get_union_pack_dirs()
+
+AGENTS_MD_FILENAME = "AGENTS.md"
+AGENTS_MD_DEPRECATED = "CLAUDE.md"
 
 
 def validate_plugin_json(pack_dir: str) -> List[str]:
@@ -103,7 +106,7 @@ def validate_mcp_json(pack_dir: str) -> List[str]:
     return errors
 
 
-CLAUDE_MD_REQUIRED_SECTIONS = [
+AGENTS_MD_REQUIRED_SECTIONS = [
     "Skill-First Rule",
     "Intent Routing",
     "MCP Servers",
@@ -111,12 +114,13 @@ CLAUDE_MD_REQUIRED_SECTIONS = [
 ]
 
 
-def validate_claude_md(pack_dir: str) -> List[str]:
+def validate_agents_md(pack_dir: str) -> List[str]:
     """
-    Validate CLAUDE.md presence and structure.
+    Validate AGENTS.md presence and structure.
 
     Required for any pack that has skills. Checks for required sections
     and verifies that all skills appear in the intent routing content.
+    Errors if deprecated pack-level CLAUDE.md exists (Lola manages AGENTS.md).
 
     Args:
         pack_dir: Pack directory name
@@ -125,25 +129,38 @@ def validate_claude_md(pack_dir: str) -> List[str]:
         List of error messages (empty if valid)
     """
     errors = []
-    claude_path = Path(pack_dir) / 'CLAUDE.md'
-    skills_dir = Path(pack_dir) / 'skills'
+    pack_path = Path(pack_dir)
+    deprecated_path = pack_path / AGENTS_MD_DEPRECATED
+    agents_path = pack_path / AGENTS_MD_FILENAME
+    skills_dir = pack_path / 'skills'
 
     has_skills = skills_dir.exists() and any(skills_dir.glob('*/SKILL.md'))
 
-    if not claude_path.exists():
+    if deprecated_path.exists():
+        errors.append(
+            f"{pack_dir}: deprecated pack-level {AGENTS_MD_DEPRECATED} found; "
+            f"rename to {AGENTS_MD_FILENAME} (Lola AI Context Module convention)"
+        )
+        return errors
+
+    if not agents_path.exists():
         if has_skills:
-            errors.append(f"{pack_dir}: Missing CLAUDE.md (required for packs with skills)")
+            errors.append(
+                f"{pack_dir}: Missing {AGENTS_MD_FILENAME} (required for packs with skills)"
+            )
         return errors
 
     try:
-        with open(claude_path, 'r', encoding='utf-8') as f:
+        with open(agents_path, 'r', encoding='utf-8') as f:
             content = f.read()
 
         # Check required sections
         headings = re.findall(r'^## (.+)$', content, re.MULTILINE)
-        for section in CLAUDE_MD_REQUIRED_SECTIONS:
+        for section in AGENTS_MD_REQUIRED_SECTIONS:
             if not any(section in h for h in headings):
-                errors.append(f"{pack_dir}: CLAUDE.md missing required section '## {section}'")
+                errors.append(
+                    f"{pack_dir}: {AGENTS_MD_FILENAME} missing required section '## {section}'"
+                )
 
         # Check intent routing completeness
         if has_skills:
@@ -151,11 +168,11 @@ def validate_claude_md(pack_dir: str) -> List[str]:
             for skill_name in skill_names:
                 if skill_name not in content:
                     errors.append(
-                        f"{pack_dir}: CLAUDE.md intent routing missing skill '{skill_name}'"
+                        f"{pack_dir}: {AGENTS_MD_FILENAME} intent routing missing skill '{skill_name}'"
                     )
 
     except Exception as e:
-        errors.append(f"{pack_dir}: Error reading CLAUDE.md: {e}")
+        errors.append(f"{pack_dir}: Error reading {AGENTS_MD_FILENAME}: {e}")
 
     return errors
 
@@ -183,8 +200,8 @@ def validate_pack(pack_dir: str) -> List[str]:
     # Validate mcps.json
     errors.extend(validate_mcp_json(pack_dir))
 
-    # Validate CLAUDE.md
-    errors.extend(validate_claude_md(pack_dir))
+    # Validate AGENTS.md
+    errors.extend(validate_agents_md(pack_dir))
 
     return errors
 

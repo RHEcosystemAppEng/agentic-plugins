@@ -28,7 +28,7 @@ The fastest way to contribute is using `/agentic-contribution-skill` in Claude C
 2. Open the project in Claude Code
 3. Run `/agentic-contribution-skill` and follow the prompts
 
-The skill handles pack selection, CLAUDE.md routing, validation (Tier 1 + Tier 2), and git workflow automatically.
+The skill handles pack selection, AGENTS.md routing, validation (Tier 1 + Tier 2), and git workflow automatically.
 
 ## Pack Selection
 
@@ -52,7 +52,7 @@ If you prefer to create skills manually:
 
 1. Read the standards: [SKILL_DESIGN_PRINCIPLES.md](SKILL_DESIGN_PRINCIPLES.md)
 2. Create `<pack>/skills/<skill-name>/SKILL.md` following the template
-3. Update `<pack>/CLAUDE.md` intent routing table
+3. Update `<pack>/AGENTS.md` intent routing table
 4. Validate Tier 1: `./scripts/run-skill-linter.sh <pack>/skills/<skill-name>/`
 5. Validate Tier 2: `make validate-skill-design-changed`
 
@@ -64,7 +64,7 @@ Both tiers must pass before submitting a PR.
 - [ ] Tier 2 validation passed (design principles)
 - [ ] Skill doc links validated: `uv run python scripts/validate_skill_doc_links.py <pack>/skills/<skill-name>/SKILL.md`
 - [ ] Skill doc tree links validated: `uv run python scripts/validate_docs_tree_links.py <pack>/skills/<skill-name>/SKILL.md`
-- [ ] Pack CLAUDE.md intent routing updated
+- [ ] Pack AGENTS.md intent routing updated
 - [ ] Tested skill locally by invoking it in Claude Code
 - [ ] No credentials hardcoded (use `${ENV_VAR}` format)
 - [ ] Human-in-the-loop confirmation for destructive operations

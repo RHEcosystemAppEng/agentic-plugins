@@ -1,6 +1,6 @@
 <!--
   Catalog fragment — maintain via create-collection workflow (assistant + maintainer + PR review).
-  Golden sources: skills/*/SKILL.md, README.md, CLAUDE.md, marketplace/rh-agentic-collection.yml
+  Golden sources: skills/*/SKILL.md, README.md, AGENTS.md, marketplace/rh-agentic-collection.yml
 -->
 
 ### Why use this collection instead of calling MCP tools directly?
@@ -17,4 +17,4 @@ This pack ships an AI-oriented knowledge base under **`docs/`**. Start at **[doc
 ### Configuration and architecture
 
 - Environment variables for Lightspeed and AAP are declared only as `${VAR}` placeholders in **`mcps.json`**.
-- Orchestration (**`/remediation`**) chains impact, validation, context, playbook generation, execution, and verification; see pack **CLAUDE.md** for routing when you need a single step only.
+- Orchestration (**`/remediation`**) chains impact, validation, context, playbook generation, execution, and verification; see pack **AGENTS.md** for routing when you need a single step only.

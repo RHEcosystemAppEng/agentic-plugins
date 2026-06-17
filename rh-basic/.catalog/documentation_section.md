@@ -1,6 +1,6 @@
 <!--
   Catalog fragment — maintain via create-collection workflow (assistant + maintainer + PR review).
-  Golden sources: skills/*/SKILL.md, README.md, CLAUDE.md, marketplace/rh-agentic-collection.yml
+  Golden sources: skills/*/SKILL.md, README.md, AGENTS.md, marketplace/rh-agentic-collection.yml
 -->
 
 Skills source authoritative content from official Red Hat documentation at runtime using `WebFetch`. No offline doc corpus is bundled; the pack stays lean and always reflects current Red Hat guidance.

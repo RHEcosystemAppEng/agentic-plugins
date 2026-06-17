@@ -13,64 +13,64 @@
     "Execution"
   ],
   "contents": {
-    "description": "The pack provides 8 skills and 3 orchestration skills for rh automation workflows on Red Hat platforms; see CLAUDE.md for intent routing.\n",
+    "description": "The pack provides 8 skills and 3 orchestration skills for rh automation workflows on Red Hat platforms; see AGENTS.md for intent routing.\n",
     "orchestration_skills": [
       {
         "description": "Orchestrates forensic analysis of failed jobs with event extraction, host correlation, and resolution advisory.",
         "name": "forensic-troubleshooter",
-        "summary_markdown": "Orchestrates forensic analysis of failed jobs with event extraction, host correlation, and resolution advisory.\n**Use when:**\n- \"Job #X failed\"\n- \"Analyze the failure\"\n- \"Root cause analysis of job #X\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Orchestrates forensic analysis of failed jobs with event extraction, host correlation, and resolution advisory.\n**Use when:**\n- \"Job #X failed\"\n- \"Analyze the failure\"\n- \"Root cause analysis of job #X\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       },
       {
         "description": "Orchestrates AAP governance readiness assessments -- full platform audit or scoped to specific domains.",
         "name": "governance-assessor",
-        "summary_markdown": "Orchestrates AAP governance readiness assessments -- full platform audit or scoped to specific domains.\n**Use when:**\n- \"What should I fix before executing jobs?\"\n- \"See CLAUDE.md intent routing\"\n- \"See CLAUDE.md intent routing\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Orchestrates AAP governance readiness assessments -- full platform audit or scoped to specific domains.\n**Use when:**\n- \"What should I fix before executing jobs?\"\n- \"See AGENTS.md intent routing\"\n- \"See AGENTS.md intent routing\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       },
       {
         "description": "Orchestrates governed job execution with risk analysis, check mode, approval, and rollback.",
         "name": "governance-executor",
-        "summary_markdown": "Orchestrates governed job execution with risk analysis, check mode, approval, and rollback.\n**Use when:**\n- \"Execute job template X\"\n- \"See CLAUDE.md intent routing\"\n- \"See CLAUDE.md intent routing\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Orchestrates governed job execution with risk analysis, check mode, approval, and rollback.\n**Use when:**\n- \"Execute job template X\"\n- \"See AGENTS.md intent routing\"\n- \"See AGENTS.md intent routing\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       }
     ],
     "skills": [
       {
         "description": "Validate that required AAP MCP servers are accessible before executing automation skills.",
         "name": "aap-mcp-validator",
-        "summary_markdown": "Validate that required AAP MCP servers are accessible before executing automation skills.\n**Use when:**\n- \"Validate AAP MCP\"\n- \"Verify AAP connection\"\n- \"See CLAUDE.md intent routing\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Validate that required AAP MCP servers are accessible before executing automation skills.\n**Use when:**\n- \"Validate AAP MCP\"\n- \"Verify AAP connection\"\n- \"See AGENTS.md intent routing\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       },
       {
         "description": "Analyze execution risk by classifying inventory, scanning extra_vars for secrets, and assessing scope.",
         "name": "execution-risk-analyzer",
-        "summary_markdown": "Analyze execution risk by classifying inventory, scanning extra_vars for secrets, and assessing scope.\n**Use when:**\n- \"Execute on production\"\n- \"Is this execution safe?\"\n- \"Check execution risk\"\n- \"Validate the execution target\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Analyze execution risk by classifying inventory, scanning extra_vars for secrets, and assessing scope.\n**Use when:**\n- \"Execute on production\"\n- \"Is this execution safe?\"\n- \"Check execution risk\"\n- \"Validate the execution target\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       },
       {
         "description": "Generate concise execution audit reports tracking documents consulted, MCP tools used, decisions made, and outcomes.",
         "name": "execution-summary",
-        "summary_markdown": "Generate concise execution audit reports tracking documents consulted, MCP tools used, decisions made, and outcomes.\n**Use when:**\n- \"Generate execution summary\"\n- \"Create execution report\"\n- \"Show workflow audit trail\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Generate concise execution audit reports tracking documents consulted, MCP tools used, decisions made, and outcomes.\n**Use when:**\n- \"Generate execution summary\"\n- \"Create execution report\"\n- \"Show workflow audit trail\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       },
       {
         "description": "Assess AAP platform governance readiness -- full 7-domain audit or scoped to specific domains.",
         "name": "governance-readiness-assessor",
-        "summary_markdown": "Assess AAP platform governance readiness -- full 7-domain audit or scoped to specific domains.\n**Use when:**\n- \"What should I fix before executing jobs?\"\n- \"Assess my AAP configuration\"\n- \"See CLAUDE.md intent routing\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Assess AAP platform governance readiness -- full 7-domain audit or scoped to specific domains.\n**Use when:**\n- \"What should I fix before executing jobs?\"\n- \"Assess my AAP configuration\"\n- \"See AGENTS.md intent routing\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       },
       {
         "description": "Execute governed job launches with check mode, approval gates, phased rollout, and rollback.",
         "name": "governed-job-launcher",
-        "summary_markdown": "Execute governed job launches with check mode, approval gates, phased rollout, and rollback.\n**Use when:**\n- \"Launch with check mode first\"\n- \"Execute the job\"\n- \"Rollback the failed job\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Execute governed job launches with check mode, approval gates, phased rollout, and rollback.\n**Use when:**\n- \"Launch with check mode first\"\n- \"Execute the job\"\n- \"Rollback the failed job\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       },
       {
         "description": "Correlate job failures with host system facts to determine platform drift and resource issues.",
         "name": "host-fact-inspector",
-        "summary_markdown": "Correlate job failures with host system facts to determine platform drift and resource issues.\n**Use when:**\n- \"Check the system facts for failed hosts\"\n- \"Is the host healthy?\"\n- \"Why is the service failing on this host?\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Correlate job failures with host system facts to determine platform drift and resource issues.\n**Use when:**\n- \"Check the system facts for failed hosts\"\n- \"Is the host healthy?\"\n- \"Why is the service failing on this host?\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       },
       {
         "description": "Extract and analyze failure events from AAP jobs to classify errors and reconstruct failure timelines.",
         "name": "job-failure-analyzer",
-        "summary_markdown": "Extract and analyze failure events from AAP jobs to classify errors and reconstruct failure timelines.\n**Use when:**\n- \"Job #X failed\"\n- \"Analyze the failed job\"\n- \"Show me the failure details\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Extract and analyze failure events from AAP jobs to classify errors and reconstruct failure timelines.\n**Use when:**\n- \"Job #X failed\"\n- \"Analyze the failed job\"\n- \"Show me the failure details\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       },
       {
         "description": "Provide Red Hat documentation-backed resolution recommendations for classified job errors.",
         "name": "resolution-advisor",
-        "summary_markdown": "Provide Red Hat documentation-backed resolution recommendations for classified job errors.\n**Use when:**\n- \"What does Red Hat recommend for this error?\"\n- \"What's the fix for privilege escalation timeout?\"\n- \"Is this a known AAP issue?\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with CLAUDE.md chaining when users need follow-on skills.\n"
+        "summary_markdown": "Provide Red Hat documentation-backed resolution recommendations for classified job errors.\n**Use when:**\n- \"What does Red Hat recommend for this error?\"\n- \"What's the fix for privilege escalation timeout?\"\n- \"Is this a known AAP issue?\"\n**What it does:**\n- Runs the documented workflow with MCP access only through the skill and required confirmations.\n- Aligns with AGENTS.md chaining when users need follow-on skills.\n"
       }
     ],
     "skills_decision_guide": [
@@ -155,7 +155,7 @@
       "workflow": "User: \"I only want risk analysis before I approve launch\"\n- `/aap-mcp-validator` confirms MCP reachability\n- `/execution-risk-analyzer` classifies targets and variables\n- `/governed-job-launcher` runs with the agreed mode and gates\n"
     }
   ],
-  "summary": "The rh-automation collection ships 11 catalogued skills for Red Hat automation workflows described in README and CLAUDE.md; orchestration entries coordinate sub-skills with explicit approvals.\n",
+  "summary": "The rh-automation collection ships 11 catalogued skills for Red Hat automation workflows described in README and AGENTS.md; orchestration entries coordinate sub-skills with explicit approvals.\n",
   "support_level": "Unknown",
   "version": "0.1.0"
 }

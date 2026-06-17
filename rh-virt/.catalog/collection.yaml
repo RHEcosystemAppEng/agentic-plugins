@@ -1,5 +1,5 @@
 # Catalog: maintained via create-collection workflow (assistant + maintainer + PR review).
-# Golden sources: skills/*/SKILL.md, README.md, CLAUDE.md, marketplace/rh-agentic-collection.yml
+# Golden sources: skills/*/SKILL.md, README.md, AGENTS.md, marketplace/rh-agentic-collection.yml
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: openshift-virtualization
@@ -24,7 +24,7 @@ summary: |
   The rh-virt collection ships 10 skills for OpenShift Virtualization operations with confirmations on destructive steps.
 contents:
   description: |
-    The pack provides 10 skills for rh virt workflows on Red Hat platforms; see CLAUDE.md for intent routing.
+    The pack provides 10 skills for rh virt workflows on Red Hat platforms; see AGENTS.md for intent routing.
   skills:
   - name: vm-clone
     description: "Clone existing virtual machines for testing, scaling, or creating templates."
@@ -37,7 +37,7 @@ contents:
       - "Create 3 copies of template-vm"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: vm-create
     description: "Create new virtual machines in OpenShift Virtualization with automatic instance type resolution and OS selection."
     summary_markdown: |
@@ -49,7 +49,7 @@ contents:
       - "Provision a [size] VM"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: vm-delete
     description: "Permanently delete virtual machines and their associated resources from OpenShift Virtualization."
     summary_markdown: |
@@ -61,7 +61,7 @@ contents:
       - "Clean up VM [name]"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: vm-inventory
     description: "List and view virtual machines across namespaces with status, resource usage, and health information."
     summary_markdown: |
@@ -73,7 +73,7 @@ contents:
       - "Get details of VM [name]"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: vm-lifecycle-manager
     description: "Manage virtual machine lifecycle operations including start, stop, and restart."
     summary_markdown: |
@@ -85,7 +85,7 @@ contents:
       - "Power on/off VM [name]"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: vm-rebalance
     description: "Orchestrate VM migrations across cluster nodes for load balancing, maintenance, and resource optimization."
     summary_markdown: |
@@ -97,7 +97,7 @@ contents:
       - "Automatically rebalance the cluster"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: vm-snapshot-create
     description: "Create virtual machine snapshots for backup and recovery."
     summary_markdown: |
@@ -108,7 +108,7 @@ contents:
       - "Take a snapshot of [vm]"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: vm-snapshot-delete
     description: "Permanently delete virtual machine snapshots to free storage space."
     summary_markdown: |
@@ -119,7 +119,7 @@ contents:
       - "Free up snapshot storage"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: vm-snapshot-list
     description: "List virtual machine snapshots across namespaces with status, age, and recovery information."
     summary_markdown: |
@@ -130,7 +130,7 @@ contents:
       - "What snapshots exist for [vm]?"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   - name: vm-snapshot-restore
     description: "Restore virtual machines from snapshots with strict safety confirmations to prevent data loss."
     summary_markdown: |
@@ -141,7 +141,7 @@ contents:
       - "Recover VM [name] from backup"
       **What it does:**
       - Runs the documented workflow with MCP access only through the skill and required confirmations.
-      - Aligns with CLAUDE.md chaining when users need follow-on skills.
+      - Aligns with AGENTS.md chaining when users need follow-on skills.
   orchestration_skills: []
   skills_decision_guide:
   - user_request: "\"Create VM\""

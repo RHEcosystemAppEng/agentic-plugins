@@ -6,7 +6,7 @@ Repository-specific design principles for creating skills and agents in agentic 
 
 **Distribution (Lola):** Packs are installed with the [Lola](https://github.com/LobsterTrap/lola) package manager from the registry in [`marketplace/rh-agentic-collection.yml`](marketplace/rh-agentic-collection.yml). Layout and install flow are documented in [CLAUDE.md](CLAUDE.md) and the root [README.md](README.md).
 
-**Collection catalog (pack-local):** Each pack may include **`<pack>/.catalog/collection.yaml`** and a **`collection.json`** mirror so tooling and docs can show a structured view of the collection. Authors follow [COLLECTION_SPEC.md](COLLECTION_SPEC.md) and the **create-collection** skill; field constraints are defined in **[`catalog/schema.yaml`](catalog/schema.yaml)** (JSON Schema in YAML). Pack **`SKILL.md`**, **`README.md`**, **`CLAUDE.md`**, and **`marketplace/rh-agentic-collection.yml`** stay the **sources of truth**; the catalog aggregates and summarizes them and does **not** replace or regenerate README or marketplace content.
+**Collection catalog (pack-local):** Each pack may include **`<pack>/.catalog/collection.yaml`** and a **`collection.json`** mirror so tooling and docs can show a structured view of the collection. Authors follow [COLLECTION_SPEC.md](COLLECTION_SPEC.md) and the **create-collection** skill; field constraints are defined in **[`catalog/schema.yaml`](catalog/schema.yaml)** (JSON Schema in YAML). Pack **`SKILL.md`**, **`README.md`**, **`AGENTS.md`**, and **`marketplace/rh-agentic-collection.yml`** stay the **sources of truth**; the catalog aggregates and summarizes them and does **not** replace or regenerate README or marketplace content.
 
 **MCP configuration:** Use `<pack>/mcps.json` for MCP server definitions (never hardcode secrets; use `${VAR}` references). The deprecated filename `.mcp.json` is not used in this repository.
 
@@ -379,9 +379,9 @@ One clear purpose per skill.
 
 ---
 
-### 11. Pack-Level CLAUDE.md
+### 11. Pack-Level AGENTS.md
 
-Every pack with skills MUST have a `CLAUDE.md` in its root directory. This file acts as the instruction router for Claude Code.
+Every pack with skills MUST have an `AGENTS.md` in its root directory. This file is the [Lola AI Context Module](https://lobstertrap.org/lola/guides/creating-modules/#add-an-agentsmd) instruction router for the pack persona, intent routing, and global rules. Do **not** use pack-level `CLAUDE.md` — Lola manages `AGENTS.md`, not `CLAUDE.md`.
 
 **Required Sections:**
 - `## Skill-First Rule` — enforce skill invocation over direct MCP tool calls
@@ -389,11 +389,11 @@ Every pack with skills MUST have a `CLAUDE.md` in its root directory. This file 
 - `## MCP Servers` — list available MCP servers with descriptions
 - `## Global Rules` — credential safety, confirmation requirements, next-step suggestions
 
-**When adding a new skill**, update the pack's `CLAUDE.md` intent routing table to include it.
+**When adding a new skill**, update the pack's `AGENTS.md` intent routing table to include it.
 
-**Reference:** [rh-ai-engineer/CLAUDE.md](rh-ai-engineer/CLAUDE.md)
+**Reference:** [rh-ai-engineer/AGENTS.md](rh-ai-engineer/AGENTS.md)
 
-**Validated by:** `scripts/validate_structure.py` (automated — checks existence, required sections, and intent routing completeness)
+**Validated by:** `scripts/validate_structure.py` (automated — checks existence, required sections, intent routing completeness, and rejects deprecated pack-level `CLAUDE.md`)
 
 ---
 
@@ -566,7 +566,7 @@ Ask: "Proceed?" Wait for confirmation.
 8. **Single Responsibility** - One purpose per skill
 9. **Naming Conventions** - kebab-case
 10. **Content Quality** - Production-ready examples
-11. **Pack-Level CLAUDE.md** - Instruction routing for every pack with skills
+11. **Pack-Level AGENTS.md** - Instruction routing for every pack with skills (Lola convention)
 
 ---
 

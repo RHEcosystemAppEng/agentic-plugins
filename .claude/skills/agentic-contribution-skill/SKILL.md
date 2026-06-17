@@ -172,7 +172,7 @@ Ask concisely, validate before proceeding. Make additional questions if needed t
 2. **Add missing sections**: Per DP6/DP7 — Prerequisites, When to Use, Workflow, Common Issues, Dependencies. Keep existing content, add structure around it
 3. **Validate naming**: kebab-case, check uniqueness: `test -d <pack>/skills/<name>/`
 4. **Place file**: Copy to `<pack>/skills/<skill-name>/SKILL.md`
-5. **Update routing**: Add entry to `<pack>/CLAUDE.md` intent routing table
+5. **Update routing**: Add entry to `<pack>/AGENTS.md` intent routing table
 6. **Show changes**: Present summary of all modifications to user, wait for confirmation
 
 After confirmation → proceed to Phase 5 (Validation & Iteration).
@@ -242,10 +242,10 @@ mkdir -p <pack>/skills/<skill-name>/docs/
    - `docs/common-issues.md` - Detailed troubleshooting with full KB article content
    - `docs/examples.md` - Comprehensive usage examples
    - `docs/external-resources.md` - Any external docs/links/KB articles mentioned by user
-3. **Update <pack>/CLAUDE.md**: Add intent routing entry
+3. **Update <pack>/AGENTS.md**: Add intent routing entry
 4. **Create <pack>/mcps.json**: If new MCP server needed (use `${ENV_VAR}` format)
 5. **Update marketplace/rh-agentic-collection.yml**: If new pack (register pack for Lola installation)
-6. **Create pack structure**: If new pack (README.md, CLAUDE.md, skills/ directory)
+6. **Create pack structure**: If new pack (README.md, AGENTS.md, skills/ directory)
 
 Generate SKILL.md following the mandatory section template in SKILL_DESIGN_PRINCIPLES.md (already consulted in Phase 3). If SKILL.md becomes too long, move detailed content to `docs/` with references in main file.
 

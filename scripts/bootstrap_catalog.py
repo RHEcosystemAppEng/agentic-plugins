@@ -3,7 +3,7 @@
 Bootstrap <pack>/.catalog/collection.yaml for every union-registry pack (initial CI-friendly content).
 
 Intended for first-time repo setup; refine catalogs via the create-collection skill and PRs.
-Does not modify README, SKILL, CLAUDE, or marketplace files.
+Does not modify README, SKILL, AGENTS, or marketplace files.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ from generate_pack_data import parse_yaml_frontmatter
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 CATALOG_YAML_BANNER = """# Catalog: maintained via create-collection workflow (assistant + maintainer + PR review).
-# Golden sources: skills/*/SKILL.md, README.md, CLAUDE.md, marketplace/rh-agentic-collection.yml
+# Golden sources: skills/*/SKILL.md, README.md, AGENTS.md, marketplace/rh-agentic-collection.yml
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 """
 
@@ -66,7 +66,7 @@ def _skill_entries(pack_dir: str, root: Path) -> Tuple[List[Dict[str, Any]], Lis
         if len(desc) > 220:
             desc = desc[:217] + "..."
         sm = (
-            f"**Use when:** See the skill description and CLAUDE.md intent routing.\n\n"
+            f"**Use when:** See the skill description and AGENTS.md intent routing.\n\n"
             f"**What it does:** {desc or 'See SKILL.md for workflow and prerequisites.'}"
         )
         entry = {"name": name, "description": desc or f"Skill `{name}` in pack `{pack_dir}`.", "summary_markdown": sm}
@@ -84,7 +84,7 @@ def _decision_rows(pack_dir: str, regular: List[Dict[str, Any]], orch: List[Dict
             {
                 "user_request": f'User: "I need help related to {s["name"]}"',
                 "skill_to_use": s["name"],
-                "reason": f"Use `{s['name']}` for workflows described in that skill and in CLAUDE.md.",
+                "reason": f"Use `{s['name']}` for workflows described in that skill and in AGENTS.md.",
             }
         )
     return rows
@@ -119,7 +119,7 @@ def build_collection_data(pack_dir: str, root: Path) -> Dict[str, Any]:
             "name": "Choose the right skill",
             "workflow": (
                 'User: "I have a task for this collection"\n'
-                "- Open CLAUDE.md intent routing and match your request to a skill name.\n"
+                "- Open AGENTS.md intent routing and match your request to a skill name.\n"
                 "- Invoke that skill and follow its workflow and prerequisites.\n"
             ),
         }

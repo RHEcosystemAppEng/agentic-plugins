@@ -23,7 +23,7 @@ Packs follow the [Lola](https://github.com/LobsterTrap/lola) package manager for
 Each pack follows this structure:
 ```
 <pack-name>/
-├── CLAUDE.md            # Claude Code instruction routing (persona, skills, rules)
+├── AGENTS.md            # Lola AI Context Module instruction routing (persona, skills, rules)
 ├── README.md            # Pack description, persona, target marketplaces
 ├── mcps.json            # MCP server configurations (uses env vars for credentials)
 ├── .catalog/            # collection.yaml + collection.json (COLLECTION_SPEC.md, catalog/schema.yaml)
@@ -61,7 +61,7 @@ There are two ways to add skills to this project:
 
 ### Repository catalog skills (`.catalog/`)
 
-Packs listed in `union(marketplace/rh-agentic-collection.yml modules[].path, docs/plugins.json keys)` maintain **`<pack>/.catalog/collection.yaml`** (and a deterministic **`collection.json`** mirror). Golden sources remain `SKILL.md`, `README.md`, `CLAUDE.md`, and marketplace YAML—**never** generated from catalog back into those files.
+Packs listed in `union(marketplace/rh-agentic-collection.yml modules[].path, docs/plugins.json keys)` maintain **`<pack>/.catalog/collection.yaml`** (and a deterministic **`collection.json`** mirror). Golden sources remain `SKILL.md`, `README.md`, `AGENTS.md`, and marketplace YAML—**never** generated from catalog back into those files.
 
 - **`create-collection`** (`.claude/skills/create-collection/`) — workflow to author or refresh catalog YAML under `.catalog/`.
 - **`collection-compliance`** (`.claude/skills/collection-compliance/`) — interpret `make validate-collection-compliance` failures and fix drift.
@@ -170,7 +170,7 @@ last_updated: YYYY-MM-DD
 
 1. Create pack folder: `<pack-name>/`
 2. Add `README.md` with description, persona, marketplaces
-3. Add `CLAUDE.md` with persona, skill-first rule, intent routing table, MCP servers, and global rules (see [rh-ai-engineer/CLAUDE.md](rh-ai-engineer/CLAUDE.md) for reference)
+3. Add `AGENTS.md` with persona, skill-first rule, intent routing table, MCP servers, and global rules (see [rh-ai-engineer/AGENTS.md](rh-ai-engineer/AGENTS.md) for reference)
 4. Create `skills/` directory
 5. Add `mcps.json` when the pack integrates MCP servers (use `${VAR}` for secrets)
 6. Register the pack in [`marketplace/rh-agentic-collection.yml`](marketplace/rh-agentic-collection.yml) so `lola install -f <pack-name>` can resolve it
@@ -190,7 +190,7 @@ last_updated: YYYY-MM-DD
    - Workflow with precise parameters
    - Dependencies declaration
 4. Include concrete examples and complete error handling
-5. Update the pack's `CLAUDE.md` intent routing table to include the new skill
+5. Update the pack's `AGENTS.md` intent routing table to include the new skill
 6. Test with `Skill` tool invocation
 7. Validate with `./scripts/run-skill-linter.sh skills/<skill-name>/`
 

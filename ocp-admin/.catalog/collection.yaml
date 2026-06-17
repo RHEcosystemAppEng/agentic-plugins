@@ -1,5 +1,5 @@
 # Catalog: maintained via create-collection workflow (assistant + maintainer + PR review).
-# Golden sources: skills/*/SKILL.md, README.md, CLAUDE.md, marketplace/rh-agentic-collection.yml
+# Golden sources: skills/*/SKILL.md, README.md, AGENTS.md, marketplace/rh-agentic-collection.yml
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: openshift-administration
@@ -28,7 +28,7 @@ description: Automation capabilities for OpenShift Container Platform cluster ma
 summary: |
   The ocp-admin collection covers Assisted Installer cluster creation, multi-cluster discovery across self-managed and managed
   OpenShift, kubeconfig-backed fleet health reporting, and security validation for Red Hat container images and CoreOS using
-  official SBOMs and VEX data. Use CLAUDE.md intent routing to pick the right skill.
+  official SBOMs and VEX data. Use AGENTS.md intent routing to pick the right skill.
 contents:
   description: |
     The pack provides seven skills for cluster lifecycle, fleet visibility, and security validation on OpenShift,

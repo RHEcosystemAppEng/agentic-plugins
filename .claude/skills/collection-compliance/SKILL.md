@@ -47,12 +47,12 @@ allowed-tools: Read Glob Grep Bash
    - Compare each pack's catalog metadata and referenced fragments against golden sources:
      - `skills/*/SKILL.md` (names, descriptions, scope, orchestration intent)
      - `README.md` (installation, prerequisites, env variables, usage caveats)
-     - `CLAUDE.md` (persona, routing, global rules, MCP posture)
+     - `AGENTS.md` (persona, routing, global rules, MCP posture)
      - `marketplace/rh-agentic-collection.yml` (module `path`, module name/description/tags)
    - Fail review if any of these drift conditions are found:
      - Installation steps differ in substance (for example Lola module IDs/paths mismatch)
      - Required env vars in `mcps.json` are missing or inconsistent in `deploy_and_use`
-     - Skill inventory/routing intent in catalog contradicts `skills/` + `CLAUDE.md`
+     - Skill inventory/routing intent in catalog contradicts `skills/` + `AGENTS.md`
      - Fragment prose overstates/understates capabilities versus README/skills
    - Remediate via create-collection workflow and then regenerate JSON mirror.
 

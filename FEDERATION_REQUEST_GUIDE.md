@@ -52,7 +52,7 @@ flowchart TB
 
 | Requirement | Details | CI |
 |-------------|---------|-----|
-| **Lola pack** | `CLAUDE.md`, `README.md`, `skills/` at declared `path` | Blocks |
+| **Lola pack** | `AGENTS.md`, `README.md`, `skills/` at declared `path` | Blocks |
 | **License** | Apache-2.0–compatible LICENSE in your repo | Manual |
 | **Tier 1** | [agentskills.io](https://agentskills.io/specification) linter | Blocks |
 | **Tier 2** | [SKILL_DESIGN_PRINCIPLES.md](SKILL_DESIGN_PRINCIPLES.md) | **Warns** |

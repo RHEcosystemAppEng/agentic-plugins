@@ -23,7 +23,7 @@ flowchart TB
     SKILL["/federation-review"]
     GUIDE["This guide"]
     M1["License + owner/contact"]
-    M2["AI agent compatibility<br/>(CLAUDE.md, Cursor, ChatGPT)"]
+    M2["AI agent compatibility<br/>(AGENTS.md, Cursor, ChatGPT)"]
     M3["Catalog quality spot-check"]
     CAT --> PATH
     PATH -->|recommended| SKILL --> M1
@@ -85,7 +85,7 @@ uv run python scripts/validate_federation_catalog.py \
 
 - [ ] Owner/contact provided on the PR or issue
 - [ ] LICENSE in external repo is Apache-2.0–compatible
-- [ ] Declared agents supported (`CLAUDE.md` routing, Cursor/ChatGPT config as claimed)
+- [ ] Declared agents supported (`AGENTS.md` routing, Cursor/ChatGPT config as claimed)
 - [ ] Destructive skill operations require human confirmation
 - [ ] Full pack at `path` is appropriate — no per-skill subset in marketplace YAML
 
@@ -94,7 +94,7 @@ Clone at pinned commit when inspecting by hand:
 ```bash
 git clone --no-checkout <repo-url> /tmp/federation-review
 cd /tmp/federation-review && git checkout <commit-sha>
-# ... inspect skills/, mcps.json, CLAUDE.md ...
+# ... inspect skills/, mcps.json, AGENTS.md ...
 rm -rf /tmp/federation-review
 ```
 
