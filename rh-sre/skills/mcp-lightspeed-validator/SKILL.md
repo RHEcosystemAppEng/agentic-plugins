@@ -5,12 +5,12 @@ description: |
 model: haiku
 color: yellow
 license: Apache-2.0
-allowed-tools: vulnerability__get_cves
+allowed-tools: get_mcp_version
 ---
 
 # MCP Lightspeed Validator
 
-Validates connectivity to the Red Hat Lightspeed MCP server by running a lightweight tool call.
+Validates connectivity to the Red Hat Lightspeed MCP server by calling `get_mcp_version`.
 
 ## When to Use This Skill
 
@@ -18,7 +18,7 @@ Use when validating Lightspeed MCP before CVE operations, troubleshooting connec
 
 ## Workflow
 
-1. **Test connectivity**: Call `vulnerability__get_cves` with **no parameters** (uses default limit=10). Do NOT pass `limit`—some MCP clients incorrectly serialize it as `limit_`, causing validation errors.
+1. **Test connectivity**: Call `get_mcp_version` with **no parameters**.
 2. **If it fails**: Provide a comprehensive message with possible root causes (see below).
 3. **Report**: Output a table with validated servers and outcome (emojis).
 
@@ -60,7 +60,7 @@ Use ✅ for success, ❌ for failure, ⚠️ for partial (e.g. connected but err
 - `lightspeed-mcp` - Red Hat Lightspeed vulnerability and inventory data
 
 ### Required MCP Tools
-- `vulnerability__get_cves` or `get_cves` (from lightspeed-mcp) - Connectivity test
+- `get_mcp_version` (from lightspeed-mcp gateway) - Connectivity test
 
 ### Related Skills
 - `/remediation` - Requires Lightspeed MCP validation before CVE operations
