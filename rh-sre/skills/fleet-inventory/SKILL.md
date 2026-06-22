@@ -19,7 +19,7 @@ description: |
 model: inherit
 color: blue
 license: Apache-2.0
-allowed-tools: inventory__get_host_details vulnerability__get_cve_systems
+allowed-tools: inventory__list_hosts inventory__find_host_by_name inventory__get_host_details vulnerability__get_cve_systems
 ---
 
 # Fleet Inventory Skill
@@ -31,8 +31,10 @@ This skill queries Red Hat Lightspeed to retrieve and display information about 
 **Required MCP Servers**: `lightspeed-mcp` ([setup guide](https://console.redhat.com/))
 
 **Required MCP Tools**:
-- `get_host_details` (from lightspeed-mcp) - Retrieve system inventory
-- `get_cve_systems` (from lightspeed-mcp) - Find CVE-affected systems
+- `inventory__list_hosts` (from lightspeed-mcp) - List and discover registered hosts
+- `inventory__find_host_by_name` (from lightspeed-mcp) - Resolve hostname to host UUID
+- `inventory__get_host_details` (from lightspeed-mcp) - Retrieve details for known host UUIDs
+- `vulnerability__get_cve_systems` (from lightspeed-mcp) - Find CVE-affected systems
 
 **Required Environment Variables**:
 - `LIGHTSPEED_CLIENT_ID` - Red Hat Lightspeed service account client ID
@@ -100,19 +102,21 @@ Proceeding with fleet inventory query...
 ### Step 1: Retrieve System Inventory
 
 **Document Consultation** (REQUIRED - Execute FIRST):
-1. **Action**: Read [insights-api.md](docs/insights/insights-api.md) using the Read tool to understand the `get_host_details` response format and pagination handling
-2. **Output to user**: "I consulted [insights-api.md](docs/insights/insights-api.md) to understand the `get_host_details` response format and pagination handling."
+1. **Action**: Read [insights-api.md](docs/insights/insights-api.md) using the Read tool to understand `inventory__list_hosts` response format and pagination handling
+2. **Output to user**: "I consulted [insights-api.md](docs/insights/insights-api.md) to understand the `inventory__list_hosts` response format and pagination handling."
 
-**MCP Tool**: `get_host_details` (from lightspeed-mcp)
+**MCP Tool**: `inventory__list_hosts` (from lightspeed-mcp)
 
-**Purpose**: Query Lightspeed for comprehensive system information
+**Purpose**: Query Lightspeed for registered hosts. Use for fleet discovery, tag filters, and environment scoping.
 
-**Parameters**: See [references/01-parameter-reference.md](references/01-parameter-reference.md) for get_host_details/get_cve_systems parameters and response fields.
+**Parameters**: `per_page=10` on first call, then `page` for pagination. Optional filters: `display_name`, `tags`, `staleness`, `hostname_or_id`. See [references/01-parameter-reference.md](references/01-parameter-reference.md).
+
+**Optional enrichment**: After host UUIDs are known, call `inventory__get_host_details(host_ids="uuid-1,uuid-2")` for full host records. Use `inventory__find_host_by_name(hostname="...")` to resolve a hostname to a UUID.
 
 **Verification Checklist**:
-- ✓ Systems list returned with metadata
-- ✓ Total count matches expectation
-- ✓ System details include RHEL version, tags, status
+- ✓ Hosts list returned with metadata
+- ✓ Total count matches expectation (paginate if needed)
+- ✓ Host details include RHEL version, tags, status
 - ✓ No authentication errors (401/403)
 
 **Key Fields to Extract**:
@@ -133,11 +137,11 @@ Apply user-requested filters and grouping. See [references/01-parameter-referenc
 
 ### Step 3: Query CVE-Affected Systems
 
-**MCP Tool**: `get_cve_systems` (from lightspeed-mcp)
+**MCP Tool**: `vulnerability__get_cve_systems` (from lightspeed-mcp)
 
 **Purpose**: Find systems affected by specific CVEs
 
-**Parameters**: `cve_id` (CVE-YYYY-NNNNN, uppercase). See [references/01-parameter-reference.md](references/01-parameter-reference.md).
+**Parameters**: `cve` (CVE-YYYY-NNNNN, uppercase). Paginate with `limit` and `offset`. See [references/01-parameter-reference.md](references/01-parameter-reference.md).
 
 **Verification Checklist**:
 - ✓ CVE ID matches request exactly
@@ -191,13 +195,21 @@ Examples:
 - `lightspeed-mcp` - Red Hat Lightspeed platform access for system inventory and CVE data
 
 ### Required MCP Tools
-- `get_host_details` (from lightspeed-mcp) - Retrieve all registered systems with metadata
-  - Parameters: Optional filters (system_id, hostname_pattern, tags, operating_system)
-  - Returns: List of systems with id, display_name, fqdn, rhel_version, tags, stale status
+- `inventory__list_hosts` (from lightspeed-mcp) - List and discover registered hosts
+  - Parameters: `per_page`, `page`, `display_name`, `tags`, `staleness`, etc.
+  - Returns: Paginated host list with id, display_name, fqdn, tags, stale status
 
-- `get_cve_systems` (from lightspeed-mcp) - Find systems affected by specific CVEs
-  - Parameters: cve_id (string, format: CVE-YYYY-NNNNN)
-  - Returns: List of affected systems with vulnerability and remediation status
+- `inventory__find_host_by_name` (from lightspeed-mcp) - Resolve hostname to host record
+  - Parameters: `hostname` (required)
+  - Returns: Host record with UUID
+
+- `inventory__get_host_details` (from lightspeed-mcp) - Retrieve details for known host UUIDs
+  - Parameters: `host_ids` (required, comma-separated UUID string)
+  - Returns: Full host details for specified IDs
+
+- `vulnerability__get_cve_systems` (from lightspeed-mcp) - Find systems affected by specific CVEs
+  - Parameters: `cve` (string, format: CVE-YYYY-NNNNN), `limit`, `offset`
+  - Returns: Paginated list of affected systems with vulnerability and remediation status
 
 ### Related Skills
 - `mcp-lightspeed-validator` - **PREREQUISITE** - Validates Lightspeed MCP server configuration and connectivity
