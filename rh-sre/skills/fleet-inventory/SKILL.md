@@ -19,7 +19,7 @@ description: |
 model: inherit
 color: blue
 license: Apache-2.0
-allowed-tools: inventory__list_hosts inventory__find_host_by_name inventory__get_host_details vulnerability__get_cve_systems
+allowed-tools: inventory__list_hosts inventory__find_host_by_name inventory__get_host_details inventory__get_host_system_profile vulnerability__get_cve_systems
 ---
 
 # Fleet Inventory Skill
@@ -33,7 +33,8 @@ This skill queries Red Hat Lightspeed to retrieve and display information about 
 **Required MCP Tools**:
 - `inventory__list_hosts` (from lightspeed-mcp) - List and discover registered hosts
 - `inventory__find_host_by_name` (from lightspeed-mcp) - Resolve hostname to host UUID
-- `inventory__get_host_details` (from lightspeed-mcp) - Retrieve details for known host UUIDs
+- `inventory__get_host_details` (from lightspeed-mcp) - Retrieve inventory metadata for known host UUIDs
+- `inventory__get_host_system_profile` (from lightspeed-mcp) - Retrieve OS version and system profile when needed
 - `vulnerability__get_cve_systems` (from lightspeed-mcp) - Find CVE-affected systems
 
 **Required Environment Variables**:
@@ -111,21 +112,29 @@ Proceeding with fleet inventory query...
 
 **Parameters**: `per_page=10` on first call, then `page` for pagination. Optional filters: `display_name`, `tags`, `staleness`, `hostname_or_id`. See [references/01-parameter-reference.md](references/01-parameter-reference.md).
 
-**Optional enrichment**: After host UUIDs are known, call `inventory__get_host_details(host_ids="uuid-1,uuid-2")` for full host records. Use `inventory__find_host_by_name(hostname="...")` to resolve a hostname to a UUID.
+**Optional enrichment**: After host UUIDs are known:
+- `inventory__get_host_details(host_ids="uuid-1,uuid-2")` — inventory metadata (similar fields to `list_hosts`)
+- `inventory__get_host_system_profile(host_ids="uuid-1")` — OS version and system profile when RHEL version is required (one or two UUIDs at a time; large response)
+- `inventory__find_host_by_name(hostname="...")` — resolve a hostname to a UUID
 
 **Verification Checklist**:
+- ✓ Response includes `total`, `count`, `page`, `per_page`, and `results`
 - ✓ Hosts list returned with metadata
-- ✓ Total count matches expectation (paginate if needed)
-- ✓ Host details include RHEL version, tags, status
+- ✓ Total count matches expectation (paginate with `page` while `count` equals `per_page`)
 - ✓ No authentication errors (401/403)
 
-**Key Fields to Extract**:
+**Key Fields to Extract** (from `results[]` on `list_hosts` / `get_host_details`):
 - `id`: Unique system identifier (use for remediation workflows)
 - `display_name` / `fqdn`: Human-readable hostname
-- `system_profile.operating_system.version`: OS version (critical for remediation compatibility; use `system_profile.operating_system.major` for major-version filters)
-- `tags`: Environment labels (production, staging, dev)
-- `stale` / staleness: Whether system recently checked in (< 7 days); prefer `staleness` filter on `inventory__list_hosts` when filtering
-- `updated`: Last inventory update timestamp
+- `updated`: Last inventory record update
+- `last_check_in`: Last reporter check-in (prefer for active/stale display)
+- `stale_timestamp`, `stale_warning_timestamp`, `culled_timestamp`: Staleness thresholds
+- `per_reporter_staleness`: Per-reporter check-in detail
+- `groups`: Inventory groups (when present)
+
+**When RHEL version or environment tags are required** (not on every `list_hosts` record):
+- `system_profile.operating_system.version` or equivalent — from `inventory__get_host_system_profile`; equivalents include `operating_system.major`/`minor`, `os_release`, `operating_system.name`
+- `tags`: Environment labels (when present on the host)
 
 ### Step 2: Filter and Organize Systems
 
@@ -197,15 +206,19 @@ Examples:
 ### Required MCP Tools
 - `inventory__list_hosts` (from lightspeed-mcp) - List and discover registered hosts
   - Parameters: `per_page`, `page`, `display_name`, `tags`, `staleness`, etc.
-  - Returns: Paginated host list with id, display_name, fqdn, tags, stale status
+  - Returns: `{ total, count, page, per_page, results[] }` with id, display_name, fqdn, updated, last_check_in, staleness timestamps
 
 - `inventory__find_host_by_name` (from lightspeed-mcp) - Resolve hostname to host record
   - Parameters: `hostname` (required)
   - Returns: Host record with UUID
 
-- `inventory__get_host_details` (from lightspeed-mcp) - Retrieve details for known host UUIDs
+- `inventory__get_host_details` (from lightspeed-mcp) - Retrieve inventory metadata for known host UUIDs
   - Parameters: `host_ids` (required, comma-separated UUID string)
-  - Returns: Full host details for specified IDs
+  - Returns: Same pagination wrapper; host records similar to `list_hosts` (not guaranteed to include `system_profile`)
+
+- `inventory__get_host_system_profile` (from lightspeed-mcp) - Retrieve OS version and system profile
+  - Parameters: `host_ids` (comma-separated; one or two UUIDs at a time)
+  - Returns: `system_profile` with `operating_system` (name, major, minor), `os_release`, packages, services
 
 - `vulnerability__get_cve_systems` (from lightspeed-mcp) - Find systems affected by specific CVEs
   - Parameters: `cve` (string, format: CVE-YYYY-NNNNN), `limit`, `offset`

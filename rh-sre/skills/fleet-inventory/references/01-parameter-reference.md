@@ -31,7 +31,9 @@ inventory__list_hosts(page_size=100)     # Use per_page, not page_size
 inventory__list_hosts(tags=["production"])  # tags is a string, not an array
 ```
 
-**Response fields**: id, display_name, fqdn, tags, stale/staleness, updated, system_profile (for RHEL version)
+**Response envelope**: `{ total, count, page, per_page, results[] }`
+
+**Response fields** (per host in `results[]`): `id`, `display_name`, `fqdn`, `updated`, `last_check_in`, `stale_timestamp`, `per_reporter_staleness`, `groups`, `facts`. Tags when present. No `system_profile` — use `get_host_system_profile` for OS version.
 
 ## inventory__find_host_by_name
 
@@ -57,6 +59,8 @@ inventory__find_host_by_name(hostname="web-server-01")
 inventory__get_host_details(host_ids="68ce32aa-57da-49b7-8ded-dc4ad54e520a")
 ```
 
+**Response**: Same envelope as `list_hosts`; host shape is similar (inventory metadata, not guaranteed to include `system_profile`).
+
 **Wrong**:
 ```
 inventory__get_host_details()                        # host_ids is required
@@ -64,6 +68,31 @@ inventory__get_host_details(system_id="abc-123")     # Use host_ids
 inventory__get_host_details(hostname_pattern="web-*")  # Not supported; use list_hosts
 inventory__get_host_details(tags=["production"])     # Not supported; use list_hosts
 ```
+
+## inventory__get_host_system_profile
+
+**Purpose**: Retrieve OS version and full system profile for **known** host UUIDs. Use when RHEL version distribution or version-based filtering is required.
+
+| Parameter | Type | Required | Example | Notes |
+|-----------|------|----------|---------|-------|
+| `host_ids` | string | No | `"uuid-1"` or `"uuid-1,uuid-2"` | Comma-separated UUIDs. **One or two at a time** — MCP warns of very large responses. Default `""`. |
+
+```
+inventory__get_host_system_profile(host_ids="68ce32aa-57da-49b7-8ded-dc4ad54e520a")
+```
+
+**Response envelope**: `{ total, count, page, per_page, results[] }` (same as `list_hosts`).
+
+**Each `results[]` item** (live shape): `id` + `system_profile` only — not the full inventory record from `list_hosts`.
+
+**`system_profile` fields** (live; OS version equivalents):
+- `operating_system.name` — e.g. `"RHEL"`
+- `operating_system.major` / `operating_system.minor` — e.g. `10` / `1` (no `operating_system.version` string in live responses)
+- `os_release` — e.g. `"10.1"`
+- `installed_packages`, `enabled_services`, `installed_services`
+- Hardware/infrastructure: `cpu_model`, `number_of_cpus`, `system_memory_bytes`, `network_interfaces`, etc.
+
+Use `system_profile.operating_system.version` in docs as the canonical name; at runtime read `major`/`minor`, `os_release`, or `operating_system.name` when `version` is absent.
 
 ## vulnerability__get_cve_systems
 
@@ -94,9 +123,10 @@ vulnerability__get_cve_systems(cve_id="CVE-2024-1234")  # Use cve, not cve_id
 
 ## Client-side filtering and sorting
 
-When API filters are insufficient (e.g. RHEL major version), filter after listing:
+When API filters are insufficient, filter after listing or after fetching profiles:
 
-**By RHEL**: `[h for h in hosts if h.get('system_profile', {}).get('operating_system', {}).get('major') == 8]`
-**By tag** (after list): `[h for h in hosts if any("production" in t for t in h.get('tags', []))]`
-**By stale**: `[h for h in hosts if h.get('stale')]` or use `staleness` filter on list_hosts
+**By RHEL major** (requires `get_host_system_profile` data): `[h for h in profiles if h.get('system_profile', {}).get('operating_system', {}).get('major') == 8]`
+**By tag** (when present on host): `[h for h in hosts if any("production" in t for t in h.get('tags', []))]`
+**By stale** (from list_hosts): compare `last_check_in` to `stale_timestamp`, or use `staleness` filter on `list_hosts`
+**Sort by last check-in**: `sorted(hosts, key=lambda h: h.get('last_check_in', ''), reverse=True)`
 **Sort by updated**: `sorted(hosts, key=lambda h: h.get('updated', ''), reverse=True)`

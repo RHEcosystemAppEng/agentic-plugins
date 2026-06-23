@@ -8,7 +8,7 @@
 2. Call `inventory__list_hosts(per_page=10, page=1, display_name="")`
 3. Paginate: increment `page` until a page returns fewer than `per_page` hosts
 4. Consult fleet-management.md for grouping
-5. Group by RHEL version, environment tags
+5. Group by environment (`groups` or `tags` when present); for RHEL version breakdown, call `inventory__get_host_system_profile(host_ids="<uuid>")` per host (one or two UUIDs at a time)
 6. Generate Template 1 output
 7. Offer next steps (CVE analysis, remediation)
 
@@ -40,5 +40,6 @@
 
 1. Invoke mcp-lightspeed-validator (Step 0) → PASSED
 2. Call `inventory__find_host_by_name(hostname="web-server-01")`
-3. If details needed, call `inventory__get_host_details(host_ids="<uuid-from-step-2>")`
-4. Present host summary
+3. If inventory metadata needed, call `inventory__get_host_details(host_ids="<uuid-from-step-2>")`
+4. If OS version needed, call `inventory__get_host_system_profile(host_ids="<uuid-from-step-2>")`
+5. Present host summary
