@@ -25,7 +25,9 @@ Retrieved from Red Hat Lightspeed on YYYY-MM-DDTHH:MM:SSZ
 | Environment | Count | Systems |
 
 ## Top 20 Systems (by last check-in)
-[Table: display_name, rhel_version, tags, last_seen]
+[Table: display_name, last_check_in, updated, groups or tags when present]
+
+For RHEL version breakdown, call `inventory__get_host_system_profile` and use `system_profile.operating_system.version` or equivalent (`os_release`, `major`/`minor`).
 
 **Would you like to**: Filter by environment/RHEL, view CVEs, create remediation plans
 ```
