@@ -16,7 +16,10 @@ from typing import Any, Dict, List
 
 import markdown
 
+from catalog_legacy_banner import render_legacy_catalog_banner
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
+STYLES_VERSION = "74"
 
 
 def md_to_html(text: Any) -> str:
@@ -638,6 +641,8 @@ def render_collection_page(pack: Dict[str, Any], mcp_data: List[Dict[str, Any]])
         license_nav_href = "https://github.com/RHEcosystemAppEng/agentic-collections/blob/main/LICENSE"
     license_nav_href_esc = html.escape(license_nav_href, quote=True)
 
+    legacy_banner = render_legacy_catalog_banner()
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -647,9 +652,10 @@ def render_collection_page(pack: Dict[str, Any], mcp_data: List[Dict[str, Any]])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Red+Hat+Text:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css?v=73">
+    <link rel="stylesheet" href="../styles.css?v={STYLES_VERSION}">
 </head>
 <body>
+    {legacy_banner}
     <div class="site-brand-accent" aria-hidden="true"></div>
     <main>
         <section class="collection-page">
@@ -694,7 +700,7 @@ def render_collection_page(pack: Dict[str, Any], mcp_data: List[Dict[str, Any]])
         <div class="modal-content" id="mcp-details"></div>
     </div>
 
-    <script src="../app.js?v=73"></script>
+    <script src="../app.js?v={STYLES_VERSION}"></script>
 </body>
 </html>
 """

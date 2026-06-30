@@ -12,6 +12,7 @@ from typing import Dict, Any
 # Import our data generators
 from catalog_site_bundle import bundle_catalog_for_site
 from eval_site_enrichment import apply_eval_enrichment
+from catalog_legacy_banner import sync_index_banner
 from generate_collection_pages import generate_collection_pages
 from generate_pack_data import generate_pack_data
 from generate_mcp_data import generate_mcp_data
@@ -55,6 +56,8 @@ def build_website():
     pack_data = generate_pack_data()
     
     root = Path(__file__).resolve().parent.parent
+    docs_dir = Path('docs')
+    docs_dir.mkdir(exist_ok=True)
 
     # Merge pack icons and optional resolved collection catalog (for Pages UI)
     for pack in pack_data:
@@ -91,6 +94,13 @@ def build_website():
     print(f"✅ Generated {page_count} pages in docs/collections/")
     print()
 
+    print("⚠️  Syncing legacy catalog deprecation banner...")
+    if sync_index_banner(docs_dir / "index.html"):
+        print("✅ Updated docs/index.html with legacy catalog banner")
+    else:
+        print("ℹ️  docs/index.html banner already current or marker missing")
+    print()
+
     # Combine into final output
     output = {
         'repository': {
@@ -104,9 +114,7 @@ def build_website():
         'generated_at': datetime.now(timezone.utc).isoformat()
     }
 
-    # Ensure docs directory exists
-    docs_dir = Path('docs')
-    docs_dir.mkdir(exist_ok=True)
+    # Ensure docs directory exists (mkdir at start of build_website)
 
     # Write data.json
     output_file = docs_dir / 'data.json'
