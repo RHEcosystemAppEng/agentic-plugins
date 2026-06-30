@@ -1,3 +1,16 @@
+[![maintenance-status](https://img.shields.io/badge/maintenance-archived-red.svg?style=for-the-badge)](https://github.com/RHEcosystemAppEng/agentic-collections-skills)
+
+> [!CAUTION]
+> ## This repository has been archived
+>
+> Development moved to:
+> - **[agentic-collections-skills](https://github.com/RHEcosystemAppEng/agentic-collections-skills)** — agentic packs, skills, and Lola modules
+> - **[agentic-collections-catalog](https://github.com/RHEcosystemAppEng/agentic-collections-catalog)** — marketplace catalog and collection metadata
+>
+> This repo is read-only and kept for historical reference. Do not open issues or PRs here.
+
+---
+
 # Red Hat Agentic Collections
 
 **Production-ready AI skills and automation for Red Hat platforms** — install specialized plugins for SREs, developers, platform administrators, and AI engineers working with RHEL, OpenShift, and Red Hat automation platforms.
