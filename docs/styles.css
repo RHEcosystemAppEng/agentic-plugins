@@ -61,6 +61,94 @@ body {
     flex-direction: column;
 }
 
+/* Deprecated legacy catalog banner (archived agentic-collections Pages site) */
+.legacy-catalog-banner {
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    background: linear-gradient(90deg, #3d0000 0%, #c9190b 45%, #a30000 100%);
+    color: #fff;
+    border-bottom: 4px solid #ffcc00;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+
+.legacy-catalog-banner-inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+}
+
+.legacy-catalog-banner-kicker {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #ffeb99;
+    margin-bottom: 0.4rem;
+}
+
+.legacy-catalog-banner-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.15rem, 2.8vw, 1.65rem);
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
+}
+
+.legacy-catalog-banner-title a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.legacy-catalog-banner-body {
+    font-size: 1rem;
+    margin-bottom: 0.85rem;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.legacy-catalog-banner-links {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.25rem;
+}
+
+.legacy-catalog-banner-links a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.legacy-catalog-banner-links a:hover {
+    color: #ffeb99;
+}
+
+.legacy-catalog-banner-cta {
+    margin: 0;
+}
+
+.legacy-catalog-banner-cta a {
+    display: inline-block;
+    background: #fff;
+    color: #a30000;
+    font-weight: 700;
+    padding: 0.65rem 1.35rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-size: 1.05rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.legacy-catalog-banner-cta a:hover {
+    background: #ffeb99;
+    color: #3d0000;
+}
+
 /* Standalone collection pages (no catalog header): Red Hat top bar */
 .site-brand-accent {
     height: 3px;
