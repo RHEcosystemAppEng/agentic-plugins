@@ -5,6 +5,12 @@
 [![Skill Check Tier 2](https://github.com/RHEcosystemAppEng/agentic-plugins/actions/workflows/tier-2-check.yaml/badge.svg)](https://github.com/RHEcosystemAppEng/agentic-plugins/actions/workflows/tier-2-check.yaml)
 [![Skill Check Tier 1](https://github.com/RHEcosystemAppEng/agentic-plugins/actions/workflows/tier-1-check.yaml/badge.svg)](https://github.com/RHEcosystemAppEng/agentic-plugins/actions/workflows/tier-1-check.yaml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Catalog](https://img.shields.io/badge/Catalog-Browse%20Marketplace-blueviolet)](https://rhecosystemappeng.github.io/agentic-plugins/)
+
+---
+
+> **Browse the catalog:** The published marketplace UI is at [rhecosystemappeng.github.io/agentic-plugins](https://rhecosystemappeng.github.io/agentic-plugins/) — powered by [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog).
+> This repo is where skills are authored and maintained. The catalog aggregates content from here periodically.
 
 ---
 
