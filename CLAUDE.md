@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repository Is
 
-This is a **skills source repository** — one of potentially many that feed into the [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog).  It contains AI agentic packs with skills, MCP server configurations, AI-optimized documentation, and catalog metadata for Red Hat platforms.
+This is a **skills source repository** — one of potentially many that feed into the [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog).  It contains agentic packs with skills, MCP server configurations, AI-optimized documentation, and catalog metadata for Red Hat platforms.
 
 Contributors work here to create, improve, and validate skills. An internal process periodically fetches content from this repository (and others like it) to build the unified catalog and marketplace. **This repo does not serve the marketplace directly** — it is a source of skills that the catalog aggregates.
 
