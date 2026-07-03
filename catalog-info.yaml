@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: agentic-plugins
+  title: Agentic Plugins
+  description: >
+    Root catalog entry point for the agentic-plugins repository.
+    Points to all agentic pack locations for Compass ingestion.
+spec:
+  targets:
+    - ./ocp-admin/catalog-info.yaml

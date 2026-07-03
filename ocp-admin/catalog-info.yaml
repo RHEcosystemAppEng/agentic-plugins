@@ -1,0 +1,22 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: ocp-admin
+  title: OpenShift Administration Agentic Pack
+  description: >
+    Points to all AI skill and MCP server catalog entities in the ocp-admin
+    agentic pack for Red Hat OpenShift administration.
+spec:
+  targets:
+    # Skills
+    - ./skills/cluster-creator/catalog-info.yaml
+    - ./skills/cluster-inventory/catalog-info.yaml
+    - ./skills/cluster-report/catalog-info.yaml
+    - ./skills/container-cve-validator/catalog-info.yaml
+    - ./skills/coreos-cve-validator/catalog-info.yaml
+    - ./skills/cve-recon/catalog-info.yaml
+    - ./skills/image-inspect/catalog-info.yaml
+    # MCP Servers
+    - ./mcps/openshift-self-managed/catalog-info.yaml
+    - ./mcps/openshift-ocm-managed/catalog-info.yaml
+    - ./mcps/openshift-administration/catalog-info.yaml

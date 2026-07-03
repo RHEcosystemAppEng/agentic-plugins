@@ -1,0 +1,50 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  name: openshift-administration
+  namespace: ocp-admin
+  title: OpenShift Administration MCP Server
+  description: >
+    Red Hat OpenShift MCP server for interacting with OpenShift Container Platform
+    clusters and its operators. Provides read-only access to cluster resources,
+    node metrics, and configuration contexts via core and config toolsets.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/mcps.json
+  tags:
+    - openshift
+    - kubernetes
+    - cluster-operations
+    - mcp-server
+spec:
+  type: local
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  primitives:
+    - type: tool
+      name: configuration_contexts_list
+      description: List available kubeconfig contexts for cluster access.
+    - type: tool
+      name: resources_get
+      description: Get details of a specific Kubernetes resource.
+    - type: tool
+      name: resources_list
+      description: List Kubernetes resources by type and namespace.
+    - type: tool
+      name: nodes_top
+      description: Get node resource usage metrics (CPU, memory).
+    - type: tool
+      name: namespaces_list
+      description: List all namespaces in the cluster.
+    - type: tool
+      name: pods_list
+      description: List pods with status and resource information.
+  packages:
+    - type: container
+      registry_name: quay.io
+      name: ecosystem-appeng/openshift-mcp-server
+      version: sha256:3531cb78f51f8c7ebcdb21adc21358ab8924116994848a3ce1ff542b3fc23742
+      environment_variables:
+        - description: Path to kubeconfig file for cluster authentication
+          name: KUBECONFIG
+  remotes: []

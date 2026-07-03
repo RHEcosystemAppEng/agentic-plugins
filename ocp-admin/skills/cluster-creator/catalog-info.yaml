@@ -1,0 +1,42 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: cluster-creator
+  namespace: ocp-admin
+  title: OpenShift Cluster Creator
+  description: >
+    End-to-end OpenShift cluster creation using Red Hat Assisted Installer.
+    Handles SNO and HA multi-node clusters on baremetal, vsphere, oci, nutanix.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/skills/cluster-creator/SKILL.md
+
+  tags:
+    - ai-skill
+    - openshift
+    - cluster-management
+    - assisted-installer
+    - provisioning
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: ocp-admin
+  disciplines:
+    - devops
+    - infrastructure
+  categories:
+    - automation
+    - provisioning
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:ocp-admin/openshift-self-managed
