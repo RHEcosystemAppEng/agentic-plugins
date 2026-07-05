@@ -46,7 +46,7 @@ After completing a skill, suggest relevant next-step skills (for example, after 
 
 ## MCP Servers
 
-Six HTTP MCP servers are configured for this pack. Skills wrap these — do not call their tools directly.
+Six HTTP MCP servers may be available in local runtimes. Skills wrap these — do not call their tools directly.
 
 - **aap-mcp-job-management** (Required for jobs and execution) — Job templates, launches, events, statuses, workflows, approvals.
 - **aap-mcp-inventory-management** (Required for inventory-scoped work) — Inventories, hosts, groups, host facts (`ansible_facts`).
@@ -55,7 +55,7 @@ Six HTTP MCP servers are configured for this pack. Skills wrap these — do not 
 - **aap-mcp-system-monitoring** (Required for full governance readiness) — Instance groups, activity stream, mesh topology, platform status.
 - **aap-mcp-user-management** (Required for full governance readiness) — Users, teams, organizations, roles, RBAC.
 
-Environment variables `AAP_MCP_SERVER` and `AAP_API_TOKEN` are defined in `mcps.json` using `${...}` placeholders only; never expose secret values in chat output.
+Environment variables `AAP_MCP_SERVER` and `AAP_API_TOKEN` should be configured with `${...}` placeholders only; never expose secret values in chat output.
 
 ## Global Rules
 

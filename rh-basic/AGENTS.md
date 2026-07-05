@@ -25,7 +25,7 @@ If the request doesn't clearly match one skill, ask the user to clarify.
 
 ## MCP Servers
 
-One MCP server is configured for this pack. Skills wrap it — do not call its tools directly.
+One MCP server may be available in local runtimes. Skills wrap it — do not call its tools directly.
 
 - **red-hat-security** — Red Hat Security API: CVE metadata, advisories, and errata data. Uses Red Hat Customer Portal browser SSO — no credentials or env vars required.
 

@@ -38,7 +38,7 @@ After completing a skill, suggest relevant next-step skills to the user.
 
 ## MCP Servers
 
-Three MCP servers are available. Skills manage these automatically — do not call their tools directly.
+Three MCP servers may be available in local runtimes. Skills manage these automatically — do not call their tools directly.
 
 - **openshift-self-managed** (Required for cluster-creator, cluster-inventory) — Assisted Installer API for self-managed cluster lifecycle (OCP, SNO). Requires OFFLINE_TOKEN from https://cloud.redhat.com/openshift/token.
 - **openshift-ocm-managed** (Required for cluster-inventory) — OpenShift Cluster Manager API for managed service clusters (ROSA, ARO, OSD). Requires OFFLINE_TOKEN.
