@@ -21,4 +21,3 @@ metadata:
       icon: github
 spec:
   owner: group:redhat/ecosystem-appeng
-  domain: agentic-plugins

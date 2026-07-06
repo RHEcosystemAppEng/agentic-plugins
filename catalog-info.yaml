@@ -12,8 +12,6 @@ metadata:
     agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
 spec:
   targets:
-    # Domain
-    - ./domain.yaml
     # System manifests (one per pack)
     - ./ocp-admin/system.yaml
     - ./rh-sre/system.yaml
