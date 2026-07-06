@@ -1,19 +1,21 @@
 apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
-  name: lightspeed-mcp-developer
-  title: Red Hat Lightspeed MCP Server (Developer)
+  name: red-hat-lightspeed
+  title: Red Hat Lightspeed MCP Server
   description: >
-    Red Hat Lightspeed MCP server for developer workflows.
-    Provides vulnerability, advisor, inventory, and planning data
-    from Red Hat Insights for application development and debugging.
+    Red Hat Lightspeed MCP server providing CVE vulnerability data,
+    risk assessment, system inventory, compliance checks, and remediation
+    playbook generation via Red Hat Insights. Used across SRE and
+    developer workflows.
   annotations:
     backstage.io/source-location: >-
-      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/mcps.json
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/mcps.json
   tags:
     - lightspeed
     - insights
-    - developer
+    - cve
+    - remediation
     - mcp-server
 spec:
   type: local
@@ -24,7 +26,7 @@ spec:
     - type: container
       registry_name: quay.io
       name: redhat-services-prod/insights-management-tenant/insights-mcp/red-hat-lightspeed-mcp
-      version: sha256:05dde29df5ab0be7230e0ec64c87e8e7fda12d77d01bd026b67486da714c1a94
+      version: sha256:98ee33fa7cb690d02d33f57900ab95ad831b8e7985710e0ccb87f53ce1b09865
       environment_variables:
         - description: Lightspeed client ID for authentication
           name: LIGHTSPEED_CLIENT_ID

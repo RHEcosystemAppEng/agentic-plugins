@@ -1,12 +1,13 @@
 apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
-  name: openshift-administration
-  title: OpenShift Administration MCP Server
+  name: openshift-mcp-server
+  title: OpenShift MCP Server
   description: >
     Red Hat OpenShift MCP server for interacting with OpenShift Container Platform
-    clusters and its operators. Provides read-only access to cluster resources,
-    node metrics, and configuration contexts via core and config toolsets.
+    clusters and its operators. Provides access to cluster resources, node metrics,
+    configuration contexts, virtualization, Helm, observability, and service mesh
+    toolsets depending on configuration.
   annotations:
     backstage.io/source-location: >-
       url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/mcps.json

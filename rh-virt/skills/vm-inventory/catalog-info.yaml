@@ -36,4 +36,4 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/openshift-virtualization
+    - mcpserver:default/openshift-mcp-server

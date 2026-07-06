@@ -37,6 +37,6 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/openshift-ai-engineer
+    - mcpserver:default/openshift-mcp-server
     - mcpserver:default/ai-observability
     - mcpserver:default/rhoai

@@ -39,4 +39,4 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/openshift-self-managed
+    - mcpserver:default/assisted-installer

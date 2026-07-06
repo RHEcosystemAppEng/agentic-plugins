@@ -39,7 +39,7 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/openshift-developer
+    - mcpserver:default/openshift-mcp-server
     - mcpserver:default/podman
     - mcpserver:default/github
-    - mcpserver:default/lightspeed-mcp-developer
+    - mcpserver:default/red-hat-lightspeed

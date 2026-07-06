@@ -1,0 +1,48 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  name: ansible-automation-platform
+  title: Ansible Automation Platform MCP Server
+  description: >
+    Ansible Automation Platform MCP server providing job management,
+    inventory management, configuration, security compliance, system
+    monitoring, and user management operations via remote HTTP endpoints.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/mcps.json
+  tags:
+    - ansible
+    - aap
+    - automation
+    - mcp-server
+spec:
+  type: remote
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  primitives: []
+  packages: []
+  remotes:
+    - url: https://${AAP_MCP_SERVER}/job_management/mcp
+      environment_variables:
+        - description: AAP MCP server hostname
+          name: AAP_MCP_SERVER
+    - url: https://${AAP_MCP_SERVER}/inventory_management/mcp
+      environment_variables:
+        - description: AAP MCP server hostname
+          name: AAP_MCP_SERVER
+    - url: https://${AAP_MCP_SERVER}/configuration/mcp
+      environment_variables:
+        - description: AAP MCP server hostname
+          name: AAP_MCP_SERVER
+    - url: https://${AAP_MCP_SERVER}/security_compliance/mcp
+      environment_variables:
+        - description: AAP MCP server hostname
+          name: AAP_MCP_SERVER
+    - url: https://${AAP_MCP_SERVER}/system_monitoring/mcp
+      environment_variables:
+        - description: AAP MCP server hostname
+          name: AAP_MCP_SERVER
+    - url: https://${AAP_MCP_SERVER}/user_management/mcp
+      environment_variables:
+        - description: AAP MCP server hostname
+          name: AAP_MCP_SERVER

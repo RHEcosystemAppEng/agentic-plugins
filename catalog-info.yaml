@@ -31,20 +31,10 @@ spec:
     - ./rh-ai-engineer/catalog-info.yaml
     - ./rh-automation/catalog-info.yaml
     # MCP Server Manifests
-    - ./mcps/openshift-self-managed.yaml
-    - ./mcps/openshift-ocm-managed.yaml
-    - ./mcps/openshift-administration.yaml
-    - ./mcps/openshift-virtualization.yaml
-    - ./mcps/openshift-developer.yaml
-    - ./mcps/openshift-ai-engineer.yaml
-    - ./mcps/lightspeed-mcp-sre.yaml
-    - ./mcps/lightspeed-mcp-developer.yaml
-    - ./mcps/aap-mcp-job-management.yaml
-    - ./mcps/aap-mcp-inventory-management.yaml
-    - ./mcps/aap-mcp-configuration.yaml
-    - ./mcps/aap-mcp-security-compliance.yaml
-    - ./mcps/aap-mcp-system-monitoring.yaml
-    - ./mcps/aap-mcp-user-management.yaml
+    - ./mcps/openshift-mcp-server.yaml
+    - ./mcps/assisted-installer.yaml
+    - ./mcps/red-hat-lightspeed.yaml
+    - ./mcps/ansible-automation-platform.yaml
     - ./mcps/red-hat-security.yaml
     - ./mcps/ai-observability.yaml
     - ./mcps/rhoai.yaml

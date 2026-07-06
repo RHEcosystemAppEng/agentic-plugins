@@ -38,6 +38,5 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/lightspeed-mcp-sre
-    - mcpserver:default/aap-mcp-job-management
-    - mcpserver:default/aap-mcp-inventory-management
+    - mcpserver:default/red-hat-lightspeed
+    - mcpserver:default/ansible-automation-platform
