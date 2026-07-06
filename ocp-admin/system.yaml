@@ -13,6 +13,8 @@ metadata:
     - openshift
     - cluster-management
     - administration
+  annotations:
+    backstage.io/techdocs-ref: url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/README.md
   labels:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
