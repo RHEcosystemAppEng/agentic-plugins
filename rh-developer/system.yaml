@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: rh-developer
+  namespace: rh-developer
+  title: Developer Tools
+  description: >
+    Build and deploy applications on Red Hat platforms. Covers project
+    detection, S2I builds, Helm deployments, containerization workflows,
+    and troubleshooting for OpenShift and RHEL targets.
+  tags:
+    - ai-skill
+    - developer
+    - openshift
+    - deployment
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  owner: group:redhat/ecosystem-appeng
+  domain: agentic-plugins

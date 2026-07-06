@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: rh-virt
+  namespace: rh-virt
+  title: Red Hat Virtualization
+  description: >
+    Automation capabilities for VM lifecycle management, provisioning,
+    and inventory operations on OpenShift clusters using KubeVirt.
+  tags:
+    - ai-skill
+    - virtualization
+    - kubevirt
+    - openshift
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  owner: group:redhat/ecosystem-appeng
+  domain: agentic-plugins

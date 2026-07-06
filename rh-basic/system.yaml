@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: rh-basic
+  namespace: rh-basic
+  title: Getting Started
+  description: >
+    Essential Red Hat skills for IT professionals. Covers CVE analysis,
+    diagnostics gathering, product lifecycle status, and support case
+    management. Works with or without MCP server configuration.
+  tags:
+    - ai-skill
+    - red-hat
+    - getting-started
+    - support
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  owner: group:redhat/ecosystem-appeng
+  domain: agentic-plugins

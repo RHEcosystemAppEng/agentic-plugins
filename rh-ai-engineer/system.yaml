@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: rh-ai-engineer
+  namespace: rh-ai-engineer
+  title: AI Engineering
+  description: >
+    Automation tools for AI/ML engineers working with Red Hat OpenShift AI.
+    Deploy and manage models, pipelines, registries, workbenches, and
+    serving runtimes on OpenShift AI.
+  tags:
+    - ai-skill
+    - ai-engineering
+    - openshift-ai
+    - machine-learning
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  owner: group:redhat/ecosystem-appeng
+  domain: agentic-plugins

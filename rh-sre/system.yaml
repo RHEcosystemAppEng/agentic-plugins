@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: rh-sre
+  namespace: rh-sre
+  title: Site Reliability Engineering
+  description: >
+    Agentic tools and automation for managing Red Hat platforms and
+    infrastructure. Covers vulnerability management, fleet inventory,
+    system monitoring, and operational excellence for SRE workflows.
+  tags:
+    - ai-skill
+    - sre
+    - monitoring
+    - vulnerability-management
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  owner: group:redhat/ecosystem-appeng
+  domain: agentic-plugins

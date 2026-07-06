@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: ocp-admin
+  namespace: ocp-admin
+  title: OpenShift Administration
+  description: >
+    Administration and management tools for OpenShift Container Platform
+    including cluster lifecycle management, multi-cluster operations,
+    workload orchestration, and security policies.
+  tags:
+    - ai-skill
+    - openshift
+    - cluster-management
+    - administration
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  owner: group:redhat/ecosystem-appeng
+  domain: agentic-plugins
