@@ -42,7 +42,7 @@ After completing a skill, suggest relevant next-step skills to the user.
 
 ## MCP Servers
 
-Three MCP servers are available. Skills manage these automatically — do not call their tools directly.
+Three MCP servers may be available in local runtimes. Skills manage these automatically — do not call their tools directly.
 
 - **openshift** (Required) — Kubernetes resource CRUD, pod logs, events. The reliable foundation.
 - **rhoai** (Preferred) — RHOAI-specific convenience tools. May return auth errors; skills fall back to openshift automatically.

@@ -54,7 +54,7 @@ After completing a skill, suggest relevant next-step skills to the user.
 
 ## MCP Servers
 
-Five MCP servers are available. Skills manage these automatically — do not call their tools directly.
+Five MCP servers may be available in local runtimes. Skills manage these automatically — do not call their tools directly.
 
 - **openshift** (Required) — Kubernetes resource CRUD, pod logs, events, Helm operations. The reliable foundation.
 - **observability** (Required) — Prometheus metric discovery, metadata, series, and PromQL queries. Used by `/incident-triage` for trend analysis and saturation detection.

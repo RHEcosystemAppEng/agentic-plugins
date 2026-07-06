@@ -40,7 +40,7 @@ After completing a skill, suggest relevant next-step skills to the user.
 
 ## MCP Servers
 
-One MCP server is available. Skills manage it automatically — do not call its tools directly.
+One MCP server may be available in local runtimes. Skills manage it automatically — do not call its tools directly.
 
 - **openshift-virtualization** (Required) — KubeVirt operations for VM management. Uses OpenShift/Kubernetes API via KUBECONFIG. Requires cluster with OpenShift Virtualization operator installed (>= 4.19).
 
