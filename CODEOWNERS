@@ -8,13 +8,13 @@
 * @r2dedios @dmartinol @ikrispin @nemerna
 
 # Pack owners
-rh-sre/              @dmartinol
-rh-developer/        @ikrispin
-rh-virt/             @r2dedios
-ocp-admin/           @r2dedios
-rh-ai-engineer/      @ikrispin
-rh-automation/       @nemerna
-rh-basic/            @r2dedios
+rh-sre/              @r2dedios @dmartinol
+rh-developer/        @ikrispin @r2dedios @dmartinol
+rh-virt/             @r2dedios @dmartinol
+ocp-admin/           @r2dedios @dmartinol
+rh-ai-engineer/      @ikrispin @r2dedios @dmartinol
+rh-automation/       @nemerna @r2dedios @dmartinol
+rh-basic/            @r2dedios @dmartinol
 rh-support-engineer/ 
 
 # CI, scripts, and repo-wide config
