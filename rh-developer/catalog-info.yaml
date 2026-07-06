@@ -1,0 +1,30 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: rh-developer
+  title: Developer Tools Agentic Pack
+  description: >
+    Points to all AI skill catalog entities in the rh-developer agentic pack
+    for Red Hat application development and deployment workflows.
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+spec:
+  targets:
+    - ./skills/containerize-deploy/catalog-info.yaml
+    - ./skills/debug-build/catalog-info.yaml
+    - ./skills/debug-container/catalog-info.yaml
+    - ./skills/debug-network/catalog-info.yaml
+    - ./skills/debug-pipeline/catalog-info.yaml
+    - ./skills/debug-pod/catalog-info.yaml
+    - ./skills/debug-rbac/catalog-info.yaml
+    - ./skills/debug-rhel/catalog-info.yaml
+    - ./skills/debug-scc/catalog-info.yaml
+    - ./skills/deploy/catalog-info.yaml
+    - ./skills/detect-project/catalog-info.yaml
+    - ./skills/helm-deploy/catalog-info.yaml
+    - ./skills/incident-triage/catalog-info.yaml
+    - ./skills/recommend-image/catalog-info.yaml
+    - ./skills/rhel-deploy/catalog-info.yaml
+    - ./skills/s2i-build/catalog-info.yaml
+    - ./skills/validate-environment/catalog-info.yaml

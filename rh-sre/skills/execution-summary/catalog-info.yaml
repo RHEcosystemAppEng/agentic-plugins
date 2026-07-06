@@ -1,0 +1,40 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: execution-summary
+  namespace: rh-sre
+  title: Execution Summary
+  description: >
+    Generates a concise report of agents, skills, tools, and documentation accessed
+    during a workflow for audit and learning purposes.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/skills/execution-summary/SKILL.md
+  tags:
+    - ai-skill
+    - sre
+    - reporting
+    - audit
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-sre
+  disciplines:
+    - sre
+  categories:
+    - reporting
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/lightspeed-mcp-sre
+    - mcpserver:default/aap-mcp-job-management
+    - mcpserver:default/aap-mcp-inventory-management

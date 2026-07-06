@@ -1,0 +1,42 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: model-deploy
+  namespace: rh-ai-engineer
+  title: Model Deploy
+  description: >
+    Deploy AI/ML models on OpenShift AI using KServe with vLLM, NVIDIA NIM, or
+    Caikit+TGIS runtimes. Handles runtime selection, GPU validation, InferenceService
+    CR creation, and rollout monitoring.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/model-deploy/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - model-serving
+    - kserve
+    - deployment
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-ai-engineer
+  disciplines:
+    - ai
+  categories:
+    - deployment
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-ai-engineer
+    - mcpserver:default/ai-observability
+    - mcpserver:default/rhoai

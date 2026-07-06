@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: workbench-manage
+  namespace: rh-ai-engineer
+  title: Workbench Manage
+  description: >
+    Create and manage Jupyter notebook workbenches on OpenShift AI with image selection,
+    resource configuration, PVC storage, and lifecycle management. Handles Notebook CR
+    lifecycle including create with configurable images and resources, start/stop,
+    attach storage, and delete with data loss warnings.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/workbench-manage/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - jupyter
+    - workbench
+    - notebook
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-ai-engineer
+  disciplines:
+    - machine-learning
+  categories:
+    - management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-ai-engineer
+    - mcpserver:default/ai-observability
+    - mcpserver:default/rhoai

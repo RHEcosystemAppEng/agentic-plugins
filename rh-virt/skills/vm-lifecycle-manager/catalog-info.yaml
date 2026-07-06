@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: vm-lifecycle-manager
+  namespace: rh-virt
+  title: VM Lifecycle Manager
+  description: >
+    Manage virtual machine lifecycle operations including start, stop, and restart.
+    Handles VM state transitions safely with user confirmation for each action.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-virt/skills/vm-lifecycle-manager/SKILL.md
+  tags:
+    - ai-skill
+    - virtualization
+    - power-management
+    - operations
+    - lifecycle
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-virt
+  disciplines:
+    - operations
+  categories:
+    - vm-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-virtualization

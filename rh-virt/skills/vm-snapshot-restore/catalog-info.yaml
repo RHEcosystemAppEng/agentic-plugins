@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: vm-snapshot-restore
+  namespace: rh-virt
+  title: VM Snapshot Restore
+  description: >
+    Restore virtual machines from snapshots with strict safety confirmations to prevent
+    data loss. Requires VM to be stopped and typed snapshot name confirmation before restore.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-virt/skills/vm-snapshot-restore/SKILL.md
+  tags:
+    - ai-skill
+    - virtualization
+    - recovery
+    - snapshots
+    - data-protection
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-virt
+  disciplines:
+    - recovery
+  categories:
+    - snapshot-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-virtualization

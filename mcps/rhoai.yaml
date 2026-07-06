@@ -1,0 +1,29 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  name: rhoai
+  title: Red Hat OpenShift AI MCP Server
+  description: >
+    Red Hat OpenShift AI (RHOAI) MCP server for managing data science projects,
+    model serving, model registry, workbenches, and ML pipelines on the
+    OpenShift AI platform.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/mcps.json
+  tags:
+    - rhoai
+    - openshift-ai
+    - machine-learning
+    - model-serving
+    - mcp-server
+spec:
+  type: local
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  primitives: []
+  packages:
+    - type: uvx
+      name: rhoai-mcp
+      version: git+https://github.com/opendatahub-io/rhoai-mcp@31576c61b6f59280704c86dde1e3e9ed79def5e5
+      environment_variables: []
+  remotes: []

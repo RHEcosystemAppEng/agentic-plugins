@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: recommend-image
+  namespace: rh-developer
+  title: Recommend Image
+  description: >
+    Intelligently recommend the optimal S2I builder image or container base
+    image for a project based on detected language, framework, use-case
+    requirements, security posture, and deployment target. Supports Node.js,
+    Python, Java, Go, Ruby, .NET, PHP, and Perl on Red Hat UBI.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/recommend-image/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - containers
+    - image-selection
+    - ubi
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-developer
+  disciplines:
+    - development
+  categories:
+    - validation
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-developer
+    - mcpserver:default/podman
+    - mcpserver:default/github
+    - mcpserver:default/lightspeed-mcp-developer

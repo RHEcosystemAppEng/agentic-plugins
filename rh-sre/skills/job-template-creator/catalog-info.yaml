@@ -1,0 +1,42 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: job-template-creator
+  namespace: rh-sre
+  title: Job Template Creator
+  description: >
+    Create AAP (Ansible Automation Platform) job templates for executing playbooks.
+    Guides through adding playbooks to Git projects and creating job templates via
+    AAP Web UI for CVE remediation and other automation tasks.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/skills/job-template-creator/SKILL.md
+  tags:
+    - ai-skill
+    - sre
+    - ansible
+    - automation
+    - aap
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-sre
+  disciplines:
+    - automation
+  categories:
+    - automation
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/lightspeed-mcp-sre
+    - mcpserver:default/aap-mcp-job-management
+    - mcpserver:default/aap-mcp-inventory-management

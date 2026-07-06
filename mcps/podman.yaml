@@ -1,0 +1,28 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  name: podman
+  title: Podman MCP Server
+  description: >
+    Podman MCP server for container management operations.
+    Provides container lifecycle management, image operations,
+    and local container runtime interaction.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/mcps.json
+  tags:
+    - podman
+    - containers
+    - developer
+    - mcp-server
+spec:
+  type: local
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  primitives: []
+  packages:
+    - type: npx
+      name: podman-mcp-server
+      version: 0.0.15
+      environment_variables: []
+  remotes: []

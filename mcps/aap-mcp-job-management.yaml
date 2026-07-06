@@ -1,0 +1,29 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  name: aap-mcp-job-management
+  title: AAP MCP Server - Job Management
+  description: >
+    Ansible Automation Platform MCP server for job management operations.
+    Provides playbook execution, job tracking, template management,
+    and execution status monitoring.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/mcps.json
+  tags:
+    - ansible
+    - aap
+    - automation
+    - job-management
+    - mcp-server
+spec:
+  type: remote
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  primitives: []
+  packages: []
+  remotes:
+    - url: https://${AAP_MCP_SERVER}/job_management/mcp
+      environment_variables:
+        - description: AAP MCP server hostname
+          name: AAP_MCP_SERVER

@@ -1,20 +1,20 @@
 apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
-  name: openshift-self-managed
-  namespace: ocp-admin
-  title: OpenShift Assisted Installer MCP Server (Self-Managed)
+  name: openshift-ocm-managed
+  title: OpenShift OCM MCP Server (Managed Services)
   description: >
-    Red Hat Assisted Installer MCP server for self-managed clusters (OCP, SNO).
-    Uses the Assisted Installer API for full cluster lifecycle management
-    including creation, configuration, installation, and credential retrieval.
+    Red Hat OCM MCP server for managed service clusters (ROSA, ARO, OSD).
+    Uses the OCM API for cluster listing, inspection, and lifecycle management
+    of managed OpenShift deployments.
   annotations:
     backstage.io/source-location: >-
       url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/mcps.json
   tags:
     - openshift
-    - assisted-installer
-    - cluster-management
+    - ocm
+    - rosa
+    - managed-services
     - mcp-server
 spec:
   type: local

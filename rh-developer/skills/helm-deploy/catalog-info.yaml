@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: helm-deploy
+  namespace: rh-developer
+  title: Helm Deploy
+  description: >
+    Deploy applications to OpenShift using Helm charts. Supports both existing
+    charts and chart creation. Handles chart detection, values customization,
+    install and upgrade operations, and rollback.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/helm-deploy/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - helm
+    - deployment
+    - openshift
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-developer
+  disciplines:
+    - devops
+  categories:
+    - deployment
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-developer
+    - mcpserver:default/podman
+    - mcpserver:default/github
+    - mcpserver:default/lightspeed-mcp-developer

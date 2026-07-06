@@ -40,5 +40,5 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:ocp-admin/openshift-self-managed
-    - mcpserver:ocp-admin/openshift-ocm-managed
+    - mcpserver:default/openshift-self-managed
+    - mcpserver:default/openshift-ocm-managed

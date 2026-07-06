@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: rh-automation
+  title: Automation Agentic Pack
+  description: >
+    Points to all AI skill catalog entities in the rh-automation agentic pack
+    for Red Hat Ansible Automation Platform workflows.
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+spec:
+  targets:
+    - ./skills/aap-mcp-validator/catalog-info.yaml
+    - ./skills/execution-risk-analyzer/catalog-info.yaml
+    - ./skills/execution-summary/catalog-info.yaml
+    - ./skills/forensic-troubleshooter/catalog-info.yaml
+    - ./skills/governance-assessor/catalog-info.yaml
+    - ./skills/governance-executor/catalog-info.yaml
+    - ./skills/governance-readiness-assessor/catalog-info.yaml
+    - ./skills/governed-job-launcher/catalog-info.yaml
+    - ./skills/host-fact-inspector/catalog-info.yaml
+    - ./skills/job-failure-analyzer/catalog-info.yaml
+    - ./skills/resolution-advisor/catalog-info.yaml

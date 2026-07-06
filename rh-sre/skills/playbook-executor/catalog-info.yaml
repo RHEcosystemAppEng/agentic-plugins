@@ -1,0 +1,42 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: playbook-executor
+  namespace: rh-sre
+  title: Playbook Executor
+  description: >
+    Execute remediation playbooks via AAP with job management, dry-run support, and
+    reporting. Handles Git flow (commit, push, sync) when template playbook paths differ
+    from generated playbooks. Use after playbook-generator.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/skills/playbook-executor/SKILL.md
+  tags:
+    - ai-skill
+    - sre
+    - ansible
+    - automation
+    - execution
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-sre
+  disciplines:
+    - automation
+  categories:
+    - remediation
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/lightspeed-mcp-sre
+    - mcpserver:default/aap-mcp-job-management
+    - mcpserver:default/aap-mcp-inventory-management

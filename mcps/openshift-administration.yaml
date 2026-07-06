@@ -2,7 +2,6 @@ apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
   name: openshift-administration
-  namespace: ocp-admin
   title: OpenShift Administration MCP Server
   description: >
     Red Hat OpenShift MCP server for interacting with OpenShift Container Platform

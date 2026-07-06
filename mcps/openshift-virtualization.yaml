@@ -1,0 +1,32 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  name: openshift-virtualization
+  title: OpenShift Virtualization MCP Server
+  description: >
+    Red Hat OpenShift MCP server configured with core and kubevirt toolsets
+    for managing virtual machines on OpenShift Virtualization (CNV).
+    Provides VM lifecycle management, snapshot operations, and cluster
+    resource inspection.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-virt/mcps.json
+  tags:
+    - openshift
+    - virtualization
+    - kubevirt
+    - mcp-server
+spec:
+  type: local
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  primitives: []
+  packages:
+    - type: container
+      registry_name: quay.io
+      name: ecosystem-appeng/openshift-mcp-server
+      version: sha256:3531cb78f51f8c7ebcdb21adc21358ab8924116994848a3ce1ff542b3fc23742
+      environment_variables:
+        - description: Path to kubeconfig file for cluster authentication
+          name: KUBECONFIG
+  remotes: []

@@ -1,0 +1,40 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: red-hat-diagnostics
+  namespace: rh-basic
+  title: Red Hat Diagnostics
+  description: >
+    Explain how to gather diagnostic information for Red Hat products (RHEL,
+    OpenShift, Ansible Automation Platform, Satellite) to share with Red Hat
+    Technical Support.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-basic/skills/red-hat-diagnostics/SKILL.md
+  tags:
+    - ai-skill
+    - red-hat
+    - diagnostics
+    - support
+    - troubleshooting
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-basic
+  disciplines:
+    - support
+  categories:
+    - diagnostics
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/red-hat-security

@@ -40,4 +40,4 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:ocp-admin/openshift-administration
+    - mcpserver:default/openshift-administration

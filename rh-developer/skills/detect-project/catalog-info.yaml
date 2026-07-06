@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: detect-project
+  namespace: rh-developer
+  title: Detect Project
+  description: >
+    Analyze a project folder or GitHub repository to detect programming
+    language, framework, and version requirements. Supports Node.js, Python,
+    Java, Go, Ruby, .NET, PHP, and Perl. Use before s2i-build or rhel-deploy
+    for build strategy recommendations.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/detect-project/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - analysis
+    - project-detection
+    - language-detection
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-developer
+  disciplines:
+    - development
+  categories:
+    - validation
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-developer
+    - mcpserver:default/podman
+    - mcpserver:default/github
+    - mcpserver:default/lightspeed-mcp-developer

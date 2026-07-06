@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: ds-project-setup
+  namespace: rh-ai-engineer
+  title: DS Project Setup
+  description: >
+    Create and configure Data Science Projects on OpenShift AI with namespace setup,
+    S3 data connections, pipeline server, and model serving enablement. Bootstraps an
+    RHOAI Data Science Project with proper labels, data connections, pipeline
+    infrastructure, and model serving configuration.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/ds-project-setup/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - data-science
+    - openshift-ai
+    - project-setup
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-ai-engineer
+  disciplines:
+    - machine-learning
+  categories:
+    - configuration
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-ai-engineer
+    - mcpserver:default/ai-observability
+    - mcpserver:default/rhoai

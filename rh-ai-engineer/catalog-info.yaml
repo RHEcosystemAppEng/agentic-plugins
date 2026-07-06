@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: rh-ai-engineer
+  title: AI Engineering Agentic Pack
+  description: >
+    Points to all AI skill catalog entities in the rh-ai-engineer agentic pack
+    for Red Hat OpenShift AI and machine learning workflows.
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+spec:
+  targets:
+    - ./skills/ai-observability/catalog-info.yaml
+    - ./skills/debug-inference/catalog-info.yaml
+    - ./skills/ds-project-setup/catalog-info.yaml
+    - ./skills/guardrails-config/catalog-info.yaml
+    - ./skills/model-deploy/catalog-info.yaml
+    - ./skills/model-monitor/catalog-info.yaml
+    - ./skills/model-registry/catalog-info.yaml
+    - ./skills/nim-setup/catalog-info.yaml
+    - ./skills/pipeline-manage/catalog-info.yaml
+    - ./skills/serving-runtime-config/catalog-info.yaml
+    - ./skills/workbench-manage/catalog-info.yaml

@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: validate-environment
+  namespace: rh-developer
+  title: Validate Environment
+  description: >
+    Check and report the status of required tools and environment for
+    rh-developer skills. Validates tool installation (oc, helm, podman, git,
+    skopeo), cluster connectivity, and permissions.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/validate-environment/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - validation
+    - environment
+    - prerequisites
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-developer
+  disciplines:
+    - devops
+  categories:
+    - validation
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-developer
+    - mcpserver:default/podman
+    - mcpserver:default/github
+    - mcpserver:default/lightspeed-mcp-developer

@@ -1,0 +1,27 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  name: red-hat-security
+  title: Red Hat Security MCP Server
+  description: >
+    Red Hat Product Security MCP server providing access to CVE data,
+    security advisories (RHSA/RHBA/RHEA), product lifecycle information,
+    and vulnerability assessments via the Red Hat Security API.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-basic/mcps.json
+  tags:
+    - security
+    - cve
+    - red-hat
+    - advisory
+    - mcp-server
+spec:
+  type: remote
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  primitives: []
+  packages: []
+  remotes:
+    - url: https://security-mcp.api.redhat.com/mcp
+      environment_variables: []

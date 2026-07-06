@@ -1,0 +1,45 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: debug-rbac
+  namespace: rh-developer
+  title: Debug RBAC
+  description: >
+    Diagnose OpenShift RBAC permission failures that cause workloads to fail
+    with 403 Forbidden errors when accessing the Kubernetes API. Automates
+    multi-step diagnosis including pod logs analysis, ServiceAccount
+    identification, RoleBinding and ClusterRoleBinding analysis, and
+    remediation history for regression detection.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/debug-rbac/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - debugging
+    - rbac
+    - security
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-developer
+  disciplines:
+    - debugging
+  categories:
+    - debugging
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-developer
+    - mcpserver:default/podman
+    - mcpserver:default/github
+    - mcpserver:default/lightspeed-mcp-developer

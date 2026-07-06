@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: s2i-build
+  namespace: rh-developer
+  title: S2I Build
+  description: >
+    Create BuildConfig and ImageStream resources on OpenShift and trigger a
+    Source-to-Image (S2I) build. Handles namespace verification, resource
+    creation with user confirmation, build monitoring with log streaming,
+    and failure recovery.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/s2i-build/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - s2i
+    - builds
+    - openshift
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-developer
+  disciplines:
+    - devops
+  categories:
+    - deployment
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-developer
+    - mcpserver:default/podman
+    - mcpserver:default/github
+    - mcpserver:default/lightspeed-mcp-developer

@@ -1,0 +1,42 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: serving-runtime-config
+  namespace: rh-ai-engineer
+  title: Serving Runtime Config
+  description: >
+    Configure custom ServingRuntime CRs on OpenShift AI for model serving frameworks
+    not covered by built-in runtimes. Handles listing existing runtimes, creating new
+    ServingRuntime CRs, and validating compatibility with target models.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/serving-runtime-config/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - serving-runtime
+    - model-serving
+    - configuration
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-ai-engineer
+  disciplines:
+    - ai
+  categories:
+    - configuration
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-ai-engineer
+    - mcpserver:default/ai-observability
+    - mcpserver:default/rhoai

@@ -1,0 +1,29 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  name: aap-mcp-inventory-management
+  title: AAP MCP Server - Inventory Management
+  description: >
+    Ansible Automation Platform MCP server for inventory management.
+    Provides host inventory operations, group management,
+    and inventory source synchronization.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/mcps.json
+  tags:
+    - ansible
+    - aap
+    - automation
+    - inventory
+    - mcp-server
+spec:
+  type: remote
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  primitives: []
+  packages: []
+  remotes:
+    - url: https://${AAP_MCP_SERVER}/inventory_management/mcp
+      environment_variables:
+        - description: AAP MCP server hostname
+          name: AAP_MCP_SERVER

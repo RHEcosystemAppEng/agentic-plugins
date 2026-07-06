@@ -1,0 +1,41 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: mcp-lightspeed-validator
+  namespace: rh-sre
+  title: MCP Lightspeed Validator
+  description: >
+    Validate Red Hat Lightspeed MCP server connectivity. Verifies lightspeed-mcp
+    availability by calling get_mcp_version before CVE operations.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/skills/mcp-lightspeed-validator/SKILL.md
+  tags:
+    - ai-skill
+    - sre
+    - mcp
+    - validation
+    - lightspeed
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-sre
+  disciplines:
+    - devops
+  categories:
+    - validation
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/lightspeed-mcp-sre
+    - mcpserver:default/aap-mcp-job-management
+    - mcpserver:default/aap-mcp-inventory-management

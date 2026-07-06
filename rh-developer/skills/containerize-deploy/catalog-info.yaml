@@ -1,0 +1,46 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: containerize-deploy
+  namespace: rh-developer
+  title: Containerize Deploy
+  description: >
+    Complete end-to-end workflow for containerizing and deploying applications
+    to OpenShift or standalone RHEL systems. Orchestrates detect-project,
+    s2i-build, deploy, helm-deploy, and rhel-deploy skills with user
+    confirmation checkpoints at each phase. Supports S2I, Podman, and Helm
+    deployment strategies for OpenShift, and Podman or native deployments
+    for RHEL hosts.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/containerize-deploy/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - containerization
+    - deployment
+    - orchestration
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-developer
+  disciplines:
+    - devops
+  categories:
+    - deployment
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-developer
+    - mcpserver:default/podman
+    - mcpserver:default/github
+    - mcpserver:default/lightspeed-mcp-developer

@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: debug-rhel
+  namespace: rh-developer
+  title: Debug RHEL
+  description: >
+    Diagnose RHEL system issues including systemd service failures, SELinux
+    denials, firewall blocking, and system resource problems. Automates
+    multi-step diagnosis including journalctl log analysis, SELinux denial
+    detection, firewall rule inspection, and systemd unit status.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/debug-rhel/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - debugging
+    - rhel
+    - systemd
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-developer
+  disciplines:
+    - debugging
+  categories:
+    - debugging
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-developer
+    - mcpserver:default/podman
+    - mcpserver:default/github
+    - mcpserver:default/lightspeed-mcp-developer

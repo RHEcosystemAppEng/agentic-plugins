@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: debug-container
+  namespace: rh-developer
+  title: Debug Container
+  description: >
+    Diagnose local container issues with Podman/Docker including image pull
+    errors, container startup failures, OOM kills, and networking problems.
+    Automates multi-step diagnosis including container inspect, logs retrieval,
+    image analysis, and resource constraint checking.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/debug-container/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - debugging
+    - containers
+    - podman
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-developer
+  disciplines:
+    - debugging
+  categories:
+    - debugging
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-developer
+    - mcpserver:default/podman
+    - mcpserver:default/github
+    - mcpserver:default/lightspeed-mcp-developer

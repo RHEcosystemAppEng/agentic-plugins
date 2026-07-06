@@ -1,0 +1,40 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: red-hat-security-mcp-setup
+  namespace: rh-basic
+  title: Red Hat Security MCP Setup
+  description: >
+    Add the Red Hat Security MCP server to this project. Configures the HTTP
+    transport endpoint and explains the Red Hat Customer Portal SSO browser
+    login flow.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-basic/skills/red-hat-security-mcp-setup/SKILL.md
+  tags:
+    - ai-skill
+    - red-hat
+    - mcp
+    - security
+    - configuration
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-basic
+  disciplines:
+    - devops
+  categories:
+    - configuration
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/red-hat-security

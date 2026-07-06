@@ -5,7 +5,38 @@ metadata:
   title: Agentic Plugins
   description: >
     Root catalog entry point for the agentic-plugins repository.
-    Points to all agentic pack locations for Compass ingestion.
+    Points to all agentic pack locations and MCP server manifests
+    for Compass ingestion.
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
 spec:
   targets:
+    # Agentic Pack Locations
     - ./ocp-admin/catalog-info.yaml
+    - ./rh-sre/catalog-info.yaml
+    - ./rh-virt/catalog-info.yaml
+    - ./rh-developer/catalog-info.yaml
+    - ./rh-basic/catalog-info.yaml
+    - ./rh-ai-engineer/catalog-info.yaml
+    - ./rh-automation/catalog-info.yaml
+    # MCP Server Manifests
+    - ./mcps/openshift-self-managed.yaml
+    - ./mcps/openshift-ocm-managed.yaml
+    - ./mcps/openshift-administration.yaml
+    - ./mcps/openshift-virtualization.yaml
+    - ./mcps/openshift-developer.yaml
+    - ./mcps/openshift-ai-engineer.yaml
+    - ./mcps/lightspeed-mcp-sre.yaml
+    - ./mcps/lightspeed-mcp-developer.yaml
+    - ./mcps/aap-mcp-job-management.yaml
+    - ./mcps/aap-mcp-inventory-management.yaml
+    - ./mcps/aap-mcp-configuration.yaml
+    - ./mcps/aap-mcp-security-compliance.yaml
+    - ./mcps/aap-mcp-system-monitoring.yaml
+    - ./mcps/aap-mcp-user-management.yaml
+    - ./mcps/red-hat-security.yaml
+    - ./mcps/ai-observability.yaml
+    - ./mcps/rhoai.yaml
+    - ./mcps/podman.yaml
+    - ./mcps/github.yaml

@@ -1,0 +1,30 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  name: aap-mcp-security-compliance
+  title: AAP MCP Server - Security & Compliance
+  description: >
+    Ansible Automation Platform MCP server for security and compliance operations.
+    Provides credential management, RBAC policy enforcement,
+    and compliance audit capabilities.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/mcps.json
+  tags:
+    - ansible
+    - aap
+    - automation
+    - security
+    - compliance
+    - mcp-server
+spec:
+  type: remote
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  primitives: []
+  packages: []
+  remotes:
+    - url: https://${AAP_MCP_SERVER}/security_compliance/mcp
+      environment_variables:
+        - description: AAP MCP server hostname
+          name: AAP_MCP_SERVER

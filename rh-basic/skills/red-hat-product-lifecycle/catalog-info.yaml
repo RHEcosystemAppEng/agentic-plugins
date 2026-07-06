@@ -1,0 +1,40 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: red-hat-product-lifecycle
+  namespace: rh-basic
+  title: Red Hat Product Lifecycle
+  description: >
+    Explain a Red Hat product's lifecycle status, support phases, and
+    recommended action. Answers questions like "Is RHEL 8.6 still supported?"
+    or "When does OpenShift 4.14 reach end of maintenance?"
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-basic/skills/red-hat-product-lifecycle/SKILL.md
+  tags:
+    - ai-skill
+    - red-hat
+    - lifecycle
+    - support
+    - product-management
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-basic
+  disciplines:
+    - support
+  categories:
+    - lifecycle-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/red-hat-security

@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: vm-clone
+  namespace: rh-virt
+  title: VM Clone
+  description: >
+    Clone existing virtual machines for testing, scaling, or creating templates.
+    Clones VM configuration and optionally creates new storage or references existing storage.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-virt/skills/vm-clone/SKILL.md
+  tags:
+    - ai-skill
+    - virtualization
+    - cloning
+    - templates
+    - provisioning
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-virt
+  disciplines:
+    - provisioning
+  categories:
+    - vm-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/openshift-virtualization

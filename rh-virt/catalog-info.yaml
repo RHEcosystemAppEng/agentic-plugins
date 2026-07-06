@@ -1,0 +1,23 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: rh-virt
+  title: Virtualization Management Agentic Pack
+  description: >
+    Points to all AI skill catalog entities in the rh-virt agentic pack
+    for Red Hat OpenShift Virtualization management.
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+spec:
+  targets:
+    - ./skills/vm-clone/catalog-info.yaml
+    - ./skills/vm-create/catalog-info.yaml
+    - ./skills/vm-delete/catalog-info.yaml
+    - ./skills/vm-inventory/catalog-info.yaml
+    - ./skills/vm-lifecycle-manager/catalog-info.yaml
+    - ./skills/vm-rebalance/catalog-info.yaml
+    - ./skills/vm-snapshot-create/catalog-info.yaml
+    - ./skills/vm-snapshot-delete/catalog-info.yaml
+    - ./skills/vm-snapshot-list/catalog-info.yaml
+    - ./skills/vm-snapshot-restore/catalog-info.yaml

@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: governance-readiness-assessor
+  namespace: rh-automation
+  title: Governance Readiness Assessor
+  description: >
+    Assess AAP platform governance readiness -- full 7-domain audit or scoped to
+    specific domains.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/skills/governance-readiness-assessor/SKILL.md
+  tags:
+    - ai-skill
+    - automation
+    - ansible
+    - governance
+    - readiness
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ecosystem-appeng
+  system: rh-automation
+  disciplines:
+    - security
+  categories:
+    - governance
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:default/aap-mcp-job-management
+    - mcpserver:default/aap-mcp-inventory-management
+    - mcpserver:default/aap-mcp-configuration
+    - mcpserver:default/aap-mcp-security-compliance
+    - mcpserver:default/aap-mcp-system-monitoring
+    - mcpserver:default/aap-mcp-user-management
