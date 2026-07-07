@@ -16,7 +16,7 @@ description: |
 license: Apache-2.0
 model: inherit
 color: cyan
-allowed-tools: list_clusters cluster_info cluster_events cluster_logs_download_url
+allowed-tools: list_clusters get_cluster_hosts cluster_info cluster_events cluster_logs_download_url
 metadata:
   mcp_servers:
     - openshift-self-managed
@@ -158,6 +158,8 @@ Do NOT use when:
 3. Sort by type (OCP→ROSA→ARO→OSD→SNO), then date (newest first)
 4. Display with summary header + list/table format
 
+**Dashboard presentation**: After receiving the `list_clusters` response, the Cluster Inventory dashboard opens automatically on UI-capable clients. On text-only clients, format the results as described in Output Formatting.
+
 **Error Handling**:
 - Both APIs fail → Verify OFFLINE_TOKEN and connectivity
 - One API fails → Show partial results with note
@@ -228,7 +230,8 @@ Execute when user requests events, troubleshoots errors, or needs installation l
 - `openshift-ocm-managed` - OCM service for ROSA/ARO/OSD ([setup](../../README.md))
 
 ### Required MCP Tools
-- `list_clusters` (from both servers) - Lists clusters (auto-routes to correct API)
+- `list_clusters` (from both servers) - Lists clusters and opens the Cluster Inventory dashboard on UI-capable clients. Falls back to text on others.
+- `get_cluster_hosts` (from openshift-self-managed) - Opens the Cluster Setup dashboard for a specific cluster on UI-capable clients.
 - `cluster_info` (from both servers) - Gets cluster details (auto-routes to correct API)
 - `cluster_events` (from openshift-self-managed only) - Gets events for self-managed clusters
 - `cluster_logs_download_url` (from openshift-self-managed only) - Gets log download URL
