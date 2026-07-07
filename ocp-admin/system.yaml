@@ -15,12 +15,19 @@ metadata:
     - administration
   annotations:
     backstage.io/techdocs-ref: url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/README.md
+    agentic.redhat.com/lola-module: "true"
+    agentic.redhat.com/lola-module-name: ocp-admin
+    agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
+    agentic.redhat.com/path: ocp-admin
   labels:
     agentic-plugins.redhat.com/version: "1.0"
-    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
   links:
     - url: https://github.com/RHEcosystemAppEng/agentic-plugins
       title: Source Repository
       icon: github
 spec:
   owner: group:redhat/ecosystem-appeng
+  dependsOn:
+    - mcpserver:rh-agentic-plugins-mcps/assisted-installer
+    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server

@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: rh-agentic-plugins-mcps
+  namespace: rh-agentic-plugins-mcps
+  title: Agentic Plugins MCP Servers
+  description: >
+    Shared MCP server configurations used across agentic packs.
+    Includes servers for OpenShift, Ansible, Lightspeed, security,
+    AI observability, RHOAI, Podman, and GitHub.
+  tags:
+    - mcp-server
+    - ai-skill
+    - shared-infrastructure
+  annotations:
+    backstage.io/techdocs-ref: url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/README.md
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  owner: group:redhat/ecosystem-appeng

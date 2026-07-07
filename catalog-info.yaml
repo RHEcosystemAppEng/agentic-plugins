@@ -9,7 +9,7 @@ metadata:
     for Compass ingestion.
   labels:
     agentic-plugins.redhat.com/version: "1.0"
-    agentic-plugins.redhat.com/repo: "redhat-agentic-plugins"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
 spec:
   targets:
     # System manifests (one per pack)
@@ -28,7 +28,8 @@ spec:
     - ./rh-basic/catalog-info.yaml
     - ./rh-ai-engineer/catalog-info.yaml
     - ./rh-automation/catalog-info.yaml
-    # MCP Server Manifests
+    # MCP System and Server Manifests
+    - ./mcps/system.yaml
     - ./mcps/openshift-mcp-server.yaml
     - ./mcps/assisted-installer.yaml
     - ./mcps/red-hat-lightspeed.yaml

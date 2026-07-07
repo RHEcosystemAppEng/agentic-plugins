@@ -21,6 +21,7 @@ spec:
   type: local
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
+  system: rh-agentic-plugins-mcps
   primitives:
     - type: tool
       name: configuration_contexts_list

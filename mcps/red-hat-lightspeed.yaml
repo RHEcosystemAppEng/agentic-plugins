@@ -22,6 +22,7 @@ spec:
   type: local
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
+  system: rh-agentic-plugins-mcps
   primitives: []
   packages:
     - type: container
