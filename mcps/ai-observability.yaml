@@ -11,6 +11,8 @@ metadata:
   annotations:
     backstage.io/source-location: >-
       url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/mcps.json
+    backstage.io/techdocs-ref: >-
+      url:https://github.com/rh-ai-quickstart/ai-observability-summarizer/blob/main/README.md
   tags:
     - ai
     - observability

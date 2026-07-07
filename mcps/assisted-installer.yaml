@@ -13,6 +13,8 @@ metadata:
   annotations:
     backstage.io/source-location: >-
       url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/mcps.json
+    backstage.io/techdocs-ref: >-
+      url:https://github.com/openshift-assisted/assisted-service-mcp/blob/main/README.md
   tags:
     - openshift
     - assisted-installer

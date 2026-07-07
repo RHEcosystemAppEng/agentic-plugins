@@ -12,6 +12,8 @@ metadata:
   annotations:
     backstage.io/source-location: >-
       url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/mcps.json
+    backstage.io/techdocs-ref: >-
+      url:https://github.com/RedHatInsights/insights-mcp/blob/main/README.md
   tags:
     - lightspeed
     - insights

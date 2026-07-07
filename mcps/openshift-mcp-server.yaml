@@ -12,6 +12,8 @@ metadata:
   annotations:
     backstage.io/source-location: >-
       url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/mcps.json
+    backstage.io/techdocs-ref: >-
+      url:https://github.com/openshift/openshift-mcp-server/blob/main/README.md
   tags:
     - openshift
     - kubernetes
