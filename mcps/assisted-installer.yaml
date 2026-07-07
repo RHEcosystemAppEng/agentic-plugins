@@ -1,6 +1,7 @@
 apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
+  namespace: rh-agentic-plugins-mcps
   name: assisted-installer
   title: OpenShift Assisted Installer MCP Server
   description: >

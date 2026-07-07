@@ -37,4 +37,4 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/red-hat-security
+    - mcpserver:rh-agentic-plugins-mcps/red-hat-security

@@ -36,4 +36,4 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/openshift-mcp-server
+    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server

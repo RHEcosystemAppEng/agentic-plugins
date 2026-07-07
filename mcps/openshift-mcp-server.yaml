@@ -1,6 +1,7 @@
 apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
+  namespace: rh-agentic-plugins-mcps
   name: openshift-mcp-server
   title: OpenShift MCP Server
   description: >

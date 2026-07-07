@@ -1,6 +1,7 @@
 apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
+  namespace: rh-agentic-plugins-mcps
   name: red-hat-lightspeed
   title: Red Hat Lightspeed MCP Server
   description: >

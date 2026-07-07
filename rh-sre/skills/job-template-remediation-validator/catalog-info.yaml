@@ -36,5 +36,5 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/red-hat-lightspeed
-    - mcpserver:default/ansible-automation-platform
+    - mcpserver:rh-agentic-plugins-mcps/red-hat-lightspeed
+    - mcpserver:rh-agentic-plugins-mcps/ansible-automation-platform

@@ -37,7 +37,7 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/openshift-mcp-server
-    - mcpserver:default/podman
-    - mcpserver:default/github
-    - mcpserver:default/red-hat-lightspeed
+    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
+    - mcpserver:rh-agentic-plugins-mcps/podman
+    - mcpserver:rh-agentic-plugins-mcps/github
+    - mcpserver:rh-agentic-plugins-mcps/red-hat-lightspeed

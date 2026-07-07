@@ -1,6 +1,7 @@
 apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
+  namespace: rh-agentic-plugins-mcps
   name: ansible-automation-platform
   title: Ansible Automation Platform MCP Server
   description: >

@@ -36,4 +36,4 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/ansible-automation-platform
+    - mcpserver:rh-agentic-plugins-mcps/ansible-automation-platform

@@ -40,4 +40,4 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:default/assisted-installer
+    - mcpserver:rh-agentic-plugins-mcps/assisted-installer
