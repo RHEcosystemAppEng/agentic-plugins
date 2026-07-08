@@ -14,7 +14,6 @@ metadata:
     - getting-started
     - support
   annotations:
-    backstage.io/techdocs-ref: url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-basic/README.md
     agentic.redhat.com/lola-module: "true"
     agentic.redhat.com/lola-module-name: rh-basic
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins

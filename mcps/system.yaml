@@ -12,8 +12,6 @@ metadata:
     - mcp-server
     - ai-skill
     - shared-infrastructure
-  annotations:
-    backstage.io/techdocs-ref: url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/README.md
   labels:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"

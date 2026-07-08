@@ -13,7 +13,6 @@ metadata:
     - kubevirt
     - openshift
   annotations:
-    backstage.io/techdocs-ref: url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-virt/README.md
     agentic.redhat.com/lola-module: "true"
     agentic.redhat.com/lola-module-name: rh-virt
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins

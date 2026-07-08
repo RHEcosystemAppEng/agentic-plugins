@@ -14,7 +14,6 @@ metadata:
     - cluster-management
     - administration
   annotations:
-    backstage.io/techdocs-ref: url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/README.md
     agentic.redhat.com/lola-module: "true"
     agentic.redhat.com/lola-module-name: ocp-admin
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins

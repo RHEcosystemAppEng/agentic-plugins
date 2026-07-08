@@ -11,13 +11,15 @@ metadata:
   annotations:
     backstage.io/source-location: >-
       url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/mcps.json
-    backstage.io/techdocs-ref: >-
-      url:https://github.com/ansible/aap-mcp-server/blob/main/README.md
   tags:
     - ansible
     - aap
     - automation
     - mcp-server
+  links:
+    - url: https://github.com/ansible/aap-mcp-server
+      title: Upstream Repository
+      icon: github
 spec:
   type: remote
   lifecycle: beta

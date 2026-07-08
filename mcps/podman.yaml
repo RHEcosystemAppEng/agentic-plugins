@@ -11,13 +11,15 @@ metadata:
   annotations:
     backstage.io/source-location: >-
       url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/mcps.json
-    backstage.io/techdocs-ref: >-
-      url:https://github.com/manusa/podman-mcp-server/blob/main/README.md
   tags:
     - podman
     - containers
     - developer
     - mcp-server
+  links:
+    - url: https://github.com/manusa/podman-mcp-server
+      title: Upstream Repository
+      icon: github
 spec:
   type: local
   lifecycle: beta
