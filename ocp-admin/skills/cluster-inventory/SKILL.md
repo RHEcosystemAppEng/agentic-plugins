@@ -231,7 +231,7 @@ Execute when user requests events, troubleshoots errors, or needs installation l
 
 ### Required MCP Tools
 - `list_clusters` (from both servers) - Lists clusters and opens the Cluster Inventory dashboard on UI-capable clients. Falls back to text on others.
-- `get_cluster_hosts` (from openshift-self-managed) - Opens the Cluster Setup dashboard for a specific cluster on UI-capable clients.
+- `get_cluster_hosts` (from openshift-self-managed, optional) - If available, opens the Cluster Setup dashboard for a specific cluster on UI-capable clients. Falls back to text on others.
 - `cluster_info` (from both servers) - Gets cluster details (auto-routes to correct API)
 - `cluster_events` (from openshift-self-managed only) - Gets events for self-managed clusters
 - `cluster_logs_download_url` (from openshift-self-managed only) - Gets log download URL
