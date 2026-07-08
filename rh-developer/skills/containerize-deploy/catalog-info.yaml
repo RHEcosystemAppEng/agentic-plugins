@@ -44,3 +44,12 @@ spec:
     - mcpserver:rh-agentic-plugins-mcps/podman
     - mcpserver:rh-agentic-plugins-mcps/github
     - mcpserver:rh-agentic-plugins-mcps/red-hat-lightspeed
+    - airesource:rh-developer/detect-project
+    - airesource:rh-developer/recommend-image
+    - airesource:rh-developer/s2i-build
+    - airesource:rh-developer/deploy
+    - airesource:rh-developer/helm-deploy
+    - airesource:rh-developer/rhel-deploy
+    - airesource:rh-developer/debug-pod
+    - airesource:rh-developer/debug-network
+    - airesource:rh-developer/debug-build

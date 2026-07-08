@@ -43,3 +43,8 @@ spec:
     - mcpserver:rh-agentic-plugins-mcps/podman
     - mcpserver:rh-agentic-plugins-mcps/github
     - mcpserver:rh-agentic-plugins-mcps/red-hat-lightspeed
+    - airesource:rh-developer/debug-scc
+    - airesource:rh-developer/debug-rbac
+    - airesource:rh-developer/debug-pod
+    - airesource:rh-developer/debug-network
+    - airesource:rh-developer/debug-build

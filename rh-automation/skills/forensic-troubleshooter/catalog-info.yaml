@@ -37,3 +37,8 @@ spec:
     - cursor
   dependsOn:
     - mcpserver:rh-agentic-plugins-mcps/ansible-automation-platform
+    - airesource:rh-automation/aap-mcp-validator
+    - airesource:rh-automation/job-failure-analyzer
+    - airesource:rh-automation/host-fact-inspector
+    - airesource:rh-automation/resolution-advisor
+    - airesource:rh-automation/execution-summary

@@ -39,3 +39,6 @@ spec:
   dependsOn:
     - mcpserver:rh-agentic-plugins-mcps/red-hat-lightspeed
     - mcpserver:rh-agentic-plugins-mcps/ansible-automation-platform
+    - airesource:rh-sre/mcp-aap-validator
+    - airesource:rh-sre/job-template-remediation-validator
+    - airesource:rh-sre/job-template-creator

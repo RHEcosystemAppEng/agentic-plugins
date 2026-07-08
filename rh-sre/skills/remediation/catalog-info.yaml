@@ -40,3 +40,11 @@ spec:
   dependsOn:
     - mcpserver:rh-agentic-plugins-mcps/red-hat-lightspeed
     - mcpserver:rh-agentic-plugins-mcps/ansible-automation-platform
+    - airesource:rh-sre/mcp-lightspeed-validator
+    - airesource:rh-sre/mcp-aap-validator
+    - airesource:rh-sre/cve-impact
+    - airesource:rh-sre/cve-validation
+    - airesource:rh-sre/system-context
+    - airesource:rh-sre/playbook-generator
+    - airesource:rh-sre/playbook-executor
+    - airesource:rh-sre/remediation-verifier

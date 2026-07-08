@@ -41,3 +41,4 @@ spec:
     - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
     - mcpserver:rh-agentic-plugins-mcps/ai-observability
     - mcpserver:rh-agentic-plugins-mcps/rhoai
+    - airesource:rh-ai-engineer/model-deploy
