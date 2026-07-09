@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package skill packs into self-contained ZIPs for ChatGPT upload."""
+"""Package skill packs into self-contained ZIPs."""
 
 import argparse
 import logging
@@ -110,7 +110,7 @@ def package_all(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Package skill packs into ZIPs for ChatGPT upload")
+    parser = argparse.ArgumentParser(description="Package skill packs into self-contained ZIPs")
     parser.add_argument("--output-dir", default="dist", help="Output directory (default: dist)")
     parser.add_argument("--packs", nargs="*", help="Only package these packs (default: all)")
     parser.add_argument("--root", default=str(_REPO_ROOT), help="Repository root (default: auto-detect)")

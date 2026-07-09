@@ -44,7 +44,7 @@ jobs:
           gh release delete latest --yes 2>/dev/null || true
           git tag -f latest
           git push origin latest --force
-          gh release create latest dist/*.zip --title "Latest Skill Packs" --notes "Auto-updated on every merge to main. Download the ZIP for your pack and upload it to ChatGPT." --latest
+          gh release create latest dist/*.zip --title "Latest Skill Packs" --notes "Auto-updated on every merge to main. Download the ZIP for your pack." --latest
 
       - name: Upload release assets
         if: github.event_name == 'release' && github.event.release.tag_name != 'latest'
