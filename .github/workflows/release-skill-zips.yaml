@@ -41,6 +41,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
+          if ! ls dist/*.zip 1>/dev/null 2>&1; then
+            echo "No ZIPs found in dist/, skipping release update"
+            exit 1
+          fi
           gh release delete latest --yes 2>/dev/null || true
           git tag -f latest
           git push origin latest --force
