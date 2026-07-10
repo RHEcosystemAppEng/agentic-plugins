@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: AiResource
 metadata:
   name: rh-basic
   namespace: rh-basic
@@ -26,6 +26,18 @@ metadata:
       title: Source Repository
       icon: github
 spec:
+  type: plugin
+  lifecycle: production
   owner: group:redhat/ecosystem-appeng
+  system: agentic-plugins
+  disciplines:
+    - operations
+  categories:
+    - getting-started
+    - support
+  agents:
+    - claude-code
+    - opencode
+    - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/red-hat-security
+    - mcpserver:agentic-plugins/red-hat-security

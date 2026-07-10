@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: AiResource
 metadata:
   name: rh-sre
   namespace: rh-sre
@@ -26,7 +26,20 @@ metadata:
       title: Source Repository
       icon: github
 spec:
+  type: plugin
+  lifecycle: production
   owner: group:redhat/ecosystem-appeng
+  system: agentic-plugins
+  disciplines:
+    - sre
+    - security
+  categories:
+    - monitoring
+    - vulnerability-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/red-hat-lightspeed
-    - mcpserver:rh-agentic-plugins-mcps/ansible-automation-platform
+    - mcpserver:agentic-plugins/red-hat-lightspeed
+    - mcpserver:agentic-plugins/ansible-automation-platform

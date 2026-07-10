@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: AiResource
 metadata:
   name: rh-virt
   namespace: rh-virt
@@ -25,6 +25,18 @@ metadata:
       title: Source Repository
       icon: github
 spec:
+  type: plugin
+  lifecycle: production
   owner: group:redhat/ecosystem-appeng
+  system: agentic-plugins
+  disciplines:
+    - platform-engineering
+  categories:
+    - virtualization
+    - vm-lifecycle
+  agents:
+    - claude-code
+    - opencode
+    - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
+    - mcpserver:agentic-plugins/openshift-mcp-server

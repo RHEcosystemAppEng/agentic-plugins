@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: AiResource
 metadata:
   name: rh-automation
   namespace: rh-automation
@@ -26,6 +26,18 @@ metadata:
       title: Source Repository
       icon: github
 spec:
+  type: plugin
+  lifecycle: production
   owner: group:redhat/ecosystem-appeng
+  system: agentic-plugins
+  disciplines:
+    - operations
+  categories:
+    - automation
+    - governance
+  agents:
+    - claude-code
+    - opencode
+    - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/ansible-automation-platform
+    - mcpserver:agentic-plugins/ansible-automation-platform

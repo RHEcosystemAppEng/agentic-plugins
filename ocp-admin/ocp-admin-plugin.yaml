@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: AiResource
 metadata:
   name: ocp-admin
   namespace: ocp-admin
@@ -26,7 +26,19 @@ metadata:
       title: Source Repository
       icon: github
 spec:
+  type: plugin
+  lifecycle: production
   owner: group:redhat/ecosystem-appeng
+  system: agentic-plugins
+  disciplines:
+    - platform-engineering
+  categories:
+    - cluster-management
+    - administration
+  agents:
+    - claude-code
+    - opencode
+    - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/assisted-installer
-    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
+    - mcpserver:agentic-plugins/assisted-installer
+    - mcpserver:agentic-plugins/openshift-mcp-server

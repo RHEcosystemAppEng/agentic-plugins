@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: AiResource
 metadata:
   name: rh-developer
   namespace: rh-developer
@@ -26,9 +26,21 @@ metadata:
       title: Source Repository
       icon: github
 spec:
+  type: plugin
+  lifecycle: production
   owner: group:redhat/ecosystem-appeng
+  system: agentic-plugins
+  disciplines:
+    - development
+  categories:
+    - build
+    - deployment
+  agents:
+    - claude-code
+    - opencode
+    - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
-    - mcpserver:rh-agentic-plugins-mcps/podman
-    - mcpserver:rh-agentic-plugins-mcps/github
-    - mcpserver:rh-agentic-plugins-mcps/red-hat-lightspeed
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/podman
+    - mcpserver:agentic-plugins/github
+    - mcpserver:agentic-plugins/red-hat-lightspeed

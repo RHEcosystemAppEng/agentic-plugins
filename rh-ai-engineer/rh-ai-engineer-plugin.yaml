@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: AiResource
 metadata:
   name: rh-ai-engineer
   namespace: rh-ai-engineer
@@ -26,8 +26,20 @@ metadata:
       title: Source Repository
       icon: github
 spec:
+  type: plugin
+  lifecycle: production
   owner: group:redhat/ecosystem-appeng
+  system: agentic-plugins
+  disciplines:
+    - ai-engineering
+  categories:
+    - model-management
+    - ml-ops
+  agents:
+    - claude-code
+    - opencode
+    - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
-    - mcpserver:rh-agentic-plugins-mcps/ai-observability
-    - mcpserver:rh-agentic-plugins-mcps/rhoai
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/ai-observability
+    - mcpserver:agentic-plugins/rhoai
