@@ -27,7 +27,6 @@ spec:
   type: skill
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: ocp-admin
   disciplines:
     - devops
     - infrastructure
@@ -39,4 +38,5 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/assisted-installer
+    - airesource:ocp-admin/ocp-admin
+    - mcpserver:agentic-plugins/assisted-installer

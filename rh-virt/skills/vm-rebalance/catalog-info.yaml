@@ -26,7 +26,6 @@ spec:
   type: skill
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: rh-virt
   disciplines:
     - optimization
   categories:
@@ -36,4 +35,5 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
+    - airesource:rh-virt/rh-virt
+    - mcpserver:agentic-plugins/openshift-mcp-server

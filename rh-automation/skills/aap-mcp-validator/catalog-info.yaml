@@ -26,7 +26,6 @@ spec:
   type: skill
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: rh-automation
   disciplines:
     - automation
   categories:
@@ -36,4 +35,5 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/ansible-automation-platform
+    - airesource:rh-automation/rh-automation
+    - mcpserver:agentic-plugins/ansible-automation-platform

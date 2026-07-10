@@ -28,7 +28,6 @@ spec:
   type: skill
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: rh-developer
   disciplines:
     - development
   categories:
@@ -38,7 +37,8 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
-    - mcpserver:rh-agentic-plugins-mcps/podman
-    - mcpserver:rh-agentic-plugins-mcps/github
-    - mcpserver:rh-agentic-plugins-mcps/red-hat-lightspeed
+    - airesource:rh-developer/rh-developer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/podman
+    - mcpserver:agentic-plugins/github
+    - mcpserver:agentic-plugins/red-hat-lightspeed

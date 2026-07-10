@@ -27,7 +27,6 @@ spec:
   type: skill
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: rh-basic
   disciplines:
     - devops
   categories:
@@ -37,4 +36,5 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/red-hat-security
+    - airesource:rh-basic/rh-basic
+    - mcpserver:agentic-plugins/red-hat-security

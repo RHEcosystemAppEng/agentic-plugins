@@ -28,7 +28,6 @@ spec:
   type: skill
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: ocp-admin
   disciplines:
     - devops
     - sre
@@ -40,4 +39,5 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
+    - airesource:ocp-admin/ocp-admin
+    - mcpserver:agentic-plugins/openshift-mcp-server

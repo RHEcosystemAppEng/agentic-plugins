@@ -27,7 +27,6 @@ spec:
   type: skill
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: ocp-admin
   disciplines:
     - security
     - devops
@@ -38,3 +37,5 @@ spec:
     - claude-code
     - opencode
     - cursor
+  dependsOn:
+    - airesource:ocp-admin/ocp-admin

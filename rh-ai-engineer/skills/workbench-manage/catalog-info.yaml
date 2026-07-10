@@ -28,7 +28,6 @@ spec:
   type: skill
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: rh-ai-engineer
   disciplines:
     - machine-learning
   categories:
@@ -38,6 +37,7 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:rh-agentic-plugins-mcps/openshift-mcp-server
-    - mcpserver:rh-agentic-plugins-mcps/ai-observability
-    - mcpserver:rh-agentic-plugins-mcps/rhoai
+    - airesource:rh-ai-engineer/rh-ai-engineer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/ai-observability
+    - mcpserver:agentic-plugins/rhoai
