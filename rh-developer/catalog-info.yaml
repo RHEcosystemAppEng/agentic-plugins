@@ -16,6 +16,7 @@ metadata:
     agentic-plugins.redhat.com/repo: "agentic-plugins"
 spec:
   targets:
+    - ./rh-developer-plugin.yaml
     - ./skills/containerize-deploy/catalog-info.yaml
     - ./skills/debug-build/catalog-info.yaml
     - ./skills/debug-container/catalog-info.yaml

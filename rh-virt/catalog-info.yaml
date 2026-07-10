@@ -16,6 +16,7 @@ metadata:
     agentic-plugins.redhat.com/repo: "agentic-plugins"
 spec:
   targets:
+    - ./rh-virt-plugin.yaml
     - ./skills/vm-clone/catalog-info.yaml
     - ./skills/vm-create/catalog-info.yaml
     - ./skills/vm-delete/catalog-info.yaml

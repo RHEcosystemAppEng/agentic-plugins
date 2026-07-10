@@ -16,6 +16,7 @@ metadata:
     agentic-plugins.redhat.com/repo: "agentic-plugins"
 spec:
   targets:
+    - ./rh-sre-plugin.yaml
     - ./skills/cve-impact/catalog-info.yaml
     - ./skills/cve-validation/catalog-info.yaml
     - ./skills/execution-summary/catalog-info.yaml

@@ -16,6 +16,7 @@ metadata:
     agentic-plugins.redhat.com/repo: "agentic-plugins"
 spec:
   targets:
+    - ./rh-basic-plugin.yaml
     - ./skills/red-hat-cve-explainer/catalog-info.yaml
     - ./skills/red-hat-diagnostics/catalog-info.yaml
     - ./skills/red-hat-get-started/catalog-info.yaml

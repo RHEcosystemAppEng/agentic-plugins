@@ -1,7 +1,7 @@
 apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
-  namespace: rh-agentic-plugins-mcps
+  namespace: agentic-plugins
   name: red-hat-lightspeed
   title: Red Hat Lightspeed MCP Server
   description: >
@@ -26,7 +26,7 @@ spec:
   type: local
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: rh-agentic-plugins-mcps
+  system: agentic-plugins
   primitives: []
   packages:
     - type: container

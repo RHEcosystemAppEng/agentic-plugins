@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: agentic-plugins
+  title: Agentic Plugins
+  description: >
+    Agentic skill packs and MCP server configurations for Red Hat platforms.
+    Provides AI-powered automation across OpenShift, Ansible, Virtualization,
+    AI/ML, and SRE workflows through persona-specific skill modules.
+  tags:
+    - ai-skill
+    - agentic
+    - red-hat
+  annotations:
+    agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  owner: group:redhat/ecosystem-appeng

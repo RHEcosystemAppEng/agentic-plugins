@@ -16,6 +16,7 @@ metadata:
     agentic-plugins.redhat.com/repo: "agentic-plugins"
 spec:
   targets:
+    - ./ocp-admin-plugin.yaml
     - ./skills/cluster-creator/catalog-info.yaml
     - ./skills/cluster-inventory/catalog-info.yaml
     - ./skills/cluster-report/catalog-info.yaml

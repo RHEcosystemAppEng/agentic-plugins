@@ -16,6 +16,7 @@ metadata:
     agentic-plugins.redhat.com/repo: "agentic-plugins"
 spec:
   targets:
+    - ./rh-ai-engineer-plugin.yaml
     - ./skills/ai-observability/catalog-info.yaml
     - ./skills/debug-inference/catalog-info.yaml
     - ./skills/ds-project-setup/catalog-info.yaml

@@ -12,14 +12,8 @@ metadata:
     agentic-plugins.redhat.com/repo: "agentic-plugins"
 spec:
   targets:
-    # System manifests (one per pack)
-    - ./ocp-admin/system.yaml
-    - ./rh-sre/system.yaml
-    - ./rh-virt/system.yaml
-    - ./rh-developer/system.yaml
-    - ./rh-basic/system.yaml
-    - ./rh-ai-engineer/system.yaml
-    - ./rh-automation/system.yaml
+    # Repository-level system
+    - ./system.yaml
     # Agentic Pack Locations
     - ./ocp-admin/catalog-info.yaml
     - ./rh-sre/catalog-info.yaml
@@ -28,14 +22,5 @@ spec:
     - ./rh-basic/catalog-info.yaml
     - ./rh-ai-engineer/catalog-info.yaml
     - ./rh-automation/catalog-info.yaml
-    # MCP System and Server Manifests
-    - ./mcps/system.yaml
-    - ./mcps/openshift-mcp-server.yaml
-    - ./mcps/assisted-installer.yaml
-    - ./mcps/red-hat-lightspeed.yaml
-    - ./mcps/ansible-automation-platform.yaml
-    - ./mcps/red-hat-security.yaml
-    - ./mcps/ai-observability.yaml
-    - ./mcps/rhoai.yaml
-    - ./mcps/podman.yaml
-    - ./mcps/github.yaml
+    # MCP Servers Location
+    - ./mcps/catalog-info.yaml

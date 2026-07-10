@@ -1,7 +1,7 @@
 apiVersion: mcp/v1beta1
 kind: MCPServer
 metadata:
-  namespace: rh-agentic-plugins-mcps
+  namespace: agentic-plugins
   name: ansible-automation-platform
   title: Ansible Automation Platform MCP Server
   description: >
@@ -24,7 +24,7 @@ spec:
   type: remote
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: rh-agentic-plugins-mcps
+  system: agentic-plugins
   primitives: []
   packages: []
   remotes:

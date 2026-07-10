@@ -16,6 +16,7 @@ metadata:
     agentic-plugins.redhat.com/repo: "agentic-plugins"
 spec:
   targets:
+    - ./rh-automation-plugin.yaml
     - ./skills/aap-mcp-validator/catalog-info.yaml
     - ./skills/execution-risk-analyzer/catalog-info.yaml
     - ./skills/execution-summary/catalog-info.yaml
