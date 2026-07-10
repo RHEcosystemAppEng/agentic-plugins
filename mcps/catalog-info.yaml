@@ -13,9 +13,7 @@ spec:
   targets:
     - ./openshift-mcp-server.yaml
     - ./assisted-installer.yaml
-    - ./red-hat-lightspeed.yaml
     - ./ansible-automation-platform.yaml
-    - ./red-hat-security.yaml
     - ./ai-observability.yaml
     - ./rhoai.yaml
     - ./podman.yaml

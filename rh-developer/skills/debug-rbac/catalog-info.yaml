@@ -42,4 +42,4 @@ spec:
     - mcpserver:agentic-plugins/openshift-mcp-server
     - mcpserver:agentic-plugins/podman
     - mcpserver:agentic-plugins/github
-    - mcpserver:agentic-plugins/red-hat-lightspeed
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server

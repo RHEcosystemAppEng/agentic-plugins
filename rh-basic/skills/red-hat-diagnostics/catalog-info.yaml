@@ -37,4 +37,4 @@ spec:
     - cursor
   dependsOn:
     - airesource:rh-basic/rh-basic
-    - mcpserver:agentic-plugins/red-hat-security
+    - mcpserver:redhat/security-mcp-server

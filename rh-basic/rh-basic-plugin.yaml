@@ -40,4 +40,4 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:agentic-plugins/red-hat-security
+    - mcpserver:redhat/security-mcp-server

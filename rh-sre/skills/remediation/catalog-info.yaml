@@ -38,7 +38,7 @@ spec:
     - cursor
   dependsOn:
     - airesource:rh-sre/rh-sre
-    - mcpserver:agentic-plugins/red-hat-lightspeed
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server
     - mcpserver:agentic-plugins/ansible-automation-platform
     - airesource:rh-sre/mcp-lightspeed-validator
     - airesource:rh-sre/mcp-aap-validator

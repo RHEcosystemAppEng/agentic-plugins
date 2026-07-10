@@ -41,5 +41,5 @@ spec:
     - opencode
     - cursor
   dependsOn:
-    - mcpserver:agentic-plugins/red-hat-lightspeed
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server
     - mcpserver:agentic-plugins/ansible-automation-platform
