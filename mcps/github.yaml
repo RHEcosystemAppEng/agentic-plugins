@@ -23,7 +23,7 @@ spec:
   type: local
   lifecycle: beta
   owner: group:redhat/ecosystem-appeng
-  system: agentic-plugins
+  system: default/agentic-plugins
   primitives: []
   packages:
     - type: container

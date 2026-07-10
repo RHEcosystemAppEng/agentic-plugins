@@ -29,7 +29,7 @@ spec:
   type: plugin
   lifecycle: production
   owner: group:redhat/ecosystem-appeng
-  system: agentic-plugins
+  system: default/agentic-plugins
   disciplines:
     - ai-engineering
   categories:
