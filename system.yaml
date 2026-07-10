@@ -22,3 +22,36 @@ metadata:
       icon: github
 spec:
   owner: group:redhat/ecosystem-appeng
+relations:
+  - type: hasPart
+    targetRef: airesource:ocp-admin/ocp-admin
+  - type: hasPart
+    targetRef: airesource:rh-sre/rh-sre
+  - type: hasPart
+    targetRef: airesource:rh-virt/rh-virt
+  - type: hasPart
+    targetRef: airesource:rh-developer/rh-developer
+  - type: hasPart
+    targetRef: airesource:rh-basic/rh-basic
+  - type: hasPart
+    targetRef: airesource:rh-ai-engineer/rh-ai-engineer
+  - type: hasPart
+    targetRef: airesource:rh-automation/rh-automation
+  - type: hasPart
+    targetRef: mcpserver:agentic-plugins/openshift-mcp-server
+  - type: hasPart
+    targetRef: mcpserver:agentic-plugins/assisted-installer
+  - type: hasPart
+    targetRef: mcpserver:agentic-plugins/red-hat-lightspeed
+  - type: hasPart
+    targetRef: mcpserver:agentic-plugins/ansible-automation-platform
+  - type: hasPart
+    targetRef: mcpserver:agentic-plugins/red-hat-security
+  - type: hasPart
+    targetRef: mcpserver:agentic-plugins/ai-observability
+  - type: hasPart
+    targetRef: mcpserver:agentic-plugins/rhoai
+  - type: hasPart
+    targetRef: mcpserver:agentic-plugins/podman
+  - type: hasPart
+    targetRef: mcpserver:agentic-plugins/github
