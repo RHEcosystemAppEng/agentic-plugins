@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: guardrails-config
+  namespace: rh-ai-engineer
+  title: Guardrails Config
+  description: >
+    Configure TrustyAI Guardrails Orchestrator for LLM input/output content safety on
+    OpenShift AI. Handles GuardrailsOrchestrator CR deployment, detector configuration
+    (content safety, PII, prompt injection, toxicity), orchestration policies, and
+    guarded endpoint validation.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/guardrails-config/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - guardrails
+    - content-safety
+    - trustyai
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - ai
+  categories:
+    - configuration
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-ai-engineer/rh-ai-engineer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/ai-observability
+    - mcpserver:agentic-plugins/rhoai

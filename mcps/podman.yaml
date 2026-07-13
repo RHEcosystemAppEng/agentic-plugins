@@ -1,0 +1,34 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  namespace: agentic-plugins
+  name: podman
+  title: Podman MCP Server
+  description: >
+    Podman MCP server for container management operations.
+    Provides container lifecycle management, image operations,
+    and local container runtime interaction.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/mcps.json
+  tags:
+    - podman
+    - containers
+    - developer
+    - mcp-server
+  links:
+    - url: https://github.com/manusa/podman-mcp-server
+      title: Upstream Repository
+      icon: github
+spec:
+  type: local
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  system: default/agentic-plugins
+  primitives: []
+  packages:
+    - type: npx
+      name: podman-mcp-server
+      version: 0.0.15
+      environment_variables: []
+  remotes: []

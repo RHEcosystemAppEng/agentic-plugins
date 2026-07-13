@@ -1,0 +1,42 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: debug-inference
+  namespace: rh-ai-engineer
+  title: Debug Inference
+  description: >
+    Troubleshoot failed or slow InferenceService deployments on OpenShift AI.
+    Progressive diagnosis covering status conditions, events, pod logs, GPU health,
+    and observability analysis.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/debug-inference/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - debugging
+    - inference
+    - troubleshooting
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - ai
+  categories:
+    - debugging
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-ai-engineer/rh-ai-engineer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/ai-observability
+    - mcpserver:agentic-plugins/rhoai

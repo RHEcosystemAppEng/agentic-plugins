@@ -1,0 +1,41 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: image-inspect
+  namespace: ocp-admin
+  title: Container Image Inspector
+  description: >
+    Fetch container image labels, validate registry ownership, resolve tag/digest
+    via SBOM, and report the SBOM artifact reference for a Red Hat container image.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/skills/image-inspect/SKILL.md
+
+  tags:
+    - ai-skill
+    - security
+    - container
+    - sbom
+    - image-inspection
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - security
+    - devops
+  categories:
+    - security
+    - inspection
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:ocp-admin/ocp-admin

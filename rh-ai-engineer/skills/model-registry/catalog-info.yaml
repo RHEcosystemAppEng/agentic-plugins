@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: model-registry
+  namespace: rh-ai-engineer
+  title: Model Registry
+  description: >
+    Register, version, and manage ML models in the OpenShift AI Model Registry.
+    Browse the Model Catalog, track model metadata, and promote models across
+    environments. Handles model registration, versioning, metadata management,
+    artifact tracking, and cross-environment promotion.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/model-registry/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - model-registry
+    - versioning
+    - mlops
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - machine-learning
+  categories:
+    - management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-ai-engineer/rh-ai-engineer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/ai-observability
+    - mcpserver:agentic-plugins/rhoai
+    - airesource:rh-ai-engineer/model-deploy

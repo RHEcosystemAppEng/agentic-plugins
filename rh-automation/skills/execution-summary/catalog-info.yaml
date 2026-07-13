@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: execution-summary
+  namespace: rh-automation
+  title: Execution Summary
+  description: >
+    Generate concise execution audit reports tracking documents consulted, MCP
+    tools used, decisions made, and outcomes.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/skills/execution-summary/SKILL.md
+  tags:
+    - ai-skill
+    - automation
+    - ansible
+    - reporting
+    - audit
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - automation
+  categories:
+    - reporting
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-automation/rh-automation
+    - mcpserver:agentic-plugins/ansible-automation-platform

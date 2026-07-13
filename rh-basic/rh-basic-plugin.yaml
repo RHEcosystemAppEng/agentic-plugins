@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: rh-basic
+  namespace: rh-basic
+  title: Getting Started
+  description: >
+    Essential Red Hat skills for IT professionals. Covers CVE analysis,
+    diagnostics gathering, product lifecycle status, and support case
+    management. Works with or without MCP server configuration.
+  tags:
+    - ai-skill
+    - red-hat
+    - getting-started
+    - support
+  annotations:
+    agentic.redhat.com/lola-module: "true"
+    agentic.redhat.com/lola-module-name: rh-basic
+    agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
+    agentic.redhat.com/path: rh-basic
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: plugin
+  lifecycle: production
+  owner: group:redhat/ai5-marketplace
+  system: default/agentic-plugins
+  disciplines:
+    - operations
+  categories:
+    - getting-started
+    - support
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:redhat/security-mcp-server

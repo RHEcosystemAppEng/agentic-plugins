@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: debug-pod
+  namespace: rh-developer
+  title: Debug Pod
+  description: >
+    Diagnose pod failures on OpenShift including CrashLoopBackOff,
+    ImagePullBackOff, OOMKilled, and pending pods. Automates multi-step
+    diagnosis including pod status, events, logs (current and previous),
+    and resource constraint analysis.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/debug-pod/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - debugging
+    - pods
+    - openshift
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - debugging
+  categories:
+    - debugging
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-developer/rh-developer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/podman
+    - mcpserver:agentic-plugins/github
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server

@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: debug-build
+  namespace: rh-developer
+  title: Debug Build
+  description: >
+    Diagnose OpenShift build failures including S2I builds, Docker/Podman
+    builds, and BuildConfig issues. Automates multi-step diagnosis including
+    BuildConfig validation, build pod logs, registry authentication, and
+    source repository access.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/debug-build/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - debugging
+    - openshift
+    - builds
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - debugging
+  categories:
+    - debugging
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-developer/rh-developer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/podman
+    - mcpserver:agentic-plugins/github
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server

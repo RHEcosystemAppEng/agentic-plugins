@@ -1,0 +1,50 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: incident-triage
+  namespace: rh-developer
+  title: Incident Triage
+  description: >
+    Structured incident investigation for OpenShift using the Five Whys
+    methodology, investigation guardrails, Prometheus metric analysis, and
+    adversarial due diligence. Orchestrates multi-resource diagnosis across
+    Deployments, ReplicaSets, Pods, Services, and cluster resources to trace
+    from observed symptoms to root cause.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/incident-triage/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - incident-response
+    - triage
+    - openshift
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - debugging
+  categories:
+    - debugging
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-developer/rh-developer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/podman
+    - mcpserver:agentic-plugins/github
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server
+    - airesource:rh-developer/debug-scc
+    - airesource:rh-developer/debug-rbac
+    - airesource:rh-developer/debug-pod
+    - airesource:rh-developer/debug-network
+    - airesource:rh-developer/debug-build

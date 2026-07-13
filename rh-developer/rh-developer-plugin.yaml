@@ -1,0 +1,46 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: rh-developer
+  namespace: rh-developer
+  title: Developer Tools
+  description: >
+    Build and deploy applications on Red Hat platforms. Covers project
+    detection, S2I builds, Helm deployments, containerization workflows,
+    and troubleshooting for OpenShift and RHEL targets.
+  tags:
+    - ai-skill
+    - developer
+    - openshift
+    - deployment
+  annotations:
+    agentic.redhat.com/lola-module: "true"
+    agentic.redhat.com/lola-module-name: rh-developer
+    agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
+    agentic.redhat.com/path: rh-developer
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: plugin
+  lifecycle: production
+  owner: group:redhat/ai5-marketplace
+  system: default/agentic-plugins
+  disciplines:
+    - development
+  categories:
+    - build
+    - deployment
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/podman
+    - mcpserver:agentic-plugins/github
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server

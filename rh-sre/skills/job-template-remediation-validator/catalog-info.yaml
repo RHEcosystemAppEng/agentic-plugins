@@ -1,0 +1,40 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: job-template-remediation-validator
+  namespace: rh-sre
+  title: Job Template Remediation Validator
+  description: >
+    Verify an AAP job template meets requirements for executing CVE remediation playbooks.
+    Validates template readiness before playbook-executor selects a template for execution.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/skills/job-template-remediation-validator/SKILL.md
+  tags:
+    - ai-skill
+    - sre
+    - validation
+    - ansible
+    - aap
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - automation
+  categories:
+    - validation
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-sre/rh-sre
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server
+    - mcpserver:agentic-plugins/ansible-automation-platform

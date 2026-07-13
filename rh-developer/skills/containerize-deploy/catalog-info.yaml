@@ -1,0 +1,55 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: containerize-deploy
+  namespace: rh-developer
+  title: Containerize Deploy
+  description: >
+    Complete end-to-end workflow for containerizing and deploying applications
+    to OpenShift or standalone RHEL systems. Orchestrates detect-project,
+    s2i-build, deploy, helm-deploy, and rhel-deploy skills with user
+    confirmation checkpoints at each phase. Supports S2I, Podman, and Helm
+    deployment strategies for OpenShift, and Podman or native deployments
+    for RHEL hosts.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/containerize-deploy/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - containerization
+    - deployment
+    - orchestration
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - devops
+  categories:
+    - deployment
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-developer/rh-developer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/podman
+    - mcpserver:agentic-plugins/github
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server
+    - airesource:rh-developer/detect-project
+    - airesource:rh-developer/recommend-image
+    - airesource:rh-developer/s2i-build
+    - airesource:rh-developer/deploy
+    - airesource:rh-developer/helm-deploy
+    - airesource:rh-developer/rhel-deploy
+    - airesource:rh-developer/debug-pod
+    - airesource:rh-developer/debug-network
+    - airesource:rh-developer/debug-build

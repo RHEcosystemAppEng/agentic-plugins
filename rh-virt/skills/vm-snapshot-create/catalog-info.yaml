@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: vm-snapshot-create
+  namespace: rh-virt
+  title: VM Snapshot Create
+  description: >
+    Create virtual machine snapshots for backup and recovery. Validates storage class
+    snapshot support, CSI driver capabilities, and guest agent status before snapshot creation.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-virt/skills/vm-snapshot-create/SKILL.md
+  tags:
+    - ai-skill
+    - virtualization
+    - backup
+    - snapshots
+    - data-protection
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - backup
+  categories:
+    - snapshot-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-virt/rh-virt
+    - mcpserver:agentic-plugins/openshift-mcp-server

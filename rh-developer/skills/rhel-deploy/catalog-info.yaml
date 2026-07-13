@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: rhel-deploy
+  namespace: rh-developer
+  title: RHEL Deploy
+  description: >
+    Deploy applications to standalone RHEL, Fedora, or CentOS systems using
+    Podman containers with systemd or native dnf builds. Handles SSH
+    connectivity, SELinux, firewall-cmd, and systemd unit creation.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/skills/rhel-deploy/SKILL.md
+  tags:
+    - ai-skill
+    - developer
+    - deployment
+    - rhel
+    - systemd
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - devops
+  categories:
+    - deployment
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-developer/rh-developer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/podman
+    - mcpserver:agentic-plugins/github
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server

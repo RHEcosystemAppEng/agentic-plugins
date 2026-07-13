@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: red-hat-get-started
+  namespace: rh-basic
+  title: Red Hat Get Started
+  description: >
+    Bootstrap installer. Fetches and installs all Red Hat agent skills into
+    this project.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-basic/skills/red-hat-get-started/SKILL.md
+  tags:
+    - ai-skill
+    - red-hat
+    - installer
+    - bootstrap
+    - onboarding
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - devops
+  categories:
+    - setup
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-basic/rh-basic
+    - mcpserver:redhat/security-mcp-server

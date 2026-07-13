@@ -1,0 +1,36 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  namespace: agentic-plugins
+  name: github
+  title: GitHub MCP Server
+  description: >
+    GitHub MCP server for repository operations, pull request management,
+    issue tracking, and code search across GitHub repositories.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-developer/mcps.json
+  tags:
+    - github
+    - developer
+    - source-control
+    - mcp-server
+  links:
+    - url: https://github.com/github/github-mcp-server
+      title: Upstream Repository
+      icon: github
+spec:
+  type: local
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  system: default/agentic-plugins
+  primitives: []
+  packages:
+    - type: container
+      registry_name: ghcr.io
+      name: github/github-mcp-server
+      version: "1.0.3"
+      environment_variables:
+        - description: GitHub personal access token
+          name: GITHUB_PERSONAL_ACCESS_TOKEN
+  remotes: []

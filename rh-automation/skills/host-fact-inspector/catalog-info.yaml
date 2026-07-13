@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: host-fact-inspector
+  namespace: rh-automation
+  title: Host Fact Inspector
+  description: >
+    Correlate job failures with host system facts to determine platform drift and
+    resource issues.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/skills/host-fact-inspector/SKILL.md
+  tags:
+    - ai-skill
+    - automation
+    - ansible
+    - inventory
+    - diagnostics
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - sre
+  categories:
+    - analysis
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-automation/rh-automation
+    - mcpserver:agentic-plugins/ansible-automation-platform

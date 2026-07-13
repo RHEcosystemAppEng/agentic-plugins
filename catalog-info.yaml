@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: agentic-plugins
+  title: Agentic Plugins
+  description: >
+    Root catalog entry point for the agentic-plugins repository.
+    Points to all agentic pack locations and MCP server manifests
+    for Compass ingestion.
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
+spec:
+  targets:
+    # Repository-level system
+    - ./system.yaml
+    # Agentic Pack Locations
+    - ./ocp-admin/catalog-info.yaml
+    - ./rh-sre/catalog-info.yaml
+    - ./rh-virt/catalog-info.yaml
+    - ./rh-developer/catalog-info.yaml
+    - ./rh-basic/catalog-info.yaml
+    - ./rh-ai-engineer/catalog-info.yaml
+    - ./rh-automation/catalog-info.yaml
+    # MCP Servers Location
+    - ./mcps/catalog-info.yaml

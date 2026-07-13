@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: ocp-admin
+  title: OpenShift Administration Agentic Pack
+  description: >
+    Points to all AI skill catalog entities in the ocp-admin agentic pack
+    for Red Hat OpenShift administration.
+  annotations:
+    agentic.redhat.com/lola-module: "true"
+    agentic.redhat.com/lola-module-name: ocp-admin
+    agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
+    agentic.redhat.com/path: ocp-admin
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
+spec:
+  targets:
+    - ./ocp-admin-plugin.yaml
+    - ./skills/cluster-creator/catalog-info.yaml
+    - ./skills/cluster-inventory/catalog-info.yaml
+    - ./skills/cluster-report/catalog-info.yaml
+    - ./skills/container-cve-validator/catalog-info.yaml
+    - ./skills/coreos-cve-validator/catalog-info.yaml
+    - ./skills/cve-recon/catalog-info.yaml
+    - ./skills/image-inspect/catalog-info.yaml

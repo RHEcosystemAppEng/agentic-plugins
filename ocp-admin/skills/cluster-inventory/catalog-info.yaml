@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: cluster-inventory
+  namespace: ocp-admin
+  title: OpenShift Cluster Inventory
+  description: >
+    List and inspect OpenShift clusters across self-managed (OCP, SNO)
+    and managed service (ROSA, ARO, OSD) deployments.
+    Read-only operations. Does NOT modify clusters.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/skills/cluster-inventory/SKILL.md
+
+  tags:
+    - ai-skill
+    - openshift
+    - cluster-management
+    - inventory
+    - monitoring
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - devops
+    - infrastructure
+  categories:
+    - monitoring
+    - inventory
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:ocp-admin/ocp-admin
+    - mcpserver:agentic-plugins/assisted-installer

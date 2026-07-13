@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: red-hat-support-severity
+  namespace: rh-basic
+  title: Red Hat Support Severity
+  description: >
+    Help determine the correct severity level for a Red Hat support ticket,
+    explain SLAs, and guide what information to include.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-basic/skills/red-hat-support-severity/SKILL.md
+  tags:
+    - ai-skill
+    - red-hat
+    - support
+    - severity
+    - sla
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - support
+  categories:
+    - ticket-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-basic/rh-basic
+    - mcpserver:redhat/security-mcp-server

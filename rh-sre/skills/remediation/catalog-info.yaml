@@ -1,0 +1,50 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: remediation
+  namespace: rh-sre
+  title: Remediation
+  description: >
+    End-to-end CVE remediation orchestration skill. Handles multi-step remediation
+    workflows including validation, system context gathering, playbook generation,
+    execution, and verification. Use for all CVE remediation workflows, batch
+    remediation across multiple systems, and emergency security response.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/skills/remediation/SKILL.md
+  tags:
+    - ai-skill
+    - sre
+    - remediation
+    - cve
+    - security
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - security
+  categories:
+    - remediation
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-sre/rh-sre
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server
+    - mcpserver:agentic-plugins/ansible-automation-platform
+    - airesource:rh-sre/mcp-lightspeed-validator
+    - airesource:rh-sre/mcp-aap-validator
+    - airesource:rh-sre/cve-impact
+    - airesource:rh-sre/cve-validation
+    - airesource:rh-sre/system-context
+    - airesource:rh-sre/playbook-generator
+    - airesource:rh-sre/playbook-executor
+    - airesource:rh-sre/remediation-verifier

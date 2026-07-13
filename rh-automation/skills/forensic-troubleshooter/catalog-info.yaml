@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: forensic-troubleshooter
+  namespace: rh-automation
+  title: Forensic Troubleshooter
+  description: >
+    Orchestrates forensic analysis of failed jobs with event extraction, host
+    correlation, and resolution advisory.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/skills/forensic-troubleshooter/SKILL.md
+  tags:
+    - ai-skill
+    - automation
+    - ansible
+    - troubleshooting
+    - forensics
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - sre
+  categories:
+    - analysis
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-automation/rh-automation
+    - mcpserver:agentic-plugins/ansible-automation-platform
+    - airesource:rh-automation/aap-mcp-validator
+    - airesource:rh-automation/job-failure-analyzer
+    - airesource:rh-automation/host-fact-inspector
+    - airesource:rh-automation/resolution-advisor
+    - airesource:rh-automation/execution-summary

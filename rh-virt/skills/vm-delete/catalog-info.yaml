@@ -1,0 +1,40 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: vm-delete
+  namespace: rh-virt
+  title: VM Delete
+  description: >
+    Permanently delete virtual machines and their associated resources from OpenShift
+    Virtualization. Handles permanent VM deletion with strict safety confirmations
+    and typed verification.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-virt/skills/vm-delete/SKILL.md
+  tags:
+    - ai-skill
+    - virtualization
+    - cleanup
+    - decommission
+    - vm-management
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - operations
+  categories:
+    - vm-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-virt/rh-virt
+    - mcpserver:agentic-plugins/openshift-mcp-server

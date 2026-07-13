@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: agentic-plugins-mcps
+  title: Agentic Plugins MCP Servers
+  description: >
+    Points to the MCP system and all MCP server manifests
+    used across agentic packs.
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
+spec:
+  targets:
+    - ./openshift-mcp-server.yaml
+    - ./assisted-installer.yaml
+    - ./ansible-automation-platform.yaml
+    - ./ai-observability.yaml
+    - ./rhoai.yaml
+    - ./podman.yaml
+    - ./github.yaml

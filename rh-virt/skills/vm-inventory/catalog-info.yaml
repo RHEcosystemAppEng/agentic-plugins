@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: vm-inventory
+  namespace: rh-virt
+  title: VM Inventory
+  description: >
+    List and view virtual machines across namespaces with status, resource usage,
+    and health information. Provides comprehensive VM inventory and status reporting.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-virt/skills/vm-inventory/SKILL.md
+  tags:
+    - ai-skill
+    - virtualization
+    - monitoring
+    - reporting
+    - inventory
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - monitoring
+  categories:
+    - vm-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-virt/rh-virt
+    - mcpserver:agentic-plugins/openshift-mcp-server

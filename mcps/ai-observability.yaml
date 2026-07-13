@@ -1,0 +1,35 @@
+apiVersion: mcp/v1beta1
+kind: MCPServer
+metadata:
+  namespace: agentic-plugins
+  name: ai-observability
+  title: AI Observability MCP Server
+  description: >
+    AI observability MCP server for monitoring and debugging AI/ML model
+    inference, performance metrics, and serving runtime health on
+    Red Hat OpenShift AI.
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/mcps.json
+  tags:
+    - ai
+    - observability
+    - machine-learning
+    - monitoring
+    - mcp-server
+  links:
+    - url: https://github.com/rh-ai-quickstart/ai-observability-summarizer
+      title: Upstream Repository
+      icon: github
+spec:
+  type: remote
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  system: default/agentic-plugins
+  primitives: []
+  packages: []
+  remotes:
+    - url: ${AI_OBSERVABILITY_MCP_URL}/mcp
+      environment_variables:
+        - description: AI observability MCP server base URL
+          name: AI_OBSERVABILITY_MCP_URL

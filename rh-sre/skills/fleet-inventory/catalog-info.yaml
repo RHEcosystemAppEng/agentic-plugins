@@ -1,0 +1,40 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: fleet-inventory
+  namespace: rh-sre
+  title: Fleet Inventory
+  description: >
+    Query and display Red Hat Lightspeed managed system inventory. Focuses on discovery
+    and listing of systems, including affected systems by CVE, RHEL version distribution,
+    and production system identification.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/skills/fleet-inventory/SKILL.md
+  tags:
+    - ai-skill
+    - sre
+    - inventory
+    - fleet-management
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - sre
+  categories:
+    - monitoring
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-sre/rh-sre
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server
+    - mcpserver:agentic-plugins/ansible-automation-platform

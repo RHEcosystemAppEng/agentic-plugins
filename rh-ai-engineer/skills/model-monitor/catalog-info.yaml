@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: model-monitor
+  namespace: rh-ai-engineer
+  title: Model Monitor
+  description: >
+    Configure TrustyAI model monitoring for bias detection and data drift on deployed
+    InferenceServices. Handles TrustyAIService deployment, bias metric configuration
+    (SPD, DIR), drift metric configuration (MeanShift, FourierMMD, KS-Test,
+    Jensen-Shannon), threshold tuning, and monitoring validation.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/model-monitor/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - trustyai
+    - bias-detection
+    - drift-detection
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - ai
+  categories:
+    - monitoring
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-ai-engineer/rh-ai-engineer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/ai-observability
+    - mcpserver:agentic-plugins/rhoai

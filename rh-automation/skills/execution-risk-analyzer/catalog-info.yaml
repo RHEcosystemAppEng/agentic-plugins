@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: execution-risk-analyzer
+  namespace: rh-automation
+  title: Execution Risk Analyzer
+  description: >
+    Analyze execution risk by classifying inventory, scanning extra_vars for
+    secrets, and assessing scope.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/skills/execution-risk-analyzer/SKILL.md
+  tags:
+    - ai-skill
+    - automation
+    - ansible
+    - risk-analysis
+    - security
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - automation
+  categories:
+    - analysis
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-automation/rh-automation
+    - mcpserver:agentic-plugins/ansible-automation-platform

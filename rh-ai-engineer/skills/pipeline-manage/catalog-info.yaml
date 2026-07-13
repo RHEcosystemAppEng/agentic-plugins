@@ -1,0 +1,42 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: pipeline-manage
+  namespace: rh-ai-engineer
+  title: Pipeline Manage
+  description: >
+    Create, run, schedule, and monitor Data Science Pipelines (Kubeflow Pipelines 2.0)
+    on OpenShift AI. Handles pipeline server setup, pipeline run submission from YAML,
+    scheduling recurring runs, monitoring execution, and viewing step logs.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/pipeline-manage/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - pipelines
+    - kubeflow
+    - mlops
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - machine-learning
+  categories:
+    - management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-ai-engineer/rh-ai-engineer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/ai-observability
+    - mcpserver:agentic-plugins/rhoai

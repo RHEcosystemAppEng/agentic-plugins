@@ -1,0 +1,42 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: ai-observability
+  namespace: rh-ai-engineer
+  title: AI Observability
+  description: >
+    Analyze AI model performance, GPU utilization, and cluster health on OpenShift AI.
+    Query-driven, read-only analysis that routes to the appropriate observability domain
+    based on user intent.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-ai-engineer/skills/ai-observability/SKILL.md
+  tags:
+    - ai-skill
+    - ai-engineering
+    - observability
+    - gpu
+    - monitoring
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - ai
+  categories:
+    - monitoring
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-ai-engineer/rh-ai-engineer
+    - mcpserver:agentic-plugins/openshift-mcp-server
+    - mcpserver:agentic-plugins/ai-observability
+    - mcpserver:agentic-plugins/rhoai

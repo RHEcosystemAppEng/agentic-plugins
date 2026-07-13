@@ -1,0 +1,32 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: rh-sre
+  title: Site Reliability Engineering Agentic Pack
+  description: >
+    Points to all AI skill catalog entities in the rh-sre agentic pack
+    for Red Hat Site Reliability Engineering workflows.
+  annotations:
+    agentic.redhat.com/lola-module: "true"
+    agentic.redhat.com/lola-module-name: rh-sre
+    agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
+    agentic.redhat.com/path: rh-sre
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
+spec:
+  targets:
+    - ./rh-sre-plugin.yaml
+    - ./skills/cve-impact/catalog-info.yaml
+    - ./skills/cve-validation/catalog-info.yaml
+    - ./skills/execution-summary/catalog-info.yaml
+    - ./skills/fleet-inventory/catalog-info.yaml
+    - ./skills/job-template-creator/catalog-info.yaml
+    - ./skills/job-template-remediation-validator/catalog-info.yaml
+    - ./skills/mcp-aap-validator/catalog-info.yaml
+    - ./skills/mcp-lightspeed-validator/catalog-info.yaml
+    - ./skills/playbook-executor/catalog-info.yaml
+    - ./skills/playbook-generator/catalog-info.yaml
+    - ./skills/remediation/catalog-info.yaml
+    - ./skills/remediation-verifier/catalog-info.yaml
+    - ./skills/system-context/catalog-info.yaml

@@ -1,0 +1,41 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: playbook-generator
+  namespace: rh-sre
+  title: Playbook Generator
+  description: >
+    Generate production-ready Ansible remediation playbooks for CVE vulnerabilities with
+    Red Hat best practices, error handling, and Kubernetes safety patterns. This skill only
+    generates playbooks; for execution, use the playbook-executor skill.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-sre/skills/playbook-generator/SKILL.md
+  tags:
+    - ai-skill
+    - sre
+    - ansible
+    - playbook
+    - security
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - security
+  categories:
+    - remediation
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-sre/rh-sre
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server
+    - mcpserver:agentic-plugins/ansible-automation-platform

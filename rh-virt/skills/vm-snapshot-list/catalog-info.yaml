@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: vm-snapshot-list
+  namespace: rh-virt
+  title: VM Snapshot List
+  description: >
+    List virtual machine snapshots across namespaces with status, age, and recovery
+    information. Read-only operation requiring no user confirmation.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-virt/skills/vm-snapshot-list/SKILL.md
+  tags:
+    - ai-skill
+    - virtualization
+    - monitoring
+    - snapshots
+    - reporting
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - monitoring
+  categories:
+    - snapshot-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-virt/rh-virt
+    - mcpserver:agentic-plugins/openshift-mcp-server

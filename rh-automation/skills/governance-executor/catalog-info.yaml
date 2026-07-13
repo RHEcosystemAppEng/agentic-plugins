@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: governance-executor
+  namespace: rh-automation
+  title: Governance Executor
+  description: >
+    Orchestrates governed job execution with risk analysis, check mode, approval,
+    and rollback.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/rh-automation/skills/governance-executor/SKILL.md
+  tags:
+    - ai-skill
+    - automation
+    - ansible
+    - governance
+    - execution
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - automation
+  categories:
+    - execution
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - airesource:rh-automation/rh-automation
+    - mcpserver:agentic-plugins/ansible-automation-platform
+    - airesource:rh-automation/aap-mcp-validator
+    - airesource:rh-automation/execution-risk-analyzer
+    - airesource:rh-automation/governed-job-launcher
+    - airesource:rh-automation/execution-summary

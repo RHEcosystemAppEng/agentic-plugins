@@ -1,0 +1,45 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: rh-sre
+  namespace: rh-sre
+  title: Site Reliability Engineering
+  description: >
+    Agentic tools and automation for managing Red Hat platforms and
+    infrastructure. Covers vulnerability management, fleet inventory,
+    system monitoring, and operational excellence for SRE workflows.
+  tags:
+    - ai-skill
+    - sre
+    - monitoring
+    - vulnerability-management
+  annotations:
+    agentic.redhat.com/lola-module: "true"
+    agentic.redhat.com/lola-module-name: rh-sre
+    agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
+    agentic.redhat.com/path: rh-sre
+  labels:
+    agentic-plugins.redhat.com/version: "1.0"
+    agentic-plugins.redhat.com/repo: "agentic-plugins"
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: plugin
+  lifecycle: production
+  owner: group:redhat/ai5-marketplace
+  system: default/agentic-plugins
+  disciplines:
+    - sre
+    - security
+  categories:
+    - monitoring
+    - vulnerability-management
+  agents:
+    - claude-code
+    - opencode
+    - cursor
+  dependsOn:
+    - mcpserver:redhat/red-hat-lightspeed-mcp-server
+    - mcpserver:agentic-plugins/ansible-automation-platform
