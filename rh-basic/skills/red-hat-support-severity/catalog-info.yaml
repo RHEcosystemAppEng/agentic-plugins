@@ -25,7 +25,7 @@ metadata:
 spec:
   type: skill
   lifecycle: beta
-  owner: group:redhat/ecosystem-appeng
+  owner: group:redhat/ai5-marketplace
   disciplines:
     - support
   categories:

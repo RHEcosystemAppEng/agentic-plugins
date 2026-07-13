@@ -28,7 +28,7 @@ metadata:
 spec:
   type: plugin
   lifecycle: production
-  owner: group:redhat/ecosystem-appeng
+  owner: group:redhat/ai5-marketplace
   system: default/agentic-plugins
   disciplines:
     - ai-engineering

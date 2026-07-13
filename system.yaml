@@ -21,4 +21,5 @@ metadata:
       title: Source Repository
       icon: github
 spec:
-  owner: group:redhat/ecosystem-appeng
+  owner: group:redhat/ai5-marketplace
+
