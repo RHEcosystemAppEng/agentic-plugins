@@ -36,7 +36,7 @@ This skill queries Red Hat Lightspeed to retrieve and display information about 
 - `inventory__get_host_details` (from lightspeed-mcp) - Retrieve inventory metadata for known host UUIDs
 - `inventory__get_host_system_profile` (from lightspeed-mcp) - Retrieve OS version and system profile when needed
 - `vulnerability__get_cve_systems` (from lightspeed-mcp) - Find CVE-affected systems
-- `inventory__load_inventory_dashboard` (from lightspeed-mcp) - Render host data in an interactive dashboard. Call with collected host data after listing. Falls back to text if unavailable.
+- `inventory__load_inventory_dashboard` (from lightspeed-mcp) - Open the interactive inventory dashboard with query parameters. If the client does not support UI, the tool instructs the model to present the data as text.
 
 **Required Environment Variables**:
 - `LIGHTSPEED_CLIENT_ID` - Red Hat Lightspeed service account client ID
@@ -107,13 +107,13 @@ Proceeding with fleet inventory query...
 1. **Action**: Read [insights-api.md](docs/insights/insights-api.md) using the Read tool to understand `inventory__list_hosts` response format and pagination handling
 2. **Output to user**: "I consulted [insights-api.md](docs/insights/insights-api.md) to understand the `inventory__list_hosts` response format and pagination handling."
 
-**MCP Tool**: `inventory__list_hosts` (from lightspeed-mcp)
+**MCP Tools**: `inventory__load_inventory_dashboard` and `inventory__list_hosts` (from lightspeed-mcp)
 
 **Purpose**: Query Lightspeed for registered hosts. Use for fleet discovery, tag filters, and environment scoping.
 
 **Parameters**: `per_page=10` on first call, then `page` for pagination. Optional filters: `display_name`, `tags`, `staleness`, `hostname_or_id`. See [references/01-parameter-reference.md](references/01-parameter-reference.md).
 
-**Immediately after receiving the `list_hosts` response**, call `inventory__load_inventory_dashboard(hosts=response["results"])`. Do this BEFORE printing anything. Pass the raw `results` array exactly as returned by `list_hosts` — do NOT extract, filter, or restructure the host objects.
+**Before** continuing further, call `inventory__load_inventory_dashboard(...)` with the same query parameters used in the `list_hosts` call, and examin the instruction returning from the tool.
 
 **Optional enrichment**: After host UUIDs are known:
 - `inventory__get_host_details(host_ids="uuid-1,uuid-2")` — inventory metadata (similar fields to `list_hosts`)
@@ -176,11 +176,12 @@ Status: "Not Affected"
 → Action: Exclude from affected count
 ```
 
-### Step 4: Generate Fleet Summary
+### Step 4: Present Results
 
-Create organized output. **Read [references/03-output-templates.md](references/03-output-templates.md)** for report format (Overview, RHEL/Environment breakdown, System Details, Stale Systems).
+**If the dashbaord was succesful**, DO NOT PRINT the inventory table, as it's covered in the dashboard. SKIP to the follow-ups.
+**ONLY If the dashbaord was NOT succesful**: Create organized output. **Read [references/03-output-templates.md](references/03-output-templates.md)** for report format (Overview, RHEL/Environment breakdown, System Details, Stale Systems).
 
-### Step 5: Offer Remediation Transition
+### Step 5: Follow-up
 
 When appropriate, suggest transitioning to the `/remediation` skill:
 
@@ -227,8 +228,8 @@ Examples:
   - Parameters: `cve` (string, format: CVE-YYYY-NNNNN), `limit`, `offset`
   - Returns: Paginated list of affected systems with vulnerability and remediation status
 
-- `inventory__load_inventory_dashboard` (from lightspeed-mcp) - Render host data in an interactive dashboard
-  - Parameters: `hosts` (list of host objects from list_hosts response)
+- `inventory__load_inventory_dashboard` (from lightspeed-mcp) - Open the interactive inventory dashboard
+  - Parameters: Query parameters matching the `list_hosts` call (hostname_or_id, display_name, per_page, etc.)
   - Returns: Interactive dashboard with host browsing, staleness filters, and system profiles
   - Falls back to text if unavailable or client does not support UI
 
