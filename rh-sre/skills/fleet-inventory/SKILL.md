@@ -178,8 +178,8 @@ Status: "Not Affected"
 
 ### Step 4: Present Results
 
-**If the dashbaord was succesful**, DO NOT PRINT the inventory table, as it's covered in the dashboard. SKIP to the follow-ups.
-**ONLY If the dashbaord was NOT succesful**: Create organized output. **Read [references/03-output-templates.md](references/03-output-templates.md)** for report format (Overview, RHEL/Environment breakdown, System Details, Stale Systems).
+**If the dashboard was successful**, DO NOT PRINT the inventory table, as it's covered in the dashboard. SKIP to the follow-ups.
+**ONLY If the dashboard was NOT successful**: Create organized output. **Read [references/03-output-templates.md](references/03-output-templates.md)** for report format (Overview, RHEL/Environment breakdown, System Details, Stale Systems).
 
 ### Step 5: Follow-up
 
