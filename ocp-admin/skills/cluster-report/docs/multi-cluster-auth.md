@@ -40,10 +40,10 @@ If you're currently logged into all the clusters you would like to get a report 
 
 ```bash
 # Step 1: Setup — applies RBAC to each cluster, extracts SA tokens
-python3 ocp-admin/scripts/cluster-report/build-kubeconfig.py setup --all-contexts
+python3 scripts/build-kubeconfig.py setup --all-contexts
 
 # Step 2: Build — assembles a merged kubeconfig from the inventory
-python3 ocp-admin/scripts/cluster-report/build-kubeconfig.py \
+python3 scripts/build-kubeconfig.py \
   build --clusters ~/.ocp-clusters/clusters.json --verify
 
 # Step 3: Use — export and run the skill
@@ -105,7 +105,7 @@ Set permissions: `chmod 600 ~/.ocp-clusters/clusters.json`
 ### 4. Build Kubeconfig
 
 ```bash
-python3 ocp-admin/scripts/cluster-report/build-kubeconfig.py \
+python3 scripts/build-kubeconfig.py \
   build --clusters ~/.ocp-clusters/clusters.json --output ~/.kube/cluster-report-kubeconfig
 ```
 
