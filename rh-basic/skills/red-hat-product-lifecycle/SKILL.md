@@ -25,7 +25,7 @@ When the user asks about lifecycle status, support phases, or EOL dates for any 
 1. Identify product and version from the user message.
 2. Run the lifecycle script via Bash:
    ```
-   python rh-basic/skills/red-hat-product-lifecycle/scripts/rh_lifecycle.py "Product Name Version"
+   python scripts/rh_lifecycle.py "Product Name Version"
    ```
    The script queries `https://access.redhat.com/product-life-cycles/api/v1/products` and returns JSON to stdout.
    Errors are on stderr (JSON with `"error"` key); exit code 1 on failure.
@@ -48,7 +48,7 @@ Dates are `YYYY-MM-DD`; `"N/A"` means no date; `"Ongoing"` means open-ended.
 
 ## Dependencies
 
-Script: `rh-basic/skills/red-hat-product-lifecycle/scripts/rh_lifecycle.py`
+Script: `scripts/rh_lifecycle.py`
 
 ## Lifecycle Phase Reference
 
