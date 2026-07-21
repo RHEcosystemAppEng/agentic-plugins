@@ -113,7 +113,7 @@ Proceeding with fleet inventory query...
 
 **Parameters**: `per_page=10` on first call, then `page` for pagination. Optional filters: `display_name`, `tags`, `staleness`, `hostname_or_id`. See [references/01-parameter-reference.md](references/01-parameter-reference.md).
 
-**Before** continuing further, call `inventory__load_inventory_dashboard(...)` with the same query parameters used in the `list_hosts` call, and examin the instruction returning from the tool.
+**Before** continuing further, call `inventory__load_inventory_dashboard(...)` with the same query parameters used in the `list_hosts` call, and examine the instruction returning from the tool.
 
 **Optional enrichment**: After host UUIDs are known:
 - `inventory__get_host_details(host_ids="uuid-1,uuid-2")` — inventory metadata (similar fields to `list_hosts`)
