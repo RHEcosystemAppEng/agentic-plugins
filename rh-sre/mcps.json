@@ -10,7 +10,7 @@
         "LIGHTSPEED_CLIENT_ID",
         "--env",
         "LIGHTSPEED_CLIENT_SECRET",
-        "quay.io/redhat-services-prod/insights-management-tenant/insights-mcp/red-hat-lightspeed-mcp@sha256:98ee33fa7cb690d02d33f57900ab95ad831b8e7985710e0ccb87f53ce1b09865"
+        "quay.io/redhat-services-prod/insights-management-tenant/insights-mcp/red-hat-lightspeed-mcp@sha256:90473f1e97a1e637465c01c2f2ab8858525c187a2d0be20e62e4f6d30c27773c"
       ],
       "env": {
         "LIGHTSPEED_CLIENT_ID": "${LIGHTSPEED_CLIENT_ID}",
