@@ -14,6 +14,7 @@ The ocp-admin collection provides specialized tools for managing OpenShift clust
 - **Complete cluster lifecycle**: Creation, configuration, monitoring, and operations
 - **Multi-cluster management**: Consolidated reporting across multiple clusters
 - **Assisted Installer integration**: Automated cluster deployment with validation
+- **Network security**: Zero Trust NetworkPolicy design with live cluster verification
 - **Comprehensive documentation**: 17 reference documents covering all aspects of OpenShift administration
 
 ---
@@ -416,6 +417,24 @@ Fetch container image labels, validate registry ownership, resolve tag/digest vi
 - Reports SBOM artifact OCI reference and fetch command
 - Output formats: markdown, JSON, CSV
 
+### 8. **network-policy-architect** - Zero Trust NetworkPolicy Design
+
+Design and validate Kubernetes NetworkPolicies following Zero Trust principles (NIST SP 800-207). Two-tier analysis — architecture review then live cluster verification — produces a verified implementation plan with dry-run results.
+
+**Use when**:
+- "Create NetworkPolicies for my namespace"
+- "Audit network isolation for this workload"
+- "Design network segmentation for a new application"
+- "Verify NetworkPolicies implement Zero Trust"
+
+**MCP Server**: `openshift-administration` (OpenShift MCP Server)
+
+**What it does**:
+- **Tier 1 (Architecture Analysis)**: Maps all pod types, services, communication flows, and special networking cases (hostNetwork, OVN-K, DNS on 5353) from source code and manifests
+- **Tier 2 (Live Cluster Verification)**: Validates draft rules against a running cluster using MCP tools — verifies pod labels, services, existing policies, and performs dry-run policy application with health checks
+- Produces implementation plan with default-deny, per-pod rules, exceptions, dry-run results, and NIST SP 800-207 alignment
+- Requires human confirmation before applying or removing dry-run policies
+
 ---
 
 ## Multi-Cluster Authentication
@@ -627,7 +646,21 @@ User: "Does CVE-2025-61726 affect CoreOS in OCP 4.20.16?"
 Result: CoreOS-specific vulnerability assessment with RHEL EUS stream awareness
 ```
 
-### Workflow 6: Check Cluster Installation Progress
+### Workflow 6: Network Policy Design for Zero Trust
+
+```
+User: "Create NetworkPolicies for the qtodo namespace following Zero Trust"
+→ network-policy-architect skill:
+  - Tier 1: Analyzes source code and Helm charts for pod types, services, flows
+  - Drafts per-pod ingress/egress rules with justifications
+  - Tier 2: Verifies pod labels, services, existing policies via MCP
+  - Applies policies as dry-run, verifies health, cleans up
+  - Produces implementation plan with NIST SP 800-207 alignment
+
+Result: Verified NetworkPolicy set with default-deny and per-pod rules
+```
+
+### Workflow 7: Check Cluster Installation Progress
 
 ```
 User: "What's the status of my cluster installation?"
@@ -770,7 +803,8 @@ ocp-admin/
 │   │       └── 02-report-template.md
 │   ├── coreos-cve-validator/SKILL.md # CoreOS CVE validation
 │   ├── cve-recon/SKILL.md            # CVE reconnaissance
-│   └── image-inspect/SKILL.md        # Container image metadata inspection
+│   ├── image-inspect/SKILL.md        # Container image metadata inspection
+│   └── network-policy-architect/SKILL.md  # Zero Trust NetworkPolicy design
 └── scripts/
     ├── cluster-report/
     │   ├── build-kubeconfig.py       # Multi-cluster authentication

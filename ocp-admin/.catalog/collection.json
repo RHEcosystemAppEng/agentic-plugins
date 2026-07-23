@@ -13,7 +13,7 @@
     "Vulnerability Management"
   ],
   "contents": {
-    "description": "The pack provides seven skills for cluster lifecycle, fleet visibility, and security validation on OpenShift,\nusing Assisted Installer and OCM APIs for cluster management, read-only cluster APIs for consolidated reports,\nand Python helper scripts for CVE/SBOM/VEX-based security validation.\n",
+    "description": "The pack provides eight skills for cluster lifecycle, fleet visibility, security validation, and network\nsecurity on OpenShift, using Assisted Installer and OCM APIs for cluster management, read-only cluster APIs\nfor consolidated reports, Python helper scripts for CVE/SBOM/VEX-based security validation, and MCP-based\nNetworkPolicy design with live cluster verification.\n",
     "orchestration_skills": [],
     "skills": [
       {
@@ -50,6 +50,11 @@
         "description": "Container image metadata inspection with SBOM reference and registry ownership validation.",
         "name": "image-inspect",
         "summary_markdown": "Fetch image labels, validate registry ownership, resolve tag/digest via SBOM.\n**Use when:**\n- \"Inspect this container image\"\n- \"What SBOM does this image have?\"\n**What it does:**\n- Extracts labels, validates ownership, resolves SBOM artifact OCI reference.\n"
+      },
+      {
+        "description": "Zero Trust NetworkPolicy design and live cluster verification following NIST SP 800-207.",
+        "name": "network-policy-architect",
+        "summary_markdown": "Two-tier NetworkPolicy architecture analysis and live cluster verification for Kubernetes workloads.\n**Use when:**\n- \"Create NetworkPolicies for my namespace\"\n- \"Audit network isolation for this workload\"\n- \"Design network segmentation following Zero Trust\"\n**What it does:**\n- Tier 1: Maps pod types, services, communication flows, and special networking cases from source and manifests.\n- Tier 2: Validates draft rules against a running cluster via MCP tools with dry-run application.\n- Produces verified implementation plan with default-deny, per-pod rules, and NIST alignment.\n"
       }
     ],
     "skills_decision_guide": [
@@ -87,6 +92,11 @@
         "reason": "Fetches image labels, registry ownership, and SBOM artifact reference.",
         "skill_to_use": "image-inspect",
         "user_request": "\"Inspect this container image\" or \"What SBOM does this image have?\""
+      },
+      {
+        "reason": "Two-tier Zero Trust NetworkPolicy design with architecture analysis and live cluster verification.",
+        "skill_to_use": "network-policy-architect",
+        "user_request": "\"Create NetworkPolicies\" or \"Audit network isolation\" or \"Design network segmentation\""
       }
     ]
   },
@@ -105,7 +115,10 @@
     "vex",
     "security",
     "vulnerability",
-    "coreos"
+    "coreos",
+    "networkpolicy",
+    "zero-trust",
+    "microsegmentation"
   ],
   "legal_resources": {
     "license_agreement_url": "https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/LICENSE",
@@ -173,6 +186,10 @@
     {
       "name": "CoreOS vulnerability check",
       "workflow": "User: \"Does CVE-2025-61726 affect CoreOS in OCP 4.20.16?\"\n- `/coreos-cve-validator` extracts RPMs, finds affected package, checks VEX under OCP and RHEL EUS CPEs\n"
+    },
+    {
+      "name": "Zero Trust NetworkPolicy design",
+      "workflow": "User: \"Create NetworkPolicies for the qtodo namespace following Zero Trust\"\n- `/network-policy-architect` maps communication flows, drafts per-pod rules, verifies on live cluster with dry-run\n"
     }
   ],
   "summary": "The ocp-admin collection covers Assisted Installer cluster creation, multi-cluster discovery across self-managed and managed\nOpenShift, kubeconfig-backed fleet health reporting, and security validation for Red Hat container images and CoreOS using\nofficial SBOMs and VEX data. Use AGENTS.md intent routing to pick the right skill.\n",
