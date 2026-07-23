@@ -89,7 +89,7 @@ This skill uses `openshift-self-managed` MCP server exclusively. This server con
 
 **Do NOT use when**:
 - Listing/inspecting clusters → Use `/cluster-inventory` skill
-- Managing workloads → Out of scope (use `oc` CLI with credentials from this skill)
+- Managing workloads → Out of scope (use MCP tools or CLI with credentials from this skill)
 - Troubleshooting → Use `/cluster-inventory` skill
 - Upgrading clusters (not supported)
 
@@ -420,7 +420,7 @@ Console: https://console-openshift-console.apps.{cluster_name}.{base_domain}
 Next Steps:
 - Verify via MCP: export KUBECONFIG=/tmp/{cluster_name}.{base_domain}/kubeconfig
   MCP Tool: resources_list (Parameters: {kind: "Node"})
-- Alternative (oc CLI, unlikely available): oc --kubeconfig <path> get nodes
+- Alternative (CLI, unlikely available): oc --kubeconfig <path> get nodes
 - SSH to nodes (if key configured): ssh -i /tmp/{cluster_name}.{base_domain}/ssh-key core@<node-ip>
 - Web console: kubeadmin + password from /tmp/{cluster_name}.{base_domain}/kubeadmin-password
 - Configure identity provider (idp.md), RBAC (rbac.md)
