@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Fetch OCP release metadata and extract CoreOS RPM package list."""
+"""Fetch OCP release metadata and extract CoreOS RPM package list.
+
+Uses podman to read the release image's image-references manifest directly,
+avoiding the need for the oc CLI (see MGMT-24450).
+"""
 
 import argparse
 import json
@@ -9,7 +13,8 @@ import subprocess
 import sys
 
 OCP_VERSION_RE = re.compile(r"^4\.\d+\.\d+$")
-TIMEOUT_RELEASE = 60
+RELEASE_IMAGE = "quay.io/openshift-release-dev/ocp-release"
+TIMEOUT_RELEASE = 120
 TIMEOUT_RPM = 300
 
 
@@ -23,7 +28,8 @@ def run_cmd(cmd, timeout=60):
         return -1, "", f"command not found: {cmd[0]}"
 
 
-def parse_release_info(stdout):
+def parse_image_references(image_refs_json):
+    """Extract release metadata from the image-references manifest."""
     info = {
         "created": "",
         "machine_os": "",
@@ -31,30 +37,27 @@ def parse_release_info(stdout):
         "coreos_pullspec": "",
     }
 
-    for line in stdout.split("\n"):
-        line = line.strip()
+    info["created"] = image_refs_json.get("metadata", {}).get("creationTimestamp", "")
 
-        if line.startswith("Created:"):
-            info["created"] = line.split("Created:", 1)[1].strip()
+    for tag in image_refs_json.get("spec", {}).get("tags", []):
+        name = tag.get("name", "")
+        pullspec = tag.get("from", {}).get("name", "")
+        build_versions = tag.get("annotations", {}).get("io.openshift.build.versions", "")
 
-        if "machine-os" in line.lower() and "Red Hat Enterprise Linux CoreOS" in line:
-            parts = line.split()
-            for i, p in enumerate(parts):
-                if p == "machine-os" and i + 1 < len(parts):
-                    info["machine_os"] = parts[i + 1]
+        if name == "rhel-coreos":
+            info["coreos_pullspec"] = pullspec
+            for part in build_versions.split(","):
+                part = part.strip()
+                if part.startswith("machine-os="):
+                    info["machine_os"] = part.split("=", 1)[1]
 
-        for comp in ("kubernetes", "kubectl", "kubernetes-tests"):
-            if line.startswith(comp):
-                parts = line.split()
-                if len(parts) >= 2:
-                    info["component_versions"][comp] = parts[1]
-
-        if line.startswith("rhel-coreos ") or line.startswith("rhel-coreos\t"):
-            parts = line.split()
-            for p in parts:
-                if p.startswith("quay.io/"):
-                    info["coreos_pullspec"] = p
-                    break
+        if build_versions:
+            for part in build_versions.split(","):
+                part = part.strip()
+                if "=" in part:
+                    k, v = part.split("=", 1)
+                    if k in ("kubernetes", "kubectl", "kubernetes-tests"):
+                        info["component_versions"][k] = v
 
     return info
 
@@ -151,15 +154,6 @@ def main():
 
     errors = []
 
-    if not shutil.which("oc"):
-        json.dump({
-            "ocp_version": args.ocp_version,
-            "error": "oc CLI not found in PATH. Install from https://console.redhat.com/openshift/downloads",
-            "errors": ["oc not installed"],
-        }, sys.stdout, indent=2)
-        print()
-        sys.exit(1)
-
     if not shutil.which("podman"):
         json.dump({
             "ocp_version": args.ocp_version,
@@ -169,25 +163,39 @@ def main():
         print()
         sys.exit(1)
 
-    rc, stdout, stderr = run_cmd(
-        ["oc", "adm", "release", "info", args.ocp_version, "--pullspecs"],
-        timeout=TIMEOUT_RELEASE
-    )
+    release_image = f"{RELEASE_IMAGE}:{args.ocp_version}-x86_64"
+    image_refs_cmd = [
+        "podman", "run", "--rm", "--entrypoint", "cat",
+        release_image, "/release-manifests/image-references",
+    ]
+
+    rc, stdout, stderr = run_cmd(image_refs_cmd, timeout=TIMEOUT_RELEASE)
     if rc != 0:
         json.dump({
             "ocp_version": args.ocp_version,
-            "error": f"oc adm release info failed: {stderr.strip()}",
-            "errors": [f"oc failed (exit {rc}): {stderr.strip()[:300]}"],
+            "error": f"Failed to read image-references from release image: {stderr.strip()}",
+            "errors": [f"podman failed (exit {rc}): {stderr.strip()[:300]}"],
         }, sys.stdout, indent=2)
         print()
         sys.exit(1)
 
-    info = parse_release_info(stdout)
+    try:
+        image_refs_json = json.loads(stdout)
+    except json.JSONDecodeError as e:
+        json.dump({
+            "ocp_version": args.ocp_version,
+            "error": f"Invalid image-references JSON: {e}",
+            "errors": ["Failed to parse image-references"],
+        }, sys.stdout, indent=2)
+        print()
+        sys.exit(1)
+
+    info = parse_image_references(image_refs_json)
 
     if not info["coreos_pullspec"]:
         json.dump({
             "ocp_version": args.ocp_version,
-            "error": "Could not find rhel-coreos pullspec in release info",
+            "error": "Could not find rhel-coreos pullspec in image-references",
             "errors": ["rhel-coreos image not found in release"],
         }, sys.stdout, indent=2)
         print()
