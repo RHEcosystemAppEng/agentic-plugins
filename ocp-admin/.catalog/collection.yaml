@@ -31,9 +31,10 @@ summary: |
   official SBOMs and VEX data. Use AGENTS.md intent routing to pick the right skill.
 contents:
   description: |
-    The pack provides seven skills for cluster lifecycle, fleet visibility, and security validation on OpenShift,
-    using Assisted Installer and OCM APIs for cluster management, read-only cluster APIs for consolidated reports,
-    and Python helper scripts for CVE/SBOM/VEX-based security validation.
+    The pack provides eight skills for cluster lifecycle, fleet visibility, security validation, and network
+    security on OpenShift, using Assisted Installer and OCM APIs for cluster management, read-only cluster APIs
+    for consolidated reports, Python helper scripts for CVE/SBOM/VEX-based security validation, and MCP-based
+    NetworkPolicy design with live cluster verification.
   skills:
   - name: cluster-creator
     description: End-to-end OpenShift cluster creation using Red Hat Assisted Installer (SNO and HA; bare metal, vSphere, OCI, Nutanix).
@@ -106,6 +107,18 @@ contents:
       - "What SBOM does this image have?"
       **What it does:**
       - Extracts labels, validates ownership, resolves SBOM artifact OCI reference.
+  - name: network-policy-architect
+    description: Zero Trust NetworkPolicy design and live cluster verification following NIST SP 800-207.
+    summary_markdown: |
+      Two-tier NetworkPolicy architecture analysis and live cluster verification for Kubernetes workloads.
+      **Use when:**
+      - "Create NetworkPolicies for my namespace"
+      - "Audit network isolation for this workload"
+      - "Design network segmentation following Zero Trust"
+      **What it does:**
+      - Tier 1: Maps pod types, services, communication flows, and special networking cases from source and manifests.
+      - Tier 2: Validates draft rules against a running cluster via MCP tools with dry-run application.
+      - Produces verified implementation plan with default-deny, per-pod rules, and NIST alignment.
   orchestration_skills: []
   skills_decision_guide:
   - user_request: '"Create cluster" or "install OpenShift with Assisted Installer"'
@@ -129,6 +142,9 @@ contents:
   - user_request: '"Inspect this container image" or "What SBOM does this image have?"'
     skill_to_use: image-inspect
     reason: Fetches image labels, registry ownership, and SBOM artifact reference.
+  - user_request: '"Create NetworkPolicies" or "Audit network isolation" or "Design network segmentation"'
+    skill_to_use: network-policy-architect
+    reason: Two-tier Zero Trust NetworkPolicy design with architecture analysis and live cluster verification.
 mcp_section: '#mcp_section.md'
 deploy_and_use: '#deploy_and_use.md'
 sample_workflows:
@@ -153,6 +169,10 @@ sample_workflows:
   workflow: |
     User: "Does CVE-2025-61726 affect CoreOS in OCP 4.20.16?"
     - `/coreos-cve-validator` extracts RPMs, finds affected package, checks VEX under OCP and RHEL EUS CPEs
+- name: Zero Trust NetworkPolicy design
+  workflow: |
+    User: "Create NetworkPolicies for the qtodo namespace following Zero Trust"
+    - `/network-policy-architect` maps communication flows, drafts per-pod rules, verifies on live cluster with dry-run
 resources:
 - title: OpenShift documentation
   url: https://docs.redhat.com/en/documentation/openshift_container_platform/
@@ -190,3 +210,6 @@ keywords:
 - security
 - vulnerability
 - coreos
+- networkpolicy
+- zero-trust
+- microsegmentation
