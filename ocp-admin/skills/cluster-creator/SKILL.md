@@ -20,7 +20,7 @@ description: |
 license: Apache-2.0
 model: inherit
 color: green
-allowed-tools: list_versions create_cluster cluster_info set_cluster_vips set_host_role cluster_iso_download_url install_cluster cluster_credentials_download_url cluster_logs_download_url list_static_network_config generate_nmstate_yaml validate_nmstate_yaml alter_static_network_config_nmstate_for_host
+allowed-tools: open_cluster_creator list_versions create_cluster cluster_info set_cluster_vips set_host_role cluster_iso_download_url install_cluster cluster_credentials_download_url cluster_logs_download_url list_static_network_config generate_nmstate_yaml validate_nmstate_yaml alter_static_network_config_nmstate_for_host
 metadata:
   mcp_server: openshift-self-managed
   mcp_tools_priority: true
@@ -120,13 +120,13 @@ TaskCreate(subject: "#12 Retrieve credentials", description: "Download kubeconfi
 
 **During execution**: Update task status to "in_progress" when starting, "completed" when done.
 
-### Step 1: Prerequisites Check
+### Step 1: Environment Detection and Prerequisites
 
 **TaskUpdate**: Mark task #1 as `in_progress`
 
-**Prerequisites Check**: Execute verification from Prerequisites section.
+**Check for interactive UI**: If the `open_cluster_creator` tool is available, call it immediately. The interactive Creator form handles Steps 2 through 6. Once the cluster is created via the form, resume from **Step 7** using the cluster ID returned by the form.
 
-**On Failure**: If prerequisites fail, consult [troubleshooting.md](docs/troubleshooting.md) for common setup issues, then stop and report error to user.
+**Otherwise (text-only)**: Execute prerequisites verification from the Prerequisites section above, then continue to Step 2. On failure, consult [troubleshooting.md](docs/troubleshooting.md) and stop.
 
 ---
 
