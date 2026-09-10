@@ -75,13 +75,30 @@ This makes it crystal clear that:
 
 If the current tool isn't in the table, use the "Other / unknown" row and tell the user the target location is a best-effort default they should verify for their tool.
 
+4. Let `$MCP_FILE` be this fully resolved absolute path. This is the file
+   you will read/write in Step 4.
+
 ## Step 3 — Locate the source server config
+
+`$PLUGIN_ROOT` is the root directory of this plugin. Derive it from the
+path of this skill file: navigate two directories up from `SKILL.md`.
+
+Structure:
+```
+$PLUGIN_ROOT/
+├── skills/
+│   └── <skill-name>/
+│       └── SKILL.md  ← you are here
+├── com.<vendor>/
+│   └── mcp.json
+└── mcp.json
+```
 
 Look for the `red-hat-security` entry to merge, in this order:
 
 1. `$PLUGIN_ROOT/com.<vendor>/mcp.json` — the namespace dir for the
-   currently executing tool (e.g. `./com.cursor.editor/mcp.json`,
-   `./com.anthropic.claude-code/mcp.json`).
+   currently executing tool (e.g. `$PLUGIN_ROOT/com.cursor.editor/mcp.json`,
+   `$PLUGIN_ROOT/com.anthropic.claude-code/mcp.json`).
 2. `$PLUGIN_ROOT/mcp.json` — the plugin-root fallback.
 3. If neither file exists, use this skeleton:
 
