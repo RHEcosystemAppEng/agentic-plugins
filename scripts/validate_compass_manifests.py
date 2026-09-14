@@ -13,6 +13,8 @@ Structural checks (no SKILL.md semantic inference):
   - Skill documentation layout (all packs with skills/):
       no skills/<name>/docs/; no references/references/ nesting;
       no internal docs/ links; symlinks under references/ must not target docs/
+  - Skill scripts layout: symlinks into pack scripts/<group>/ must fan out all
+      non-test files in that group; skill docs must not use <pack>/scripts/ paths
 """
 
 from __future__ import annotations
@@ -34,6 +36,10 @@ _EXPECTED_OWNER = "group:redhat/ai5-marketplace"
 _EXPECTED_NAMESPACE = "ai5-marketplace"
 _MD_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 _SKILL_DOCS_STANDARD = "https://agent-plugins.org/specification"
+_SHARED_SCRIPT_SYMLINK_RE = re.compile(
+    r"^(?:\.\./)+scripts/([^/]+)/(.+)$"
+)
+_TEST_SCRIPT_RE = re.compile(r"^test_.*\.py$")
 
 
 def _load_yaml(path: Path) -> dict:
@@ -193,6 +199,72 @@ def _check_skill_docs_layout(skill_dir: Path, errors: list[str]) -> None:
                     )
 
 
+def _parse_shared_script_symlink_target(raw: str) -> tuple[str, str] | None:
+    normalized = raw.replace("\\", "/")
+    match = _SHARED_SCRIPT_SYMLINK_RE.match(normalized)
+    if not match:
+        return None
+    return match.group(1), match.group(2)
+
+
+def _check_skill_scripts_layout(pack: str, skill_dir: Path, errors: list[str]) -> None:
+    scripts_dir = skill_dir / "scripts"
+    if not scripts_dir.is_dir():
+        return
+
+    pack_dir = skill_dir.parent.parent
+    skill_rel = skill_dir.relative_to(_REPO_ROOT)
+    linked_by_group: dict[str, set[str]] = {}
+
+    for entry in sorted(scripts_dir.iterdir()):
+        if not entry.is_symlink():
+            continue
+        parsed = _parse_shared_script_symlink_target(os.readlink(entry))
+        if not parsed:
+            continue
+        group, filename = parsed
+        linked_by_group.setdefault(group, set()).add(filename)
+
+    if not linked_by_group:
+        return
+
+    for group, linked_files in sorted(linked_by_group.items()):
+        group_dir = pack_dir / "scripts" / group
+        if not group_dir.is_dir():
+            errors.append(
+                f"{skill_rel}/scripts: symlinks reference scripts/{group}/ but "
+                f"{pack}/scripts/{group}/ is missing"
+            )
+            continue
+        for path in sorted(group_dir.iterdir()):
+            if not path.is_file():
+                continue
+            if _TEST_SCRIPT_RE.match(path.name):
+                continue
+            if path.name not in linked_files:
+                errors.append(
+                    f"{skill_rel}/scripts: missing symlink for "
+                    f"{pack}/scripts/{group}/{path.name} — fan out all non-test "
+                    f"files when linking from scripts/{group}/"
+                )
+
+    forbidden = f"{pack}/scripts/"
+    for md_file in sorted(skill_dir.rglob("*.md")):
+        if md_file.is_symlink() and not md_file.exists():
+            continue
+        try:
+            text = md_file.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        rel_md = md_file.relative_to(_REPO_ROOT)
+        for line_no, line in enumerate(text.splitlines(), start=1):
+            if forbidden in line:
+                errors.append(
+                    f"{rel_md}:{line_no}: use skill-local scripts/ paths, not "
+                    f"'{forbidden}' (authoring-repo layout only)"
+                )
+
+
 def _check_skill_conventions(path: Path, data: dict, errors: list[str]) -> None:
     meta = data.get("metadata", {})
     spec = data.get("spec", {})
@@ -214,7 +286,9 @@ def _check_skill_conventions(path: Path, data: dict, errors: list[str]) -> None:
 def validate_pack_layout(pack: str, errors: list[str]) -> None:
     pack_dir = _REPO_ROOT / pack
     for skill in sorted(skills_on_disk(pack_dir)):
-        _check_skill_docs_layout(pack_dir / "skills" / skill, errors)
+        skill_dir = pack_dir / "skills" / skill
+        _check_skill_docs_layout(skill_dir, errors)
+        _check_skill_scripts_layout(pack, skill_dir, errors)
 
 
 def validate_pack(pack: str, owned_mcps: dict[str, Path], errors: list[str]) -> None:
@@ -276,6 +350,7 @@ def validate_pack(pack: str, owned_mcps: dict[str, Path], errors: list[str]) -> 
     for skill in sorted(disk):
         skill_dir = pack_dir / "skills" / skill
         _check_skill_docs_layout(skill_dir, errors)
+        _check_skill_scripts_layout(pack, skill_dir, errors)
 
         manifest = skill_dir / "catalog-info.yaml"
         if not manifest.is_file():
