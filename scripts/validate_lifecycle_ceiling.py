@@ -21,7 +21,6 @@ from pathlib import Path
 import yaml
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
-_ROOT_CATALOG = _REPO_ROOT / "catalog-info.yaml"
 
 # Allowed lifecycle maturity order: development < beta < production.
 LIFECYCLE_RANK = {"development": 0, "beta": 1, "production": 2}

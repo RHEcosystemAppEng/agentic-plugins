@@ -13,5 +13,4 @@ dependencies = [
 dev = [
     "codespell>=2.3.0",
     "pre-commit>=4.0.0",
-    "pytest>=8.0",
 ]

@@ -66,7 +66,7 @@ validate: check-uv
 	echo "=== Validating Compass lifecycle ceiling (skill <= plugin lifecycle)..."; \
 	uv run python scripts/validate_lifecycle_ceiling.py || EXIT=1; \
 	echo "=== Running lifecycle ceiling unit tests..."; \
-	uv run pytest scripts/test_validate_lifecycle_ceiling.py || EXIT=1; \
+	uv run python scripts/test_validate_lifecycle_ceiling.py || EXIT=1; \
 	echo "=== Validating MCP tool references (skips gracefully without podman)..."; \
 	uv run python scripts/validate_mcp_tools.py --summary-only --log-file .validate/mcp-tools.log || EXIT=1; \
 	echo "=== Validating skill design principles..."; \
@@ -96,7 +96,7 @@ validate-structure: check-uv
 	echo "=== Validating Compass lifecycle ceiling (skill <= plugin lifecycle)..."; \
 	uv run python scripts/validate_lifecycle_ceiling.py || EXIT=1; \
 	echo "=== Running lifecycle ceiling unit tests..."; \
-	uv run pytest scripts/test_validate_lifecycle_ceiling.py || EXIT=1; \
+	uv run python scripts/test_validate_lifecycle_ceiling.py || EXIT=1; \
 	echo "=== Validating MCP tool references (skips gracefully without podman)..."; \
 	uv run python scripts/validate_mcp_tools.py --summary-only --log-file .validate/mcp-tools.log || EXIT=1; \
 	echo "=== Validation complete!"; \
@@ -113,7 +113,7 @@ validate-compass-manifests: check-uv
 
 validate-lifecycle-ceiling: check-uv
 	@uv run python scripts/validate_lifecycle_ceiling.py
-	@uv run pytest scripts/test_validate_lifecycle_ceiling.py
+	@uv run python scripts/test_validate_lifecycle_ceiling.py
 
 validate-skill-design: check-uv
 	@uv run python scripts/validate_skills_tier2.py $(if $(PACK),$(PACK))
