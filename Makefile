@@ -1,4 +1,4 @@
-.PHONY: help install validate validate-structure validate-collection-schema validate-collection-compliance validate-compass-manifests validate-skill-design validate-skill-design-changed validate-mcp-tools validate-spelling package clean check-uv
+.PHONY: help install validate validate-structure validate-collection-schema validate-collection-compliance validate-compass-manifests validate-lifecycle-ceiling validate-skill-design validate-skill-design-changed validate-mcp-tools validate-spelling package clean check-uv
 
 help:
 	@echo "agentic-plugins"
@@ -10,6 +10,7 @@ help:
 	@echo "  validate-collection-schema    - Schema + roster + banners (subset of compliance)"
 	@echo "  validate-collection-compliance - Full .catalog compliance (includes collection.json drift)"
 	@echo "  validate-compass-manifests     - Compass manifests, roster, refs, and skill references/ layout"
+	@echo "  validate-lifecycle-ceiling     - Compass lifecycle ceiling (skill <= plugin lifecycle) + unit tests"
 	@echo "  validate-skill-design         - Validate all skills (use PACK=rh-sre for a specific pack)"
 	@echo "  validate-skill-design-changed - Validate only changed skills (staged + unstaged, for local dev)"
 	@echo "  validate-mcp-tools            - Validate allowed-tools against live MCP servers (requires podman)"
@@ -62,6 +63,10 @@ validate: check-uv
 	uv run python scripts/validate_collection_compliance.py || EXIT=1; \
 	echo "=== Validating Compass manifests..."; \
 	uv run python scripts/validate_compass_manifests.py || EXIT=1; \
+	echo "=== Validating Compass lifecycle ceiling (skill <= plugin lifecycle)..."; \
+	uv run python scripts/validate_lifecycle_ceiling.py || EXIT=1; \
+	echo "=== Running lifecycle ceiling unit tests..."; \
+	uv run python scripts/test_validate_lifecycle_ceiling.py || EXIT=1; \
 	echo "=== Validating MCP tool references (skips gracefully without podman)..."; \
 	uv run python scripts/validate_mcp_tools.py --summary-only --log-file .validate/mcp-tools.log || EXIT=1; \
 	echo "=== Validating skill design principles..."; \
@@ -88,6 +93,10 @@ validate-structure: check-uv
 	uv run python scripts/validate_collection_compliance.py || EXIT=1; \
 	echo "=== Validating Compass manifests..."; \
 	uv run python scripts/validate_compass_manifests.py || EXIT=1; \
+	echo "=== Validating Compass lifecycle ceiling (skill <= plugin lifecycle)..."; \
+	uv run python scripts/validate_lifecycle_ceiling.py || EXIT=1; \
+	echo "=== Running lifecycle ceiling unit tests..."; \
+	uv run python scripts/test_validate_lifecycle_ceiling.py || EXIT=1; \
 	echo "=== Validating MCP tool references (skips gracefully without podman)..."; \
 	uv run python scripts/validate_mcp_tools.py --summary-only --log-file .validate/mcp-tools.log || EXIT=1; \
 	echo "=== Validation complete!"; \
@@ -101,6 +110,10 @@ validate-collection-compliance: check-uv
 
 validate-compass-manifests: check-uv
 	@uv run python scripts/validate_compass_manifests.py
+
+validate-lifecycle-ceiling: check-uv
+	@uv run python scripts/validate_lifecycle_ceiling.py
+	@uv run python scripts/test_validate_lifecycle_ceiling.py
 
 validate-skill-design: check-uv
 	@uv run python scripts/validate_skills_tier2.py $(if $(PACK),$(PACK))
