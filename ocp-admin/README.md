@@ -452,13 +452,13 @@ For running `cluster-report` across many clusters (10–100+), use service accou
 
 ```bash
 # 1. One-time setup (requires cluster-admin): apply RBAC and extract tokens
-python3 ocp-admin/scripts/cluster-report/build-kubeconfig.py setup --all-contexts
+python3 scripts/cluster-report/build-kubeconfig.py setup --all-contexts
 
 # If RBAC is already configured, skip the apply step
-python3 ocp-admin/scripts/cluster-report/build-kubeconfig.py setup --all-contexts --skip-rbac
+python3 scripts/cluster-report/build-kubeconfig.py setup --all-contexts --skip-rbac
 
 # 2. Build merged kubeconfig from saved tokens
-python3 ocp-admin/scripts/cluster-report/build-kubeconfig.py \
+python3 scripts/cluster-report/build-kubeconfig.py \
   build --clusters ~/.ocp-clusters/clusters.json --verify
 
 # 3. Export and run

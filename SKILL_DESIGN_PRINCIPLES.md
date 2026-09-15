@@ -190,6 +190,11 @@ Every skill MUST include a **Dependencies** section listing:
 - Pack-level `<pack>/references/` or skill-level `skills/<name>/references/` are the only allowed reference locations.
 - Pack-level `references/INDEX.md` and `references/SOURCES.md` may exist for repository navigation/source attribution, but skills must not depend on them at execution time.
 
+**Skill-local scripts rule (required):**
+- Scripts the agent runs must live under `skills/<skill>/scripts/` (often as symlinks into `<pack>/scripts/<group>/`).
+- If a skill symlinks any file from `scripts/<group>/`, symlink **every** non-test file in that group (YAML, JSON, and config files included — not only `.py`).
+- In skill markdown, document commands with skill-local paths (`python3 scripts/foo.py`, `oc apply -f scripts/manifest.yaml`). Do not use `<pack>/scripts/...` paths meant for the authoring repo.
+
 **Rationale**: Makes dependencies explicit for debugging and troubleshooting.
 
 ## 6. Human-in-the-Loop Requirements

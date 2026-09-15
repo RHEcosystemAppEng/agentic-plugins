@@ -40,10 +40,10 @@ If you're currently logged into all the clusters you would like to get a report 
 
 ```bash
 # Step 1: Setup — applies RBAC to each cluster, extracts SA tokens
-python3 ocp-admin/scripts/cluster-report/build-kubeconfig.py setup --all-contexts
+python3 scripts/build-kubeconfig.py setup --all-contexts
 
 # Step 2: Build — assembles a merged kubeconfig from the inventory
-python3 ocp-admin/scripts/cluster-report/build-kubeconfig.py \
+python3 scripts/build-kubeconfig.py \
   build --clusters ~/.ocp-clusters/clusters.json --verify
 
 # Step 3: Use — export and run the skill
@@ -63,7 +63,7 @@ If you prefer to set up each cluster individually:
 
 ```bash
 oc login <cluster-api-url>
-oc apply -f ocp-admin/scripts/cluster-report/cluster-reporter-rbac.yaml
+oc apply -f scripts/cluster-reporter-rbac.yaml
 ```
 
 This creates:
@@ -105,7 +105,7 @@ Set permissions: `chmod 600 ~/.ocp-clusters/clusters.json`
 ### 4. Build Kubeconfig
 
 ```bash
-python3 ocp-admin/scripts/cluster-report/build-kubeconfig.py \
+python3 scripts/build-kubeconfig.py \
   build --clusters ~/.ocp-clusters/clusters.json --output ~/.kube/cluster-report-kubeconfig
 ```
 
@@ -182,7 +182,7 @@ If `ca_cert` is omitted, TLS verification is skipped (`--insecure-skip-tls-verif
 ### `setup` Subcommand
 
 ```bash
-python3 build-kubeconfig.py setup [OPTIONS]
+python3 scripts/build-kubeconfig.py setup [OPTIONS]
 ```
 
 
@@ -204,7 +204,7 @@ Behavior:
 ### `build` Subcommand
 
 ```bash
-python3 build-kubeconfig.py build --clusters <path> [OPTIONS]
+python3 scripts/build-kubeconfig.py build --clusters <path> [OPTIONS]
 ```
 
 
@@ -229,18 +229,18 @@ SA token Secrets do not expire, but you may want to rotate them periodically:
 
 ```bash
 oc delete secret cluster-reporter-token -n cluster-reporter-system
-oc apply -f ocp-admin/scripts/cluster-report/cluster-reporter-rbac.yaml
+oc apply -f scripts/cluster-reporter-rbac.yaml
 
 oc get secret cluster-reporter-token -n cluster-reporter-system \
   -o jsonpath='{.data.token}' | base64 -d
 
-python3 build-kubeconfig.py build --clusters ~/.ocp-clusters/clusters.json --verify
+python3 scripts/build-kubeconfig.py build --clusters ~/.ocp-clusters/clusters.json --verify
 ```
 
 To detect expired or invalid tokens:
 
 ```bash
-python3 build-kubeconfig.py build --clusters ~/.ocp-clusters/clusters.json --verify
+python3 scripts/build-kubeconfig.py build --clusters ~/.ocp-clusters/clusters.json --verify
 ```
 
 ## Security Best Practices

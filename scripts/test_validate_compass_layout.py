@@ -96,6 +96,82 @@ class TestCompassSkillDocsLayout(_RepoFixtureTestCase):
         self.assertTrue(errors)
         self.assertIn("references/references/", errors[0])
 
+    def test_missing_shared_script_symlink_flagged(self) -> None:
+        pack_dir = self.fixture_root
+        group_dir = pack_dir / "scripts" / "demo-group"
+        group_dir.mkdir(parents=True)
+        (group_dir / "run.py").write_text("# run\n", encoding="utf-8")
+        (group_dir / "config.yaml").write_text("key: value\n", encoding="utf-8")
+
+        scripts_dir = pack_dir / "skills" / "demo-skill" / "scripts"
+        scripts_dir.mkdir(parents=True)
+        os.symlink("../../../scripts/demo-group/run.py", scripts_dir / "run.py")
+
+        errors: list[str] = []
+        compass._check_skill_scripts_layout(
+            pack_dir.name, pack_dir / "skills" / "demo-skill", errors
+        )
+
+        self.assertTrue(errors)
+        self.assertIn("config.yaml", errors[0])
+
+    def test_forbidden_pack_scripts_path_in_skill_markdown_flagged(self) -> None:
+        pack_dir = self.fixture_root
+        pack = pack_dir.name
+        skill_dir = pack_dir / "skills" / "demo-skill"
+        group_dir = pack_dir / "scripts" / "demo-group"
+        group_dir.mkdir(parents=True)
+        (group_dir / "run.py").write_text("# run\n", encoding="utf-8")
+
+        scripts_dir = skill_dir / "scripts"
+        scripts_dir.mkdir(parents=True)
+        os.symlink("../../../scripts/demo-group/run.py", scripts_dir / "run.py")
+
+        refs = skill_dir / "references"
+        refs.mkdir(parents=True)
+        (refs / "guide.md").write_text(
+            f"Run python3 {pack}/scripts/demo-group/run.py\n",
+            encoding="utf-8",
+        )
+
+        errors: list[str] = []
+        compass._check_skill_scripts_layout(pack, skill_dir, errors)
+
+        self.assertTrue(errors)
+        self.assertTrue(
+            any(f"{pack}/scripts/" in err and "authoring-repo" in err for err in errors),
+            msg=f"expected pack scripts path error, got: {errors}",
+        )
+
+    def test_shared_script_symlinks_complete_passes(self) -> None:
+        pack_dir = self.fixture_root
+        pack = pack_dir.name
+        skill_dir = pack_dir / "skills" / "demo-skill"
+        group_dir = pack_dir / "scripts" / "demo-group"
+        group_dir.mkdir(parents=True)
+        (group_dir / "run.py").write_text("# run\n", encoding="utf-8")
+        (group_dir / "config.yaml").write_text("key: value\n", encoding="utf-8")
+        (group_dir / "test_extra.py").write_text("# test\n", encoding="utf-8")
+
+        scripts_dir = skill_dir / "scripts"
+        scripts_dir.mkdir(parents=True)
+        os.symlink("../../../scripts/demo-group/run.py", scripts_dir / "run.py")
+        os.symlink(
+            "../../../scripts/demo-group/config.yaml", scripts_dir / "config.yaml"
+        )
+
+        refs = skill_dir / "references"
+        refs.mkdir(parents=True)
+        (refs / "guide.md").write_text(
+            "Run `python3 scripts/run.py` and `oc apply -f scripts/config.yaml`.\n",
+            encoding="utf-8",
+        )
+
+        errors: list[str] = []
+        compass._check_skill_scripts_layout(pack, skill_dir, errors)
+
+        self.assertEqual(errors, [])
+
     def test_forbidden_docs_markdown_link_flagged(self) -> None:
         skill_dir = self.fixture_root / "skills" / "demo-skill"
         refs = skill_dir / "references"
