@@ -35,5 +35,7 @@ spec:
     - airesource:ai5-marketplace/rh-sre
     - mcpserver:ai5-marketplace/ansible-automation-platform
   dependencyOf:
+    - airesource:ai5-marketplace/job-template-creator
+    - airesource:ai5-marketplace/job-template-remediation-validator
     - airesource:ai5-marketplace/playbook-executor
     - airesource:ai5-marketplace/remediation

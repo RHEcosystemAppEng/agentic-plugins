@@ -33,6 +33,7 @@ spec:
   agents: []
   dependsOn:
     - airesource:ai5-marketplace/rh-sre
+    - airesource:ai5-marketplace/mcp-aap-validator
     - mcpserver:ai5-marketplace/ansible-automation-platform
   dependencyOf:
     - airesource:ai5-marketplace/playbook-executor
