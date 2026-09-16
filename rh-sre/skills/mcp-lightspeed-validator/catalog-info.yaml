@@ -35,4 +35,7 @@ spec:
     - airesource:ai5-marketplace/rh-sre
     - mcpserver:redhat/red-hat-lightspeed-mcp-server
   dependencyOf:
+    - airesource:ai5-marketplace/cve-impact
+    - airesource:ai5-marketplace/cve-validation
+    - airesource:ai5-marketplace/fleet-inventory
     - airesource:ai5-marketplace/remediation

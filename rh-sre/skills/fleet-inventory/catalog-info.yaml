@@ -33,4 +33,5 @@ spec:
   agents: []
   dependsOn:
     - airesource:ai5-marketplace/rh-sre
+    - airesource:ai5-marketplace/mcp-lightspeed-validator
     - mcpserver:redhat/red-hat-lightspeed-mcp-server
