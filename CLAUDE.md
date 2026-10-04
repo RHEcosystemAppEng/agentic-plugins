@@ -103,7 +103,7 @@ All entities (skills, plugins, and MCP servers) share a single namespace: `ai5-m
 
 #### Adding Compass Manifests for a New Skill
 
-When adding a skill, create `skills/<skill-name>/catalog-info.yaml`. Set `spec.lifecycle` from the pack plugin (`<pack>/<pack>-plugin.yaml`); default to the plugin value and ask the user before changing it — a skill may match the plugin or use a **less mature** lifecycle only (never above the plugin). New packs default the plugin to `development`.
+When adding a skill, create `skills/<skill-name>/catalog-info.yaml`. Set `spec.lifecycle` from the pack plugin (`<pack>/<pack>-plugin.yaml`); default to the plugin value and ask the user before changing it — a skill may match the plugin or use a **less mature** lifecycle only (never above the plugin). New packs default the plugin to `development`. Valid values and publication rules: [LIFECYCLE.md](LIFECYCLE.md) (`development` < `beta` < `GA`; plus `deprecated` / `archived`).
 
 ```yaml
 apiVersion: backstage.io/v1alpha1

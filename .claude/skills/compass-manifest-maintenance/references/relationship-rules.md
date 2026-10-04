@@ -33,8 +33,14 @@ All skills, plugins, and owned MCPs use `metadata.namespace: ai5-marketplace`.
 
 ## Lifecycle (`spec.lifecycle`)
 
-- **New skill:** copy `spec.lifecycle` from `<pack>/<pack>-plugin.yaml` (ask before changing). Skill must not exceed plugin maturity (`development` < `beta` < `production`).
+Canonical model: [LIFECYCLE.md](../../../../LIFECYCLE.md) at the repository root.
+
+Allowed values: `development`, `beta`, `GA`, `deprecated`, `archived`.
+
+- **New skill:** copy `spec.lifecycle` from `<pack>/<pack>-plugin.yaml` (ask before changing). Skill must not exceed plugin maturity (`development` < `beta` < `GA`).
 - **New pack:** default plugin to `development`.
+- **Retirement:** use `deprecated` then `archived` when sunsetting a component (see LIFECYCLE.md).
+- **Distribution:** only `beta` and `GA` with `distribution: external` are published externally; `development`, `deprecated`, and `archived` are always internal-only.
 
 ## Files to touch when adding a skill
 
