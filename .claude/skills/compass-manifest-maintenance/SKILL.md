@@ -62,7 +62,7 @@ test -f CLAUDE.md && echo "✓ repo root" || echo "✗ wrong directory"
 1. **Resolve** `<pack>` and `<skill-name>` — confirm `<pack>/skills/<skill-name>/SKILL.md` exists.
 
 2. **Read golden sources** (precedence):
-   - `<pack>/<pack>-plugin.yaml` — `spec.lifecycle` (default for new skill manifest; see [relationship-rules.md](references/relationship-rules.md) Lifecycle)
+   - `<pack>/<pack>-plugin.yaml` — `spec.lifecycle` (default for new skill manifest; see [LIFECYCLE.md](../../../LIFECYCLE.md) and [relationship-rules.md](references/relationship-rules.md) Lifecycle)
    - `SKILL.md` frontmatter: `name`, `description`, `allowed-tools`
    - `SKILL.md` body: `Required MCP Servers`, `/skill-name` invocations, Dependencies, validator prerequisites
    - `<pack>/mcps.json` — server keys (map via [mcp-mapping.md](references/mcp-mapping.md))
@@ -77,7 +77,7 @@ test -f CLAUDE.md && echo "✓ repo root" || echo "✗ wrong directory"
 4. **Set `spec.lifecycle`** (do not hardcode `beta`):
    - Read `spec.lifecycle` from `<pack>/<pack>-plugin.yaml` — use as the **default** for the skill.
    - **Human in the loop:** ask whether to change it. The skill may match the plugin or use a **less mature** value only (e.g. plugin `beta` → skill `development` is OK; plugin `development` → skill `beta` is **not** allowed).
-   - See [relationship-rules.md](references/relationship-rules.md) Lifecycle.
+   - Allowed values: `development`, `beta`, `GA`, `deprecated`, `archived` — see [LIFECYCLE.md](../../../LIFECYCLE.md).
 
 5. **Write** `<pack>/skills/<skill-name>/catalog-info.yaml` from [assets/skill-catalog-info.yaml](assets/skill-catalog-info.yaml):
    - `namespace: ai5-marketplace`
