@@ -24,7 +24,7 @@ Compass does **not** auto-generate inverse relations for custom kinds (`AiResour
 | Entity | Ref format |
 |--------|------------|
 | Skill | `airesource:ai5-marketplace/<skill-name>` |
-| Plugin plugin | `airesource:ai5-marketplace/<plugin-name>` |
+| Plugin | `airesource:ai5-marketplace/<plugin-name>` |
 | Owned MCP | `mcpserver:ai5-marketplace/<mcp-name>` |
 | Canonical MCP | `mcpserver:redhat/<mcp-name>` |
 | System | `default/agentic-plugins` (in `spec.system` only) |

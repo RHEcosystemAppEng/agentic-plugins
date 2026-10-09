@@ -48,7 +48,7 @@ For each `mcpserver:` added to the skill’s `dependsOn`:
 
 ## Step 5 — Plugin MCP union
 
-The plugin plugin’s `dependsOn` MCP list = **union** of all `mcpserver:` refs across skill manifests in that plugin — not the full set of keys in `mcps.json`.
+The plugin’s `dependsOn` MCP list = **union** of all `mcpserver:` refs across skill manifests in that plugin — not the full set of keys in `mcps.json`.
 
 ## Sanity checks
 
