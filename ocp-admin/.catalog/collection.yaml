@@ -3,7 +3,7 @@
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: openshift-administration
-name: Agentic skill pack for Red Hat OpenShift
+name: Agent plugin for Red Hat OpenShift
 provider: Red Hat
 version: 0.1.0
 categories:
@@ -31,7 +31,7 @@ summary: |
   official SBOMs and VEX data. Use AGENTS.md intent routing to pick the right skill.
 contents:
   description: |
-    The pack provides eight skills for cluster lifecycle, fleet visibility, security validation, and network
+    The plugin provides eight skills for cluster lifecycle, fleet visibility, security validation, and network
     security on OpenShift, using Assisted Installer and OCM APIs for cluster management, read-only cluster APIs
     for consolidated reports, Python helper scripts for CVE/SBOM/VEX-based security validation, and MCP-based
     NetworkPolicy design with live cluster verification.
@@ -179,7 +179,7 @@ resources:
   description: Platform guides for administrators installing and operating OpenShift.
 - title: agentic-plugins repository
   url: https://github.com/RHEcosystemAppEng/agentic-plugins
-  description: Source repository for these packs, skills, and catalog metadata.
+  description: Source repository for these plugins, skills, and catalog metadata.
 - title: Red Hat Security Data
   url: https://security.access.redhat.com/
   description: Official Red Hat VEX/CSAF data, security advisories, and CVE information.

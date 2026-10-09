@@ -11,7 +11,7 @@ help:
 	@echo "  validate-collection-compliance - Full .catalog compliance (includes collection.json drift)"
 	@echo "  validate-compass-manifests     - Compass manifests, roster, refs, and skill references/ layout"
 	@echo "  validate-lifecycle-ceiling     - Compass lifecycle ceiling (skill <= plugin lifecycle) + unit tests"
-	@echo "  validate-skill-design         - Validate all skills (use PACK=rh-sre for a specific pack)"
+	@echo "  validate-skill-design         - Validate all skills (use PLUGIN=rh-sre for a specific plugin)"
 	@echo "  validate-skill-design-changed - Validate only changed skills (staged + unstaged, for local dev)"
 	@echo "  validate-mcp-tools            - Validate allowed-tools against live MCP servers (requires podman)"
 	@echo "  validate-spelling             - Run codespell spell check on all files"
@@ -116,14 +116,22 @@ validate-lifecycle-ceiling: check-uv
 	@uv run python scripts/test_validate_lifecycle_ceiling.py
 
 validate-skill-design: check-uv
-	@uv run python scripts/validate_skills_tier2.py $(if $(PACK),$(PACK))
+	@if [ -n "$(PACK)" ]; then \
+		echo "Error: PACK= was renamed to PLUGIN= (e.g. make validate-skill-design PLUGIN=rh-sre)"; \
+		exit 1; \
+	fi
+	@uv run python scripts/validate_skills_tier2.py $(if $(PLUGIN),$(PLUGIN))
 
 validate-skill-design-changed: check-uv
 	@VALIDATE_INCLUDE_UNCOMMITTED=1 ./scripts/ci-validate-changed-skills.sh
 
 validate-mcp-tools: check-uv
+	@if [ -n "$(PACK)" ]; then \
+		echo "Error: PACK= was renamed to PLUGIN= (e.g. make validate-mcp-tools PLUGIN=rh-sre)"; \
+		exit 1; \
+	fi
 	@echo "Validating MCP tool references against live servers..."
-	@uv run python scripts/validate_mcp_tools.py $(if $(PACK),$(PACK))
+	@uv run python scripts/validate_mcp_tools.py $(if $(PLUGIN),$(PLUGIN))
 	@echo "MCP tool validation complete!"
 
 validate-spelling: check-uv

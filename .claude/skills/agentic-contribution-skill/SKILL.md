@@ -6,10 +6,10 @@ description: |
   Use when:
   - "Create a new skill"
   - "Import an existing skill"
-  - "Create a new agentic pack"
-  - "Add skill to <pack>"
+  - "Create a new agent plugin"
+  - "Add skill to <plugin>"
   - "Build skill for <rh-product>"
-  - User mentions "skill builder", "contribute", "new skill", "import skill", or "new pack"
+  - User mentions "skill builder", "contribute", "new skill", "import skill", or "new plugin"
 
   Two modes: create from scratch or import existing SKILL.md. Guides through discovery, definition, generation, and validation. Enforces SKILL_DESIGN_PRINCIPLES.md and agentskills.io spec.
 license: Apache-2.0
@@ -22,14 +22,14 @@ metadata:
 
 # /agentic-contribution-skill Skill
 
-Interactive AI assistant for creating production-ready skills and agentic packs for **Red Hat products and platforms** with automated quality validation.
+Interactive AI assistant for creating production-ready skills and agent plugins for **Red Hat products and platforms** with automated quality validation.
 
 All skills created follow **Red Hat product guidelines, official documentation standards** (docs.redhat.com, access.redhat.com), and **best practices** for Red Hat Enterprise Linux, OpenShift Container Platform, Ansible Automation Platform, Red Hat Lightspeed, and other Red Hat ecosystem products.
 
-**Creates**: Complete skill structure with YAML frontmatter, all mandatory sections, pack integration, and new agentic packs (Lola-compatible)
+**Creates**: Complete skill structure with YAML frontmatter, all mandatory sections, plugin integration, and new agent plugins (Lola-compatible)
 **Validates**: Tier 1 (agentskills.io) + Tier 2 (repository design principles)
 **Applies**: Red Hat documentation compliance (uses official Red Hat documentation to adapt skill content to manufacturer guidelines - not automated validation)
-**Marketplace**: Registers packs in `marketplace/rh-agentic-collection.yml` ([agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog)) for Lola package manager installation
+**Marketplace**: Registers plugins in `marketplace/rh-agentic-collection.yml` ([agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog)) for Lola package manager installation
 
 ## Prerequisites
 
@@ -59,9 +59,9 @@ If prerequisites fail:
 ## When to Use This Skill
 
 **Use when**:
-- Creating new skill for any pack
+- Creating new skill for any plugin
 - Importing an existing SKILL.md into the repository
-- Creating new agentic pack collection
+- Creating new agent plugin collection
 - Developing or editing skills for this agentic collection
 - User explicitly invokes `/agentic-contribution-skill`
 
@@ -83,13 +83,13 @@ Ask: **"Are you creating a new skill from scratch, or importing an existing SKIL
 Ask concisely, validate before proceeding. Make additional questions if needed to gather complete context.
 
 1. **Purpose & Red Hat Product**: "What does the skill do? (1 sentence) For which Red Hat product(s) is this skill targeted?"
-2. **Persona**: "What role uses it?" (detect existing pack or suggest new)
-3. **Pack**: "Use <existing-pack>? (yes/no/create-new)"
+2. **Persona**: "What role uses it?" (detect existing plugin or suggest new)
+3. **Plugin**: "Use <existing-plugin>? (yes/no/create-new)"
 4. **MCP Tools**: 
-   - Read pack's `mcps.json` to list existing MCP servers
+   - Read plugin's `mcps.json` to list existing MCP servers
    - If MCP server mentioned, verify it exists in the file
    - For tools mentioned, verify they exist in MCP server documentation or configuration
-   - Ask: "What MCP tools does this skill need? Available MCPs in <pack>: <list>. Will you use existing MCPs, need new ones, or both?"
+   - Ask: "What MCP tools does this skill need? Available MCPs in <plugin>: <list>. Will you use existing MCPs, need new ones, or both?"
    - **Never suggest tools based on intuition** - only recommend tools you've verified exist
 5. **Operation Type**: "Read-only, additive, or destructive?" (determines color)
 
@@ -106,13 +106,13 @@ Ask concisely, validate before proceeding. Make additional questions if needed t
 **Validation**:
 - Purpose: specific, under 100 chars
 - Red Hat product: identified (OpenShift, RHEL, Ansible, etc.)
-- Persona: matches known or justifies new pack
+- Persona: matches known or justifies new plugin
 - MCP tools: **verified to exist** (no assumptions/intuition)
 - Operation type → Color selected from table above
 
 ### Phase 2: Definition (6 questions max)
 
-1. **Name**: Ask "Skill name? (kebab-case, unique)" → Validate if name is representative of purpose and Red Hat product. If NOT representative, propose 2-3 better alternatives and ask user to choose → Check: `test -d <pack>/skills/<name>/` for uniqueness
+1. **Name**: Ask "Skill name? (kebab-case, unique)" → Validate if name is representative of purpose and Red Hat product. If NOT representative, propose 2-3 better alternatives and ask user to choose → Check: `test -d <plugin>/skills/<name>/` for uniqueness
 2. **Use Cases**: "3-5 user phrases for 'Use when'" (concrete, not generic)
 3. **Anti-Patterns**: "NOT for? (with alternative)"
 4. **Workflow**: "Steps with MCP tools?" (e.g., "1. Validate VM - resources_get")
@@ -126,9 +126,9 @@ Ask concisely, validate before proceeding. Make additional questions if needed t
 
 1. **Get file**: Ask for the path to the existing SKILL.md
 2. **Read & parse**: Read the file with Read tool. Parse YAML frontmatter, extract name, description, workflow steps, MCP tools mentioned
-3. **Pack suggestion**: Analyze skill content keywords and suggest the best-fit pack:
+3. **Plugin suggestion**: Analyze skill content keywords and suggest the best-fit plugin:
 
-   | Keywords in skill content | Suggested pack |
+   | Keywords in skill content | Suggested plugin |
    |---|---|
    | VM, virtual machine, KubeVirt, snapshot, migration, clone | rh-virt |
    | CVE, vulnerability, remediation, compliance, RHEL, SRE | rh-sre |
@@ -138,7 +138,7 @@ Ask concisely, validate before proceeding. Make additional questions if needed t
    | Ansible, AAP, playbook, governance, job template | rh-automation |
    | CVE explanation, product lifecycle, support severity, diagnostics, patching, support case, troubleshooting, customer issue, knowledge base, must-gather | rh-basic |
 
-   - Present top match with reasoning: "This skill mentions X, Y, Z which aligns with `<pack>` (persona: <role>)"
+   - Present top match with reasoning: "This skill mentions X, Y, Z which aligns with `<plugin>` (persona: <role>)"
    - Ask user to confirm or override
 
 4. **Color inference**: If frontmatter has no `color`, analyze the skill's workflow steps and operations to infer the risk level. Present your conclusion to the user:
@@ -148,13 +148,13 @@ Ask concisely, validate before proceeding. Make additional questions if needed t
    ```
    Use the color mapping table from Phase 1 (Discovery).
 
-5. **MCP tool verification**: Identify all MCP tools referenced in the skill. Read the target pack's `mcps.json` and verify each tool exists. Flag any tools not found — they may need a new MCP server or the skill may need adaptation.
+5. **MCP tool verification**: Identify all MCP tools referenced in the skill. Read the target plugin's `mcps.json` and verify each tool exists. Flag any tools not found — they may need a new MCP server or the skill may need adaptation.
 
 6. **Report analysis**:
    ```
    Analyzed: <path>
    Name: <name> | Lines: <N> | Frontmatter: <valid/needs-fixes>
-   Suggested pack: <pack> (keywords: <matched>)
+   Suggested plugin: <plugin> (keywords: <matched>)
    Color: <color> (<inferred or from frontmatter>)
    MCP tools: <N verified, M not found>
    Missing sections: <list or "none">
@@ -170,9 +170,9 @@ Ask concisely, validate before proceeding. Make additional questions if needed t
 
 1. **Fix frontmatter**: Ensure `model: inherit` and `color` set (use value confirmed by user in Phase 1-Import). Add `metadata` block if missing
 2. **Add missing sections**: Per DP6/DP7 — Prerequisites, When to Use, Workflow, Common Issues, Dependencies. Keep existing content, add structure around it
-3. **Validate naming**: kebab-case, check uniqueness: `test -d <pack>/skills/<name>/`
-4. **Place file**: Copy to `<pack>/skills/<skill-name>/SKILL.md`
-5. **Update routing**: Add entry to `<pack>/AGENTS.md` intent routing table
+3. **Validate naming**: kebab-case, check uniqueness: `test -d <plugin>/skills/<name>/`
+4. **Place file**: Copy to `<plugin>/skills/<skill-name>/SKILL.md`
+5. **Update routing**: Add entry to `<plugin>/AGENTS.md` intent routing table
 6. **Show changes**: Present summary of all modifications to user, wait for confirmation
 
 After confirmation → proceed to Phase 5 (Validation & Iteration).
@@ -199,7 +199,7 @@ Show complete spec:
 ```markdown
 ## Review Before Generation
 
-**Pack**: <pack> | **Skill**: <name> | **Color**: <color>
+**Plugin**: <plugin> | **Skill**: <name> | **Color**: <color>
 
 **Purpose**: <purpose>
 **Red Hat Product**: <rh-product>
@@ -227,9 +227,9 @@ Proceed with generation? (yes/no)
 
 **Create structure**:
 ```bash
-mkdir -p <pack>/skills/<skill-name>/
+mkdir -p <plugin>/skills/<skill-name>/
 # If external resources provided by user:
-mkdir -p <pack>/skills/<skill-name>/references/
+mkdir -p <plugin>/skills/<skill-name>/references/
 ```
 
 **Generate files**:
@@ -242,11 +242,11 @@ mkdir -p <pack>/skills/<skill-name>/references/
    - `references/common-issues.md` - Detailed troubleshooting with full KB article content
    - `references/examples.md` - Comprehensive usage examples
    - `references/external-resources.md` - Any external references/links/KB articles mentioned by user
-3. **Update <pack>/AGENTS.md**: Add intent routing entry
-4. **Create <pack>/mcps.json**: If new MCP server needed (use `${ENV_VAR}` format)
-5. **Compass manifests**: Run **compass-manifest-maintenance** (`.claude/skills/compass-manifest-maintenance/`) for registered packs — skill `catalog-info.yaml`, Location targets, bidirectional `dependsOn`/`dependencyOf` on plugin and MCP manifests
-6. **Update marketplace/rh-agentic-collection.yml** in [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog): If new pack (register pack for Lola installation)
-7. **Create pack structure**: If new pack (README.md, AGENTS.md, skills/ directory)
+3. **Update <plugin>/AGENTS.md**: Add intent routing entry
+4. **Create <plugin>/mcps.json**: If new MCP server needed (use `${ENV_VAR}` format)
+5. **Compass manifests**: Run **compass-manifest-maintenance** (`.claude/skills/compass-manifest-maintenance/`) for registered plugins — skill `catalog-info.yaml`, Location targets, bidirectional `dependsOn`/`dependencyOf` on plugin and MCP manifests
+6. **Update marketplace/rh-agentic-collection.yml** in [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog): If new plugin (register plugin for Lola installation)
+7. **Create plugin structure**: If new plugin (README.md, AGENTS.md, skills/ directory)
 
 Generate SKILL.md following the mandatory section template in SKILL_DESIGN_PRINCIPLES.md (already consulted in Phase 3). If SKILL.md becomes too long, move detailed content to `references/` with references in main file.
 
@@ -256,12 +256,12 @@ Generate SKILL.md following the mandatory section template in SKILL_DESIGN_PRINC
 
 **Tier 1 - agentskills.io**:
 ```bash
-uv run python scripts/validate_skills_tier1.py <pack>/skills/<skill-name>/SKILL.md
+uv run python scripts/validate_skills_tier1.py <plugin>/skills/<skill-name>/SKILL.md
 ```
 
 **Tier 2 - Design Principles**:
 ```bash
-uv run python scripts/validate_skills_tier2.py <pack>/skills/<skill-name>/SKILL.md
+uv run python scripts/validate_skills_tier2.py <plugin>/skills/<skill-name>/SKILL.md
 ```
 
 **Report clearly**:
@@ -291,7 +291,7 @@ Present a concise summary to the user:
 - Validation results (Tier 1 + Tier 2, pass/warning counts)
 - Quality metrics (line count, section count, workflow steps, common issues)
 - Iteration count if applicable
-- Your assessment of readiness and fit within the pack
+- Your assessment of readiness and fit within the plugin
 - Ask: "Ready to commit? (yes/no)"
 
 ### Phase 7: Git Workflow (Optional - User Controls)
@@ -300,7 +300,7 @@ Present a concise summary to the user:
 
 1. **Branch**: "Create `feat/<skill-name>`? (yes/no)"
 2. **Stage**: Show files, ask confirmation
-3. **Commit**: Propose message (`feat: add <skill-name> skill to <pack>`), wait for approval
+3. **Commit**: Propose message (`feat: add <skill-name> skill to <plugin>`), wait for approval
 4. **Push**: "Push changes? (yes/no)"
 5. **PR**: Use `gh pr create` if available, or provide manual steps
 
@@ -318,11 +318,11 @@ Report: skill path, quality status, PR URL (if created), and note that CI checks
 
 ### Issue 2: "Skill name exists"
 
-**Fix**: Choose more specific name. Check: `ls <pack>/skills/`
+**Fix**: Choose more specific name. Check: `ls <plugin>/skills/`
 
 ### Issue 3: "MCP server not configured"
 
-**Fix**: Add to `<pack>/mcps.json` using `${ENV_VAR}` format.
+**Fix**: Add to `<plugin>/mcps.json` using `${ENV_VAR}` format.
 
 ### Issue 4: "Git push authentication failed"
 
@@ -342,16 +342,16 @@ ssh-add ~/.ssh/id_ed25519
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### Issue 6: "New pack not installable via Lola"
+### Issue 6: "New plugin not installable via Lola"
 
-**Cause**: Pack not registered in `marketplace/rh-agentic-collection.yml` ([agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog))
+**Cause**: Plugin not registered in `marketplace/rh-agentic-collection.yml` ([agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog))
 
-**Fix**: Add pack entry to marketplace file:
+**Fix**: Add plugin entry to marketplace file:
 ```yaml
-- name: <pack-name>
+- name: <plugin-name>
   version: 0.1.0
-  description: <pack-description>
-  path: <pack-name>
+  description: <plugin-description>
+  path: <plugin-name>
 ```
 
 ### Issue 7: "Line count exceeds 500"

@@ -1,5 +1,5 @@
-# Pack-local collection catalog — JSON Schema (Draft 2020-12), YAML encoding.
-# Field semantics and authoring: COLLECTION_SPEC.md. Instance files: <pack>/.catalog/collection.yaml
+# Plugin-local collection catalog — JSON Schema (Draft 2020-12), YAML encoding.
+# Field semantics and authoring: COLLECTION_SPEC.md. Instance files: <plugin>/.catalog/collection.yaml
 # Fragments: sibling *.md of collection.yaml; reference as #name.md (quote in YAML). Inline monitored fields
 # >500 code points must use a fragment; see COLLECTION_SPEC.md. Resolved by scripts/collection_validate_lib.py.
 

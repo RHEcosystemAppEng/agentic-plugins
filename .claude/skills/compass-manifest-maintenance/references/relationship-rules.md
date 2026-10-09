@@ -24,7 +24,7 @@ Compass does **not** auto-generate inverse relations for custom kinds (`AiResour
 | Entity | Ref format |
 |--------|------------|
 | Skill | `airesource:ai5-marketplace/<skill-name>` |
-| Pack plugin | `airesource:ai5-marketplace/<pack-name>` |
+| Plugin plugin | `airesource:ai5-marketplace/<plugin-name>` |
 | Owned MCP | `mcpserver:ai5-marketplace/<mcp-name>` |
 | Canonical MCP | `mcpserver:redhat/<mcp-name>` |
 | System | `default/agentic-plugins` (in `spec.system` only) |
@@ -33,23 +33,23 @@ All skills, plugins, and owned MCPs use `metadata.namespace: ai5-marketplace`.
 
 ## Lifecycle (`spec.lifecycle`)
 
-- **New skill:** copy `spec.lifecycle` from `<pack>/<pack>-plugin.yaml` (ask before changing). Skill must not exceed plugin maturity (`development` < `beta` < `production`).
-- **New pack:** default plugin to `development`.
+- **New skill:** copy `spec.lifecycle` from `<plugin>/<plugin>-plugin.yaml` (ask before changing). Skill must not exceed plugin maturity (`development` < `beta` < `production`).
+- **New plugin:** default plugin to `development`.
 
 ## Files to touch when adding a skill
 
 1. `skills/<skill-name>/catalog-info.yaml` — new or updated entity
-2. `<pack>/catalog-info.yaml` — Location `targets` entry
-3. `<pack>/<pack>-plugin.yaml` — `dependencyOf` skill
+2. `<plugin>/catalog-info.yaml` — Location `targets` entry
+3. `<plugin>/<plugin>-plugin.yaml` — `dependencyOf` skill
 4. Each `mcps/*.yaml` referenced — `dependencyOf` skill (and plugin if plugin depends on MCP)
 5. Each depended-on skill manifest — `dependencyOf` orchestrator (skill→skill)
-6. Reconcile plugin `dependsOn` MCP union if MCP usage changed pack-wide
+6. Reconcile plugin `dependsOn` MCP union if MCP usage changed plugin-wide
 
-## Files to touch when adding a pack
+## Files to touch when adding a plugin
 
-1. `<pack>/<pack>-plugin.yaml`
-2. `<pack>/catalog-info.yaml`
-3. Root `catalog-info.yaml` — add pack Location target
+1. `<plugin>/<plugin>-plugin.yaml`
+2. `<plugin>/catalog-info.yaml`
+3. Root `catalog-info.yaml` — add plugin Location target
 4. `system.yaml` — `dependencyOf` plugin entry
 5. Register owned MCPs in `mcps/` if new (and `mcps/catalog-info.yaml`, `system.yaml` for MCP)
 
@@ -63,6 +63,6 @@ Add skill→skill `dependsOn` when `SKILL.md` documents:
 
 Do **not** infer orchestration from `AGENTS.md` routing alone.
 
-## Registered packs (Compass Location in root)
+## Registered plugins (Compass Location in root)
 
-Currently indexed: `ocp-admin`, `rh-sre`, `rh-virt`, `rh-basic`. Packs on disk without root Location targets (`rh-developer`, `rh-ai-engineer`, `rh-automation`) are out of scope until added to root `catalog-info.yaml`.
+Currently indexed: `ocp-admin`, `rh-sre`, `rh-virt`, `rh-basic`. Plugins on disk without root Location targets (`rh-developer`, `rh-ai-engineer`, `rh-automation`) are out of scope until added to root `catalog-info.yaml`.

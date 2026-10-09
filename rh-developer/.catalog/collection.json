@@ -10,7 +10,7 @@
     "Automation"
   ],
   "contents": {
-    "description": "The pack provides 17 skills for developer workflows on OpenShift and RHEL, including two orchestration skills\nfor end-to-end containerize-and-deploy and structured incident investigation.\n",
+    "description": "The plugin provides 17 skills for developer workflows on OpenShift and RHEL, including two orchestration skills\nfor end-to-end containerize-and-deploy and structured incident investigation.\n",
     "orchestration_skills": [
       {
         "description": "End-to-end containerize and deploy",
@@ -52,7 +52,7 @@
       {
         "description": "RHEL / SSH deployment",
         "name": "rhel-deploy",
-        "summary_markdown": "Deploy to standalone RHEL/Fedora hosts via SSH and systemd/Podman patterns.\n**Use when:**\n- \"Deploy on RHEL over SSH\"\n- \"systemd unit for my container\"\n**What it does:**\n- Uses SSH and host workflows from pack docs.\n- Optional Lightspeed context when configured.\n"
+        "summary_markdown": "Deploy to standalone RHEL/Fedora hosts via SSH and systemd/Podman patterns.\n**Use when:**\n- \"Deploy on RHEL over SSH\"\n- \"systemd unit for my container\"\n**What it does:**\n- Uses SSH and host workflows from plugin docs.\n- Optional Lightspeed context when configured.\n"
       },
       {
         "description": "Environment validation",
@@ -179,7 +179,7 @@
   ],
   "maturity": "ORANGE",
   "mcp_section": "#mcp_section.md",
-  "name": "Agentic skill pack for Software Developers",
+  "name": "Agent plugin for Software Developers",
   "personas": [
     "Application developer"
   ],
@@ -211,21 +211,21 @@
       "url": "https://developers.redhat.com/products/rhel/ubi"
     },
     {
-      "description": "Local container workflows used by the pack.",
+      "description": "Local container workflows used by the plugin.",
       "embedded_doc": "skills/debug-build/references/debugging-patterns.md",
       "title": "Podman",
       "url": "https://docs.podman.io/"
     },
     {
-      "description": "Pack policy for confirmations and destructive actions.",
+      "description": "Plugin policy for confirmations and destructive actions.",
       "embedded_doc": "skills/validate-environment/references/human-in-the-loop.md",
-      "title": "Human-in-the-loop (pack)",
+      "title": "Human-in-the-loop (plugin)",
       "url": "https://github.com/RHEcosystemAppEng/agentic-plugins"
     },
     {
       "description": "SSH/systemd patterns for `/rhel-deploy`.",
       "embedded_doc": "skills/rhel-deploy/references/rhel-deployment.md",
-      "title": "RHEL deployment notes (pack)",
+      "title": "RHEL deployment notes (plugin)",
       "url": "https://github.com/RHEcosystemAppEng/agentic-plugins"
     }
   ],

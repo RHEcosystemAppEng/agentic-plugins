@@ -7,7 +7,7 @@
 
 - Claude Code CLI or IDE extension (if using Claude Code)
 - Ansible Automation Platform **controller** reachable over HTTPS from the workstation running the assistant
-- API token with permissions appropriate for job, inventory, configuration, security, monitoring, and user APIs used by the pack
+- API token with permissions appropriate for job, inventory, configuration, security, monitoring, and user APIs used by the plugin
 
 ### Environment setup
 

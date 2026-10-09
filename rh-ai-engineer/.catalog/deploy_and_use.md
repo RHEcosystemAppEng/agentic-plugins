@@ -23,7 +23,7 @@ export KUBECONFIG="/path/to/your/kubeconfig"
 
 The **`rhoai`** server maps **`RHOAI_MCP_KUBECONFIG_PATH`** to **`${KUBECONFIG}`** in **`mcps.json`**—set **`KUBECONFIG`** once for both.
 
-**`RHOAI_MCP_TRANSPORT`** is set to **`stdio`** in **`mcps.json`** (fixed for this pack). You do not need to export or override it unless you maintain a forked **`mcps.json`**.
+**`RHOAI_MCP_TRANSPORT`** is set to **`stdio`** in **`mcps.json`** (fixed for this plugin). You do not need to export or override it unless you maintain a forked **`mcps.json`**.
 
 **AI Observability MCP (optional HTTP MCP):**
 

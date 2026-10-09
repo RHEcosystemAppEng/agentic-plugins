@@ -4,7 +4,7 @@ metadata:
   name: agentic-plugins
   title: Agentic Plugins
   description: >
-    Agentic skill packs and MCP server configurations for Red Hat platforms.
+    Agent plugins and MCP server configurations for Red Hat platforms.
     Provides AI-powered automation across OpenShift, Ansible, Virtualization,
     AI/ML, and SRE workflows through persona-specific skill modules.
   tags:

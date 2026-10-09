@@ -7,7 +7,7 @@
 # Default: all maintainers review anything not matched below
 * @r2dedios @dmartinol @ikrispin @nemerna
 
-# Pack owners
+# Plugin owners
 rh-sre/              @TomerFi @r2dedios @dmartinol
 rh-developer/        @TomerFi @ikrispin @r2dedios @dmartinol
 rh-virt/             @TomerFi @r2dedios @dmartinol

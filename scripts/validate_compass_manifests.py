@@ -3,18 +3,18 @@
 Validate Compass catalog-info.yaml manifests and skill references layout.
 
 Structural checks (no SKILL.md semantic inference):
-  - Roster parity: skills on disk vs pack Location targets vs manifest files
+  - Roster parity: skills on disk vs plugin Location targets vs manifest files
   - Plugin inverse roster and skill dependsOn plugin
   - Bidirectional dependsOn/dependencyOf for skill→skill and skill→owned-MCP
   - Plugin→owned-MCP inverse; plugin MCP dependsOn union vs skills
   - Forbidden partOf/hasPart on skill manifests; redundant plugin dependsOn system
   - Dangling airesource refs; canonical mcpserver:redhat/* allowed without local file
   - Basic field conventions on skill manifests (namespace, owner, agents, distribution)
-  - Skill documentation layout (all packs with skills/):
+  - Skill documentation layout (all plugins with skills/):
       no skills/<name>/docs/; no references/references/ nesting;
       no internal docs/ links; symlinks under references/ must not target docs/
-  - Skill scripts layout: symlinks into pack scripts/<group>/ must fan out all
-      non-test files in that group; skill docs must not use <pack>/scripts/ paths
+  - Skill scripts layout: symlinks into plugin scripts/<group>/ must fan out all
+      non-test files in that group; skill docs must not use <plugin>/scripts/ paths
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ import yaml
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _ROOT_CATALOG = _REPO_ROOT / "catalog-info.yaml"
 _SKILL_TARGET_RE = re.compile(r"^\./skills/([^/]+)/catalog-info\.yaml$")
-_PLUGIN_REF = "airesource:ai5-marketplace/{pack}"
+_PLUGIN_REF = "airesource:ai5-marketplace/{plugin}"
 _FORBIDDEN_RELATION_RE = re.compile(r"^\s+(partOf|hasPart)\s*:", re.MULTILINE)
 _CANONICAL_MCP_PREFIXES = ("mcpserver:redhat/", "mcpserver:default/")
 _EXPECTED_OWNER = "group:redhat/ai5-marketplace"
@@ -56,19 +56,19 @@ def _refs(spec: dict, key: str) -> list[str]:
     return [str(item) for item in value]
 
 
-def all_packs_with_skills() -> list[str]:
-    packs: list[str] = []
+def all_plugins_with_skills() -> list[str]:
+    plugins: list[str] = []
     for entry in sorted(_REPO_ROOT.iterdir()):
         if not entry.is_dir() or entry.name.startswith("."):
             continue
         if (entry / "skills").is_dir():
-            packs.append(entry.name)
-    return packs
+            plugins.append(entry.name)
+    return plugins
 
 
-def registered_packs() -> list[str]:
+def registered_plugins() -> list[str]:
     data = _load_yaml(_ROOT_CATALOG)
-    packs: list[str] = []
+    plugins: list[str] = []
     for target in data.get("spec", {}).get("targets", []):
         if not isinstance(target, str):
             continue
@@ -79,12 +79,12 @@ def registered_packs() -> list[str]:
         parts = Path(target).parts
         if len(parts) != 2:
             continue
-        packs.append(parts[0])
-    return sorted(set(packs))
+        plugins.append(parts[0])
+    return sorted(set(plugins))
 
 
-def skills_on_disk(pack_dir: Path) -> set[str]:
-    skills_dir = pack_dir / "skills"
+def skills_on_disk(plugin_dir: Path) -> set[str]:
+    skills_dir = plugin_dir / "skills"
     if not skills_dir.is_dir():
         return set()
     return {
@@ -207,12 +207,12 @@ def _parse_shared_script_symlink_target(raw: str) -> tuple[str, str] | None:
     return match.group(1), match.group(2)
 
 
-def _check_skill_scripts_layout(pack: str, skill_dir: Path, errors: list[str]) -> None:
+def _check_skill_scripts_layout(plugin: str, skill_dir: Path, errors: list[str]) -> None:
     scripts_dir = skill_dir / "scripts"
     if not scripts_dir.is_dir():
         return
 
-    pack_dir = skill_dir.parent.parent
+    plugin_dir = skill_dir.parent.parent
     skill_rel = skill_dir.relative_to(_REPO_ROOT)
     linked_by_group: dict[str, set[str]] = {}
 
@@ -229,11 +229,11 @@ def _check_skill_scripts_layout(pack: str, skill_dir: Path, errors: list[str]) -
         return
 
     for group, linked_files in sorted(linked_by_group.items()):
-        group_dir = pack_dir / "scripts" / group
+        group_dir = plugin_dir / "scripts" / group
         if not group_dir.is_dir():
             errors.append(
                 f"{skill_rel}/scripts: symlinks reference scripts/{group}/ but "
-                f"{pack}/scripts/{group}/ is missing"
+                f"{plugin}/scripts/{group}/ is missing"
             )
             continue
         for path in sorted(group_dir.iterdir()):
@@ -244,11 +244,11 @@ def _check_skill_scripts_layout(pack: str, skill_dir: Path, errors: list[str]) -
             if path.name not in linked_files:
                 errors.append(
                     f"{skill_rel}/scripts: missing symlink for "
-                    f"{pack}/scripts/{group}/{path.name} — fan out all non-test "
+                    f"{plugin}/scripts/{group}/{path.name} — fan out all non-test "
                     f"files when linking from scripts/{group}/"
                 )
 
-    forbidden = f"{pack}/scripts/"
+    forbidden = f"{plugin}/scripts/"
     for md_file in sorted(skill_dir.rglob("*.md")):
         if md_file.is_symlink() and not md_file.exists():
             continue
@@ -283,42 +283,42 @@ def _check_skill_conventions(path: Path, data: dict, errors: list[str]) -> None:
         errors.append(f"{rel}: spec.type must be skill")
 
 
-def validate_pack_layout(pack: str, errors: list[str]) -> None:
-    pack_dir = _REPO_ROOT / pack
-    for skill in sorted(skills_on_disk(pack_dir)):
-        skill_dir = pack_dir / "skills" / skill
+def validate_plugin_layout(plugin: str, errors: list[str]) -> None:
+    plugin_dir = _REPO_ROOT / plugin
+    for skill in sorted(skills_on_disk(plugin_dir)):
+        skill_dir = plugin_dir / "skills" / skill
         _check_skill_docs_layout(skill_dir, errors)
-        _check_skill_scripts_layout(pack, skill_dir, errors)
+        _check_skill_scripts_layout(plugin, skill_dir, errors)
 
 
-def validate_pack(pack: str, owned_mcps: dict[str, Path], errors: list[str]) -> None:
-    pack_dir = _REPO_ROOT / pack
-    loc_path = pack_dir / "catalog-info.yaml"
-    plugin_path = pack_dir / f"{pack}-plugin.yaml"
-    plugin_ref = _PLUGIN_REF.format(pack=pack)
+def validate_plugin(plugin: str, owned_mcps: dict[str, Path], errors: list[str]) -> None:
+    plugin_dir = _REPO_ROOT / plugin
+    loc_path = plugin_dir / "catalog-info.yaml"
+    plugin_path = plugin_dir / f"{plugin}-plugin.yaml"
+    plugin_ref = _PLUGIN_REF.format(plugin=plugin)
 
     if not loc_path.is_file():
-        errors.append(f"{pack}: missing {loc_path.relative_to(_REPO_ROOT)}")
+        errors.append(f"{plugin}: missing {loc_path.relative_to(_REPO_ROOT)}")
         return
     if not plugin_path.is_file():
-        errors.append(f"{pack}: missing {plugin_path.relative_to(_REPO_ROOT)}")
+        errors.append(f"{plugin}: missing {plugin_path.relative_to(_REPO_ROOT)}")
         return
 
     loc_data = _load_yaml(loc_path)
     plugin_data = _load_yaml(plugin_path)
     plugin_spec = plugin_data.get("spec", {})
 
-    disk = skills_on_disk(pack_dir)
+    disk = skills_on_disk(plugin_dir)
     loc_targets = location_skill_targets(loc_data)
 
     for skill in sorted(disk - loc_targets):
         errors.append(
-            f"{pack}: skill '{skill}' on disk but missing from "
+            f"{plugin}: skill '{skill}' on disk but missing from "
             f"{loc_path.relative_to(_REPO_ROOT)} targets"
         )
     for skill in sorted(loc_targets - disk):
         errors.append(
-            f"{pack}: {loc_path.relative_to(_REPO_ROOT)} targets skill '{skill}' "
+            f"{plugin}: {loc_path.relative_to(_REPO_ROOT)} targets skill '{skill}' "
             "but skills/<name>/SKILL.md not found"
         )
 
@@ -329,12 +329,12 @@ def validate_pack(pack: str, owned_mcps: dict[str, Path], errors: list[str]) -> 
     }
     for skill in sorted(disk - plugin_depof_skills):
         errors.append(
-            f"{pack}: {plugin_path.relative_to(_REPO_ROOT)} missing "
+            f"{plugin}: {plugin_path.relative_to(_REPO_ROOT)} missing "
             f"dependencyOf airesource:ai5-marketplace/{skill}"
         )
     for skill in sorted(plugin_depof_skills - disk):
         errors.append(
-            f"{pack}: {plugin_path.relative_to(_REPO_ROOT)} dependencyOf unknown skill '{skill}'"
+            f"{plugin}: {plugin_path.relative_to(_REPO_ROOT)} dependencyOf unknown skill '{skill}'"
         )
 
     if "system:default/agentic-plugins" in _refs(plugin_spec, "dependsOn"):
@@ -345,16 +345,16 @@ def validate_pack(pack: str, owned_mcps: dict[str, Path], errors: list[str]) -> 
 
     skill_depends: dict[str, list[str]] = {}
     skill_depof: dict[str, set[str]] = {}
-    pack_skill_mcp_union: set[str] = set()
+    plugin_skill_mcp_union: set[str] = set()
 
     for skill in sorted(disk):
-        skill_dir = pack_dir / "skills" / skill
+        skill_dir = plugin_dir / "skills" / skill
         _check_skill_docs_layout(skill_dir, errors)
-        _check_skill_scripts_layout(pack, skill_dir, errors)
+        _check_skill_scripts_layout(plugin, skill_dir, errors)
 
         manifest = skill_dir / "catalog-info.yaml"
         if not manifest.is_file():
-            errors.append(f"{pack}: missing {manifest.relative_to(_REPO_ROOT)}")
+            errors.append(f"{plugin}: missing {manifest.relative_to(_REPO_ROOT)}")
             continue
 
         raw = manifest.read_text(encoding="utf-8")
@@ -377,22 +377,22 @@ def validate_pack(pack: str, owned_mcps: dict[str, Path], errors: list[str]) -> 
 
         for dep in deps:
             if dep.startswith("mcpserver:"):
-                pack_skill_mcp_union.add(dep)
+                plugin_skill_mcp_union.add(dep)
 
     plugin_mcp_deps = {
         d for d in _refs(plugin_spec, "dependsOn") if d.startswith("mcpserver:")
     }
-    if plugin_mcp_deps != pack_skill_mcp_union:
-        missing_on_plugin = pack_skill_mcp_union - plugin_mcp_deps
-        extra_on_plugin = plugin_mcp_deps - pack_skill_mcp_union
+    if plugin_mcp_deps != plugin_skill_mcp_union:
+        missing_on_plugin = plugin_skill_mcp_union - plugin_mcp_deps
+        extra_on_plugin = plugin_mcp_deps - plugin_skill_mcp_union
         if missing_on_plugin:
             errors.append(
-                f"{pack}: {plugin_path.relative_to(_REPO_ROOT)} missing plugin dependsOn "
+                f"{plugin}: {plugin_path.relative_to(_REPO_ROOT)} missing plugin dependsOn "
                 f"MCP union entries: {sorted(missing_on_plugin)}"
             )
         if extra_on_plugin:
             errors.append(
-                f"{pack}: {plugin_path.relative_to(_REPO_ROOT)} extra plugin dependsOn "
+                f"{plugin}: {plugin_path.relative_to(_REPO_ROOT)} extra plugin dependsOn "
                 f"MCP refs not used by any skill: {sorted(extra_on_plugin)}"
             )
 
@@ -405,13 +405,13 @@ def validate_pack(pack: str, owned_mcps: dict[str, Path], errors: list[str]) -> 
                 target = dep.split("/", 1)[1]
                 if target not in disk:
                     errors.append(
-                        f"{pack}/skills/{skill}/catalog-info.yaml: dependsOn {dep} "
-                        "but skill not in pack"
+                        f"{plugin}/skills/{skill}/catalog-info.yaml: dependsOn {dep} "
+                        "but skill not in plugin"
                     )
                     continue
                 if orchestrator_ref not in skill_depof.get(target, set()):
                     errors.append(
-                        f"{pack}/skills/{target}/catalog-info.yaml: missing dependencyOf "
+                        f"{plugin}/skills/{target}/catalog-info.yaml: missing dependencyOf "
                         f"{orchestrator_ref} (inverse of {skill} dependsOn)"
                     )
             elif dep.startswith("mcpserver:"):
@@ -425,7 +425,7 @@ def validate_pack(pack: str, owned_mcps: dict[str, Path], errors: list[str]) -> 
                         )
                 elif not _is_allowed_dangling_mcp(dep):
                     errors.append(
-                        f"{pack}/skills/{skill}/catalog-info.yaml: unknown mcpserver ref {dep}"
+                        f"{plugin}/skills/{skill}/catalog-info.yaml: unknown mcpserver ref {dep}"
                     )
 
     for dep in _refs(plugin_spec, "dependsOn"):
@@ -449,14 +449,14 @@ def main() -> int:
             f"missing root catalog Location: {_ROOT_CATALOG.relative_to(_REPO_ROOT)}"
         )
     else:
-        registered = registered_packs()
-        for pack in registered:
-            validate_pack(pack, owned_mcps, errors)
+        registered = registered_plugins()
+        for plugin in registered:
+            validate_plugin(plugin, owned_mcps, errors)
 
     registered_set = set(registered)
-    for pack in all_packs_with_skills():
-        if pack not in registered_set:
-            validate_pack_layout(pack, errors)
+    for plugin in all_plugins_with_skills():
+        if plugin not in registered_set:
+            validate_plugin_layout(plugin, errors)
 
     if errors:
         print("Compass manifest validation failed:", file=sys.stderr)

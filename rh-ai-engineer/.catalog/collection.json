@@ -15,7 +15,7 @@
     "GPU"
   ],
   "contents": {
-    "description": "The pack provides 10 skills and 1 orchestration skill for OpenShift AI workflows on Red Hat platforms; see AGENTS.md\nfor intent routing.\n",
+    "description": "The plugin provides 10 skills and 1 orchestration skill for OpenShift AI workflows on Red Hat platforms; see AGENTS.md\nfor intent routing.\n",
     "orchestration_skills": [
       {
         "description": "Configure TrustyAI Guardrails Orchestrator for LLM input/output content safety on OpenShift AI.",
@@ -131,7 +131,7 @@
   ],
   "maturity": "ORANGE",
   "mcp_section": "#mcp_section.md",
-  "name": "Agentic skill pack for OpenShift AI Engineers",
+  "name": "Agent plugin for OpenShift AI Engineers",
   "personas": [
     "Red Hat platform engineer"
   ],
@@ -149,7 +149,7 @@
       "url": "https://kserve.github.io/website/latest/"
     },
     {
-      "description": "Source for this pack and catalog metadata.",
+      "description": "Source for this plugin and catalog metadata.",
       "title": "agentic-plugins repository",
       "url": "https://github.com/RHEcosystemAppEng/agentic-plugins"
     }

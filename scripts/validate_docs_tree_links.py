@@ -5,18 +5,18 @@ Validate markdown link integrity for runtime-adjacent docs trees.
 Scope:
 - skills/*/references/**/*.md
 - skills/*/*.md (skill-root markdown such as SKILL.md and REBALANCE_*.md)
-- <pack>/references/**/*.md
-- leftover <pack>/docs/**/*.md (if present after incomplete migration)
-- <pack>/README.md
-- <pack>/.catalog/*.md
+- <plugin>/references/**/*.md
+- leftover <plugin>/docs/**/*.md (if present after incomplete migration)
+- <plugin>/README.md
+- <plugin>/.catalog/*.md
 
 Checks:
 - local markdown link targets exist
 - symlink targets resolve
 - no symlink loops
-- resolved targets do not escape pack root
+- resolved targets do not escape plugin root
 
-Pack README / catalog fragments: validate pack-local docs links
+Plugin README / catalog fragments: validate plugin-local docs links
 (`references/`, `skills/`, and leftover `docs/`) so stale `docs/INDEX.md`
 pointers fail CI after a `docs/` → `references/` migration.
 """
@@ -31,7 +31,7 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
-DEFAULT_PACKS = [
+DEFAULT_PLUGINS = [
     "rh-sre",
     "rh-developer",
     "ocp-admin",
@@ -53,28 +53,28 @@ def is_external(target: str) -> bool:
     )
 
 
-def resolve_packs(paths: Iterable[str]) -> set[Path]:
-    packs: set[Path] = set()
+def resolve_plugins(paths: Iterable[str]) -> set[Path]:
+    plugins: set[Path] = set()
     for p in paths:
         path = Path(p)
         if path.is_file():
             if path.name == "SKILL.md" and path.parent.parent.name == "skills":
-                packs.add(path.parent.parent.parent.resolve())
+                plugins.add(path.parent.parent.parent.resolve())
             elif path.name.endswith(".md"):
-                # If file belongs to a pack directory, infer it.
+                # If file belongs to a plugin directory, infer it.
                 parts = path.resolve().parts
                 if "skills" in parts:
                     idx = parts.index("skills")
-                    packs.add(Path(*parts[:idx]).resolve())
+                    plugins.add(Path(*parts[:idx]).resolve())
             continue
         if path.is_dir():
             if (path / "skills").exists():
-                packs.add(path.resolve())
+                plugins.add(path.resolve())
                 continue
-            # Maybe path is pack name that exists in cwd
+            # Maybe path is plugin name that exists in cwd
             if (Path.cwd() / path / "skills").exists():
-                packs.add((Path.cwd() / path).resolve())
-    return packs
+                plugins.add((Path.cwd() / path).resolve())
+    return plugins
 
 
 def _dedupe(paths: Iterable[Path]) -> list[Path]:
@@ -91,8 +91,8 @@ def _dedupe(paths: Iterable[Path]) -> list[Path]:
     return out
 
 
-def _is_pack_local_doc_link(base: str) -> bool:
-    """README/catalog links that must resolve from the pack root."""
+def _is_plugin_local_doc_link(base: str) -> bool:
+    """README/catalog links that must resolve from the plugin root."""
     normalized = base.replace("\\", "/")
     if normalized.startswith("./"):
         normalized = normalized[2:]
@@ -103,34 +103,34 @@ def _is_pack_local_doc_link(base: str) -> bool:
     )
 
 
-def scan_targets(pack_root: Path) -> list[Path]:
+def scan_targets(plugin_root: Path) -> list[Path]:
     targets: list[Path] = []
-    skills_dir = pack_root / "skills"
+    skills_dir = plugin_root / "skills"
     if skills_dir.exists():
         for skill_dir in sorted(skills_dir.glob("*")):
             if not skill_dir.is_dir() or not (skill_dir / "SKILL.md").exists():
                 continue
             targets.extend(sorted(skill_dir.glob("references/**/*.md")))
             targets.extend(sorted(skill_dir.glob("*.md")))
-    pack_refs = pack_root / "references"
-    if pack_refs.exists():
-        targets.extend(sorted(pack_refs.glob("**/*.md")))
-    pack_docs = pack_root / "docs"
-    if pack_docs.exists():
-        targets.extend(sorted(pack_docs.glob("**/*.md")))
-    readme = pack_root / "README.md"
+    plugin_refs = plugin_root / "references"
+    if plugin_refs.exists():
+        targets.extend(sorted(plugin_refs.glob("**/*.md")))
+    plugin_docs = plugin_root / "docs"
+    if plugin_docs.exists():
+        targets.extend(sorted(plugin_docs.glob("**/*.md")))
+    readme = plugin_root / "README.md"
     if readme.exists():
         targets.append(readme)
-    catalog = pack_root / ".catalog"
+    catalog = plugin_root / ".catalog"
     if catalog.exists():
         targets.extend(sorted(catalog.glob("*.md")))
     return _dedupe(targets)
 
 
-def validate_file(path: Path, pack_root: Path) -> list[str]:
+def validate_file(path: Path, plugin_root: Path) -> list[str]:
     errs: list[str] = []
     text = path.read_text(encoding="utf-8", errors="ignore")
-    is_pack_meta = (path == (pack_root / "README.md")) or (path.parent == (pack_root / ".catalog"))
+    is_plugin_meta = (path == (plugin_root / "README.md")) or (path.parent == (plugin_root / ".catalog"))
     for line_no, line in enumerate(text.splitlines(), start=1):
         for m in MD_LINK_RE.finditer(line):
             raw = m.group(1).strip()
@@ -140,15 +140,15 @@ def validate_file(path: Path, pack_root: Path) -> list[str]:
             if not base.endswith(".md"):
                 continue
 
-            # For pack README / catalog fragments, validate pack-local docs references
+            # For plugin README / catalog fragments, validate plugin-local docs references
             # including leftover docs/ links from incomplete migrations.
-            if is_pack_meta:
-                if not _is_pack_local_doc_link(base):
+            if is_plugin_meta:
+                if not _is_plugin_local_doc_link(base):
                     continue
                 link_base = base.replace("\\", "/")
                 if link_base.startswith("./"):
                     link_base = link_base[2:]
-                link_path = pack_root / link_base
+                link_path = plugin_root / link_base
             else:
                 link_path = path.parent / base
             try:
@@ -161,10 +161,10 @@ def validate_file(path: Path, pack_root: Path) -> list[str]:
                 continue
 
             try:
-                resolved.relative_to(pack_root)
+                resolved.relative_to(plugin_root)
             except ValueError:
                 errs.append(
-                    f"{path}:{line_no}: link escapes pack root '{raw}' -> '{resolved}'"
+                    f"{path}:{line_no}: link escapes plugin root '{raw}' -> '{resolved}'"
                 )
 
             if link_path.is_symlink():
@@ -183,30 +183,30 @@ def validate_file(path: Path, pack_root: Path) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Validate markdown links in skill docs, pack references, README, and catalog fragments"
+        description="Validate markdown links in skill docs, plugin references, README, and catalog fragments"
     )
     parser.add_argument(
         "paths",
         nargs="*",
-        default=DEFAULT_PACKS,
-        help="Pack directories or SKILL.md paths",
+        default=DEFAULT_PLUGINS,
+        help="Plugin directories or SKILL.md paths",
     )
     parser.add_argument("--json-out", help="Optional JSON summary output path")
     args = parser.parse_args()
 
-    packs = resolve_packs(args.paths)
-    if not packs:
-        packs = {Path(p).resolve() for p in DEFAULT_PACKS if (Path(p) / "skills").exists()}
+    plugins = resolve_plugins(args.paths)
+    if not plugins:
+        plugins = {Path(p).resolve() for p in DEFAULT_PLUGINS if (Path(p) / "skills").exists()}
 
     all_errors: list[str] = []
     scanned_files = 0
-    for pack in sorted(packs):
-        for f in scan_targets(pack):
+    for plugin in sorted(plugins):
+        for f in scan_targets(plugin):
             scanned_files += 1
-            all_errors.extend(validate_file(f, pack))
+            all_errors.extend(validate_file(f, plugin))
 
     summary = {
-        "packs_scanned": len(packs),
+        "plugins_scanned": len(plugins),
         "files_scanned": scanned_files,
         "error_count": len(all_errors),
     }

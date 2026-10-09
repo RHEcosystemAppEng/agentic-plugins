@@ -1,24 +1,24 @@
-# Template: <pack>/<pack>-plugin.yaml
-# Replace <pack>, title, description, tags, disciplines, categories, dependencyOf, dependsOn (MCP union).
-# New packs: spec.lifecycle defaults to development (confirm with user before raising maturity).
+# Template: <plugin>/<plugin>-plugin.yaml
+# Replace <plugin>, title, description, tags, disciplines, categories, dependencyOf, dependsOn (MCP union).
+# New plugins: spec.lifecycle defaults to development (confirm with user before raising maturity).
 apiVersion: backstage.io/v1alpha1
 kind: AiResource
 metadata:
-  name: <pack>
+  name: <plugin>
   namespace: ai5-marketplace
-  title: <Pack Title>
+  title: <Plugin Title>
   description: >
-    <Pack description from README or plugin manifest.>
+    <Plugin description from README or plugin manifest.>
   tags:
     - ai-skill
-    - <pack-tag>
+    - <plugin-tag>
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
     agentic.redhat.com/lola-module: "true"
-    agentic.redhat.com/lola-module-name: <pack>
+    agentic.redhat.com/lola-module-name: <plugin>
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
-    agentic.redhat.com/path: <pack>
+    agentic.redhat.com/path: <plugin>
     github.com/project-slug: RHEcosystemAppEng/agentic-plugins
   links:
     - url: https://github.com/RHEcosystemAppEng/agentic-plugins
@@ -35,9 +35,9 @@ spec:
     - <category>
   agents: []
   dependsOn:
-    # Union of mcpserver refs used by any skill in this pack (omit if none)
+    # Union of mcpserver refs used by any skill in this plugin (omit if none)
     # - mcpserver:ai5-marketplace/<owned-mcp>
     # - mcpserver:redhat/<canonical-mcp>
   dependencyOf:
     - airesource:ai5-marketplace/<skill-name>
-    # Every skill in the pack — bidirectional with skill dependsOn plugin
+    # Every skill in the plugin — bidirectional with skill dependsOn plugin

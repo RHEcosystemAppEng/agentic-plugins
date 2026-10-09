@@ -116,7 +116,7 @@ jobs:
           echo "PR #$PR_NUMBER — HEAD: $HEAD_SHA"
 
   # ---------------------------------------------------------------------------
-  # Scan job: runs the security scanner against changed skill packs.
+  # Scan job: runs the security scanner against changed agent plugins.
   # ---------------------------------------------------------------------------
   scan:
     needs: gate
@@ -157,8 +157,8 @@ jobs:
       - name: Install skill-scanner
         run: uv pip install --system 'cisco-ai-skill-scanner[google]'
 
-      # Detect packs with changed files via GitHub API (safe — no PR code execution)
-      - name: Detect packs to scan
+      # Detect plugins with changed files via GitHub API (safe — no PR code execution)
+      - name: Detect plugins to scan
         id: detect
         env:
           GH_TOKEN: ${{ github.token }}
@@ -167,7 +167,7 @@ jobs:
           gh api "/repos/${{ github.repository }}/pulls/$PR_NUMBER/files" \
             --paginate --jq '.[].filename' > /tmp/changed_files.txt
 
-          PACKS=$(grep -v '^\.' /tmp/changed_files.txt \
+          PLUGINS=$(grep -v '^\.' /tmp/changed_files.txt \
             | cut -d'/' -f1 \
             | sort -u \
             | while read -r dir; do
@@ -176,21 +176,21 @@ jobs:
                 fi
               done)
 
-          if [ -z "$PACKS" ]; then
-            echo "packs=" >> "$GITHUB_OUTPUT"
-            echo "pack_count=0" >> "$GITHUB_OUTPUT"
-            echo "No packs to scan"
+          if [ -z "$PLUGINS" ]; then
+            echo "plugins=" >> "$GITHUB_OUTPUT"
+            echo "plugin_count=0" >> "$GITHUB_OUTPUT"
+            echo "No plugins to scan"
           else
-            PACK_COUNT=$(echo "$PACKS" | grep -c . || true)
-            echo "packs<<EOF" >> "$GITHUB_OUTPUT"
-            echo "$PACKS" >> "$GITHUB_OUTPUT"
+            PLUGIN_COUNT=$(echo "$PLUGINS" | grep -c . || true)
+            echo "plugins<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$PLUGINS" >> "$GITHUB_OUTPUT"
             echo "EOF" >> "$GITHUB_OUTPUT"
-            echo "pack_count=$PACK_COUNT" >> "$GITHUB_OUTPUT"
-            echo "Packs to scan ($PACK_COUNT): $PACKS"
+            echo "plugin_count=$PLUGIN_COUNT" >> "$GITHUB_OUTPUT"
+            echo "Plugins to scan ($PLUGIN_COUNT): $PLUGINS"
           fi
 
       - name: Check scanner credentials
-        if: steps.detect.outputs.pack_count != '0'
+        if: steps.detect.outputs.plugin_count != '0'
         id: creds
         env:
           SKILL_SCANNER_LLM_API_KEY: ${{ secrets.SKILL_SCANNER_LLM_API_KEY }}
@@ -203,7 +203,7 @@ jobs:
           fi
 
       - name: Run security scan
-        if: steps.detect.outputs.pack_count != '0' && steps.creds.outputs.available == 'true'
+        if: steps.detect.outputs.plugin_count != '0' && steps.creds.outputs.available == 'true'
         id: scan
         env:
           SKILL_SCANNER_LLM_API_KEY: ${{ secrets.SKILL_SCANNER_LLM_API_KEY }}
@@ -212,11 +212,11 @@ jobs:
           mkdir -p security-reports
           SCAN_FAILED=false
 
-          while IFS= read -r pack; do
-            [ -z "$pack" ] && continue
-            echo "=== Scanning: $pack ==="
+          while IFS= read -r plugin; do
+            [ -z "$plugin" ] && continue
+            echo "=== Scanning: $plugin ==="
 
-            skill-scanner scan-all "$pack/skills" \
+            skill-scanner scan-all "$plugin/skills" \
               --recursive \
               --use-behavioral \
               --use-llm \
@@ -226,10 +226,10 @@ jobs:
               --fail-on-severity medium \
               --format markdown \
               --detailed \
-              --output "security-reports/security-report-${pack}.md" || SCAN_FAILED=true
+              --output "security-reports/security-report-${plugin}.md" || SCAN_FAILED=true
 
             echo ""
-          done <<< "${{ steps.detect.outputs.packs }}"
+          done <<< "${{ steps.detect.outputs.plugins }}"
 
           if [ "$SCAN_FAILED" = "true" ]; then
             echo "scan_result=failed" >> "$GITHUB_OUTPUT"
@@ -239,7 +239,7 @@ jobs:
 
       - name: Upload security reports
         id: upload
-        if: steps.detect.outputs.pack_count != '0' && steps.creds.outputs.available == 'true' && always()
+        if: steps.detect.outputs.plugin_count != '0' && steps.creds.outputs.available == 'true' && always()
         uses: actions/upload-artifact@v4
         with:
           name: security-reports
@@ -249,7 +249,7 @@ jobs:
 
       - name: Post scan summary
         if: >
-          steps.detect.outputs.pack_count != '0' &&
+          steps.detect.outputs.plugin_count != '0' &&
           steps.creds.outputs.available == 'true' &&
           always()
         env:
@@ -294,9 +294,9 @@ jobs:
             if [ -d "security-reports" ]; then
               for report in security-reports/security-report-*.md; do
                 [ -f "$report" ] || continue
-                pack=$(basename "$report" .md | sed 's/^security-report-//')
+                plugin=$(basename "$report" .md | sed 's/^security-report-//')
                 echo "<details>"
-                echo "<summary>📋 $pack</summary>"
+                echo "<summary>📋 $plugin</summary>"
                 echo ""
                 cat "$report"
                 echo ""
@@ -334,7 +334,7 @@ jobs:
           fi
 
       - name: Check scan results
-        if: steps.detect.outputs.pack_count != '0' && steps.creds.outputs.available == 'true'
+        if: steps.detect.outputs.plugin_count != '0' && steps.creds.outputs.available == 'true'
         run: |
           if [ "${{ steps.scan.outputs.scan_result }}" = "failed" ]; then
             echo "❌ Security scan found MEDIUM or higher severity issues — blocking merge"

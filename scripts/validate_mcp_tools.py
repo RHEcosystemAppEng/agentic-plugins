@@ -9,9 +9,9 @@ allowed-tools declaration.
 Platform: Linux and macOS only (uses select.select for non-blocking I/O).
 
 Usage:
-    python scripts/validate_mcp_tools.py [pack1] [pack2] ...
+    python scripts/validate_mcp_tools.py [plugin1] [plugin2] ...
     python scripts/validate_mcp_tools.py --summary-only --log-file .validate/mcp-tools.log
-    No args: validates all packs that have mcps.json
+    No args: validates all plugins that have mcps.json
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ INITIALIZED_NOTIFICATION = {
 @dataclass
 class Finding:
     skill: str
-    pack: str
+    plugin: str
     tool: str
     file_path: str
     line_number: int | None
@@ -184,14 +184,14 @@ def print_validation_summary(combined: ValidationResult, reporter: Reporter) -> 
         reporter.summary()
 
     if combined.warnings:
-        skills_affected = len({(w.pack, w.skill) for w in combined.warnings})
-        by_pack = Counter(w.pack for w in combined.warnings)
-        pack_bits = ", ".join(f"{pack} ({count})" for pack, count in by_pack.most_common())
+        skills_affected = len({(w.plugin, w.skill) for w in combined.warnings})
+        by_plugin = Counter(w.plugin for w in combined.warnings)
+        plugin_bits = ", ".join(f"{plugin} ({count})" for plugin, count in by_plugin.most_common())
         reporter.summary(
             f" Unverifiable tools: {len(combined.warnings)} tool reference(s) "
             f"in {skills_affected} skill(s)"
         )
-        reporter.summary(f"   By pack: {pack_bits}")
+        reporter.summary(f"   By plugin: {plugin_bits}")
         if reporter.log_path is not None:
             reporter.summary(f"   Details: see {reporter.log_path}")
         reporter.summary()
@@ -443,33 +443,33 @@ def parse_frontmatter(skill_path: Path) -> tuple[str, int | None]:
     return "", None
 
 
-def find_packs(repo_root: Path) -> list[str]:
-    """Find all packs that have both mcps.json and a skills directory."""
-    packs = []
+def find_plugins(repo_root: Path) -> list[str]:
+    """Find all plugins that have both mcps.json and a skills directory."""
+    plugins = []
     for mcps_file in sorted(repo_root.glob("*/mcps.json")):
-        pack_dir = mcps_file.parent
-        if (pack_dir / "skills").is_dir():
-            packs.append(pack_dir.name)
-    return packs
+        plugin_dir = mcps_file.parent
+        if (plugin_dir / "skills").is_dir():
+            plugins.append(plugin_dir.name)
+    return plugins
 
 
-def validate_pack(
-    pack: str, repo_root: Path, kubeconfig: str, reporter: Reporter,
+def validate_plugin(
+    plugin: str, repo_root: Path, kubeconfig: str, reporter: Reporter,
 ) -> ValidationResult:
-    """Validate all skills in a single pack against its MCP servers."""
+    """Validate all skills in a single plugin against its MCP servers."""
     result = ValidationResult()
-    pack_dir = repo_root / pack
-    mcps_file = pack_dir / "mcps.json"
+    plugin_dir = repo_root / plugin
+    mcps_file = plugin_dir / "mcps.json"
 
     if not mcps_file.exists():
-        reporter.detail(f"  WARNING: {pack}/mcps.json not found, skipping pack")
+        reporter.detail(f"  WARNING: {plugin}/mcps.json not found, skipping plugin")
         return result
 
     try:
         with open(mcps_file) as f:
             config = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
-        reporter.detail(f"  ERROR: failed to parse {pack}/mcps.json: {e}")
+        reporter.detail(f"  ERROR: failed to parse {plugin}/mcps.json: {e}")
         result.failed += 1
         return result
 
@@ -510,7 +510,7 @@ def validate_pack(
     if all_available_tools:
         reporter.detail(f"  Combined tool pool: {len(all_available_tools)} unique tools")
 
-    skills_dir = pack_dir / "skills"
+    skills_dir = plugin_dir / "skills"
     if not skills_dir.exists():
         return result
 
@@ -526,7 +526,7 @@ def validate_pack(
 
         if not allowed_tools_str:
             result.skipped += 1
-            reporter.detail(f"  SKIP {pack}/{skill_name}: no allowed-tools declared")
+            reporter.detail(f"  SKIP {plugin}/{skill_name}: no allowed-tools declared")
             continue
 
         declared_tools = allowed_tools_str.split()
@@ -535,7 +535,7 @@ def validate_pack(
         if not missing:
             result.passed += 1
             reporter.detail(
-                f"  PASS {pack}/{skill_name}: all {len(declared_tools)} tools validated"
+                f"  PASS {plugin}/{skill_name}: all {len(declared_tools)} tools validated"
             )
         elif result.has_skipped_servers:
             verified = [t for t in declared_tools if t in all_available_tools]
@@ -545,7 +545,7 @@ def validate_pack(
                 suggestion = suggest_tool(tool, all_available_tools)
                 finding = Finding(
                     skill=skill_name,
-                    pack=pack,
+                    plugin=plugin,
                     tool=tool,
                     file_path=rel_path,
                     line_number=line_number,
@@ -553,7 +553,7 @@ def validate_pack(
                 )
                 result.warnings.append(finding)
             reporter.detail(
-                f"  WARN {pack}/{skill_name}: {len(verified)}/{len(declared_tools)} tools verified, "
+                f"  WARN {plugin}/{skill_name}: {len(verified)}/{len(declared_tools)} tools verified, "
                 f"{len(missing)} unverifiable (MCP server not started)"
             )
         else:
@@ -563,14 +563,14 @@ def validate_pack(
                 suggestion = suggest_tool(tool, all_available_tools)
                 finding = Finding(
                     skill=skill_name,
-                    pack=pack,
+                    plugin=plugin,
                     tool=tool,
                     file_path=rel_path,
                     line_number=line_number,
                     suggestion=suggestion,
                 )
                 result.findings.append(finding)
-                reporter.detail(f"  FAIL {pack}/{skill_name}: {finding}")
+                reporter.detail(f"  FAIL {plugin}/{skill_name}: {finding}")
 
     return result
 
@@ -599,9 +599,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         description="Validate allowed-tools in SKILL.md against live MCP servers",
     )
     parser.add_argument(
-        "packs",
+        "plugins",
         nargs="*",
-        help="Pack names to validate (default: all packs with mcps.json)",
+        help="Plugin names to validate (default: all plugins with mcps.json)",
     )
     parser.add_argument(
         "--log-file",
@@ -620,7 +620,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv if argv is not None else sys.argv[1:])
     repo_root = Path(__file__).resolve().parent.parent
-    packs = args.packs or None
+    plugins = args.plugins or None
 
     skip_reason = check_prerequisites()
     if skip_reason:
@@ -633,11 +633,11 @@ def main(argv: list[str] | None = None) -> int:
         if default.exists():
             kubeconfig = str(default)
 
-    if not packs:
-        packs = find_packs(repo_root)
+    if not plugins:
+        plugins = find_plugins(repo_root)
 
-    if not packs:
-        print("No packs with mcps.json found")
+    if not plugins:
+        print("No plugins with mcps.json found")
         return 0
 
     log_path = args.log_file
@@ -652,15 +652,15 @@ def main(argv: list[str] | None = None) -> int:
         reporter.detail("    Verifying allowed-tools against live MCP servers")
         reporter.detail("=" * 66)
         reporter.detail()
-        reporter.detail(f"Packs to validate: {', '.join(packs)}")
+        reporter.detail(f"Plugins to validate: {', '.join(plugins)}")
         reporter.detail(f"KUBECONFIG: {kubeconfig}")
         reporter.detail()
 
         combined = ValidationResult()
 
-        for pack in packs:
-            reporter.detail(f"-- {pack} --")
-            result = validate_pack(pack, repo_root, kubeconfig, reporter)
+        for plugin in plugins:
+            reporter.detail(f"-- {plugin} --")
+            result = validate_plugin(plugin, repo_root, kubeconfig, reporter)
             combined.total_skills += result.total_skills
             combined.passed += result.passed
             combined.skipped += result.skipped

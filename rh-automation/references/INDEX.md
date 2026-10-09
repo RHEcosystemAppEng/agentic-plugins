@@ -1,6 +1,6 @@
 # Documentation Index
 
-Navigation guide for the rh-automation knowledge base. Runtime copies live under each skill's `references/` directory (canonical files plus shared-pool symlinks). This pack index maps those files for repository navigation.
+Navigation guide for the rh-automation knowledge base. Runtime copies live under each skill's `references/` directory (canonical files plus shared-pool symlinks). This plugin index maps those files for repository navigation.
 
 ## How Documents Are Used
 
@@ -8,7 +8,7 @@ Navigation guide for the rh-automation knowledge base. Runtime copies live under
 User Request → Agent → Skill reads document → Skill queries MCP tools → Skill interprets with document knowledge → Output with Red Hat citations
 ```
 
-Paths in `.ai-index/` are pack-relative (from `rh-automation/`).
+Paths in `.ai-index/` are plugin-relative (from `rh-automation/`).
 
 ## Document Map
 

@@ -41,12 +41,12 @@ def _write_manifest(path: Path, *, name: str, kind: str = "AiResource", lifecycl
     path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
 
 
-def _write_root_catalog(root: Path, packs: list[str]) -> None:
+def _write_root_catalog(root: Path, plugins: list[str]) -> None:
     data = {
         "apiVersion": "backstage.io/v1alpha1",
         "kind": "Location",
         "metadata": {"name": "agentic-plugins"},
-        "spec": {"targets": [f"./{pack}/catalog-info.yaml" for pack in packs] + ["./mcps/catalog-info.yaml"]},
+        "spec": {"targets": [f"./{plugin}/catalog-info.yaml" for plugin in plugins] + ["./mcps/catalog-info.yaml"]},
     }
     (root / "catalog-info.yaml").write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
     (root / "mcps").mkdir(parents=True, exist_ok=True)
@@ -56,23 +56,23 @@ def _write_root_catalog(root: Path, packs: list[str]) -> None:
     )
 
 
-def _write_pack(
+def _write_plugin(
     root: Path,
-    pack: str,
+    plugin: str,
     *,
     plugin_lifecycle: str | None = "__unset__",
     skills: dict[str, str | None] | None = None,
 ) -> None:
-    """Create <pack>/<pack>-plugin.yaml and <pack>/skills/<skill>/catalog-info.yaml files."""
-    pack_dir = root / pack
-    _write_manifest(pack_dir / f"{pack}-plugin.yaml", name=pack, lifecycle=plugin_lifecycle)
+    """Create <plugin>/<plugin>-plugin.yaml and <plugin>/skills/<skill>/catalog-info.yaml files."""
+    plugin_dir = root / plugin
+    _write_manifest(plugin_dir / f"{plugin}-plugin.yaml", name=plugin, lifecycle=plugin_lifecycle)
     for skill_name, skill_lifecycle in (skills or {}).items():
         _write_manifest(
-            pack_dir / "skills" / skill_name / "catalog-info.yaml",
+            plugin_dir / "skills" / skill_name / "catalog-info.yaml",
             name=skill_name,
             lifecycle=skill_lifecycle,
         )
-    (root / pack / "catalog-info.yaml").write_text(
+    (root / plugin / "catalog-info.yaml").write_text(
         yaml.safe_dump({"apiVersion": "backstage.io/v1alpha1", "kind": "Location", "spec": {"targets": []}}),
         encoding="utf-8",
     )
@@ -113,25 +113,25 @@ class TestLifecycleRank(unittest.TestCase):
 
 class TestPassingCases(_TempRepoTestCase):
     def test_skill_equal_to_plugin_passes(self) -> None:
-        _write_pack(self.repo_root, "rh-demo", plugin_lifecycle="beta", skills={"demo-skill": "beta"})
+        _write_plugin(self.repo_root, "rh-demo", plugin_lifecycle="beta", skills={"demo-skill": "beta"})
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(errors, [])
 
     def test_skill_less_mature_than_plugin_passes(self) -> None:
-        _write_pack(
+        _write_plugin(
             self.repo_root, "rh-demo", plugin_lifecycle="production", skills={"demo-skill": "development"}
         )
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(errors, [])
 
     def test_missing_lifecycles_default_to_development_and_pass(self) -> None:
-        _write_pack(
+        _write_plugin(
             self.repo_root,
             "rh-demo",
             plugin_lifecycle="__unset__",
@@ -139,12 +139,12 @@ class TestPassingCases(_TempRepoTestCase):
         )
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(errors, [])
 
     def test_multiple_skills_all_within_ceiling(self) -> None:
-        _write_pack(
+        _write_plugin(
             self.repo_root,
             "rh-demo",
             plugin_lifecycle="beta",
@@ -152,17 +152,17 @@ class TestPassingCases(_TempRepoTestCase):
         )
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(errors, [])
 
 
 class TestFailCase(_TempRepoTestCase):
     def test_skill_more_mature_than_plugin_fails(self) -> None:
-        _write_pack(self.repo_root, "rh-demo", plugin_lifecycle="development", skills={"demo-skill": "beta"})
+        _write_plugin(self.repo_root, "rh-demo", plugin_lifecycle="development", skills={"demo-skill": "beta"})
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(len(errors), 1)
         self.assertIn("demo-skill", errors[0])
@@ -170,15 +170,15 @@ class TestFailCase(_TempRepoTestCase):
         self.assertIn("'development'", errors[0])
 
     def test_production_skill_under_beta_plugin_fails(self) -> None:
-        _write_pack(self.repo_root, "rh-demo", plugin_lifecycle="beta", skills={"demo-skill": "production"})
+        _write_plugin(self.repo_root, "rh-demo", plugin_lifecycle="beta", skills={"demo-skill": "production"})
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(len(errors), 1)
 
     def test_only_offending_skill_is_reported(self) -> None:
-        _write_pack(
+        _write_plugin(
             self.repo_root,
             "rh-demo",
             plugin_lifecycle="development",
@@ -186,7 +186,7 @@ class TestFailCase(_TempRepoTestCase):
         )
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(len(errors), 1)
         self.assertIn("bad-skill", errors[0])
@@ -195,15 +195,15 @@ class TestFailCase(_TempRepoTestCase):
 
 class TestDeprecatedSkipLogic(_TempRepoTestCase):
     def test_deprecated_skill_is_skipped_even_if_more_mature(self) -> None:
-        _write_pack(self.repo_root, "rh-demo", plugin_lifecycle="development", skills={"demo-skill": "deprecated"})
+        _write_plugin(self.repo_root, "rh-demo", plugin_lifecycle="development", skills={"demo-skill": "deprecated"})
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(errors, [])
 
     def test_deprecated_plugin_skips_all_skills(self) -> None:
-        _write_pack(
+        _write_plugin(
             self.repo_root,
             "rh-demo",
             plugin_lifecycle="deprecated",
@@ -211,12 +211,12 @@ class TestDeprecatedSkipLogic(_TempRepoTestCase):
         )
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(errors, [])
 
     def test_deprecated_skill_among_others_only_skips_itself(self) -> None:
-        _write_pack(
+        _write_plugin(
             self.repo_root,
             "rh-demo",
             plugin_lifecycle="development",
@@ -224,7 +224,7 @@ class TestDeprecatedSkipLogic(_TempRepoTestCase):
         )
 
         errors: list[str] = []
-        lifecycle_ceiling.check_pack(self.repo_root, "rh-demo", errors)
+        lifecycle_ceiling.check_plugin(self.repo_root, "rh-demo", errors)
 
         self.assertEqual(len(errors), 1)
         self.assertIn("bad-skill", errors[0])
@@ -232,20 +232,20 @@ class TestDeprecatedSkipLogic(_TempRepoTestCase):
 
 
 class TestValidateAll(_TempRepoTestCase):
-    def test_validate_all_discovers_registered_packs_from_root_catalog(self) -> None:
+    def test_validate_all_discovers_registered_plugins_from_root_catalog(self) -> None:
         _write_root_catalog(self.repo_root, ["rh-good", "rh-bad"])
-        _write_pack(self.repo_root, "rh-good", plugin_lifecycle="beta", skills={"good-skill": "beta"})
-        _write_pack(self.repo_root, "rh-bad", plugin_lifecycle="development", skills={"bad-skill": "production"})
+        _write_plugin(self.repo_root, "rh-good", plugin_lifecycle="beta", skills={"good-skill": "beta"})
+        _write_plugin(self.repo_root, "rh-bad", plugin_lifecycle="development", skills={"bad-skill": "production"})
 
         errors = lifecycle_ceiling.validate_all(self.repo_root)
 
         self.assertEqual(len(errors), 1)
         self.assertIn("bad-skill", errors[0])
 
-    def test_validate_all_ignores_unregistered_packs(self) -> None:
+    def test_validate_all_ignores_unregistered_plugins(self) -> None:
         _write_root_catalog(self.repo_root, ["rh-good"])
-        _write_pack(self.repo_root, "rh-good", plugin_lifecycle="beta", skills={"good-skill": "beta"})
-        _write_pack(self.repo_root, "rh-bad", plugin_lifecycle="development", skills={"bad-skill": "production"})
+        _write_plugin(self.repo_root, "rh-good", plugin_lifecycle="beta", skills={"good-skill": "beta"})
+        _write_plugin(self.repo_root, "rh-bad", plugin_lifecycle="development", skills={"bad-skill": "production"})
 
         errors = lifecycle_ceiling.validate_all(self.repo_root)
 
@@ -257,7 +257,7 @@ class TestValidateAll(_TempRepoTestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("catalog-info.yaml", errors[0])
 
-    def test_pack_missing_plugin_manifest_reports_error(self) -> None:
+    def test_plugin_missing_plugin_manifest_reports_error(self) -> None:
         _write_root_catalog(self.repo_root, ["rh-orphan"])
         (self.repo_root / "rh-orphan").mkdir(parents=True)
 

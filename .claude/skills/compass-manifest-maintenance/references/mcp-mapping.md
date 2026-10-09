@@ -1,10 +1,10 @@
 # Deriving MCP `dependsOn` for skill manifests
 
-Map **only** MCP servers the skill **actually uses**. Never copy a sibling manifest and never declare every key in `<pack>/mcps.json`.
+Map **only** MCP servers the skill **actually uses**. Never copy a sibling manifest and never declare every key in `<plugin>/mcps.json`.
 
 ## Step 1 — Detect MCP usage in the skill
 
-From `<pack>/skills/<skill>/SKILL.md`:
+From `<plugin>/skills/<skill>/SKILL.md`:
 
 - `allowed-tools` in frontmatter (tool names / prefixes)
 - `Required MCP Servers` / `Required MCP Tools` in the body
@@ -14,7 +14,7 @@ If none of the above reference MCP tools → **no** `mcpserver:` in `dependsOn` 
 
 ## Step 2 — Match usage to `mcps.json` keys
 
-Read `<pack>/mcps.json`. Note which **server keys** the skill documents (e.g. `openshift-administration`, `lightspeed-mcp`, `aap-mcp-job-management`).
+Read `<plugin>/mcps.json`. Note which **server keys** the skill documents (e.g. `openshift-administration`, `lightspeed-mcp`, `aap-mcp-job-management`).
 
 When `allowed-tools` lists tools but SKILL.md does not name a key, infer the server from context in the skill body (which MCP block documents those tools).
 
@@ -32,13 +32,13 @@ For each MCP the skill uses:
 
 ### B. Canonical MCP (registered upstream, not in `mcps/`)
 
-If the pack references an MCP that **no** file under `mcps/` covers:
+If the plugin references an MCP that **no** file under `mcps/` covers:
 
-1. Search existing skill manifests in the same pack (or repo) for the same `mcps.json` key or the same upstream product.
+1. Search existing skill manifests in the same plugin (or repo) for the same `mcps.json` key or the same upstream product.
 2. Reuse the `mcpserver:` ref already used there (often `mcpserver:redhat/<name>`).
 3. Do **not** add a duplicate MCPServer manifest in `mcps/`.
 
-When unsure, grep the repo for the `mcps.json` key or tool prefix in other `catalog-info.yaml` files under the same pack.
+When unsure, grep the repo for the `mcps.json` key or tool prefix in other `catalog-info.yaml` files under the same plugin.
 
 ## Step 4 — Update inverse relations
 
@@ -48,7 +48,7 @@ For each `mcpserver:` added to the skill’s `dependsOn`:
 
 ## Step 5 — Plugin MCP union
 
-The pack plugin’s `dependsOn` MCP list = **union** of all `mcpserver:` refs across skill manifests in that pack — not the full set of keys in `mcps.json`.
+The plugin plugin’s `dependsOn` MCP list = **union** of all `mcpserver:` refs across skill manifests in that plugin — not the full set of keys in `mcps.json`.
 
 ## Sanity checks
 

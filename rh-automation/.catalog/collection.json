@@ -13,7 +13,7 @@
     "Execution"
   ],
   "contents": {
-    "description": "The pack provides 8 skills and 3 orchestration skills for rh automation workflows on Red Hat platforms; see AGENTS.md for intent routing.\n",
+    "description": "The plugin provides 8 skills and 3 orchestration skills for rh automation workflows on Red Hat platforms; see AGENTS.md for intent routing.\n",
     "orchestration_skills": [
       {
         "description": "Orchestrates forensic analysis of failed jobs with event extraction, host correlation, and resolution advisory.",
@@ -123,7 +123,7 @@
   ],
   "maturity": "ORANGE",
   "mcp_section": "#mcp_section.md",
-  "name": "Agentic skill pack for Automation Engineers",
+  "name": "Agent plugin for Automation Engineers",
   "personas": [
     "Red Hat platform engineer"
   ],
@@ -136,7 +136,7 @@
       "url": "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/"
     },
     {
-      "description": "Source for this pack and catalog metadata.",
+      "description": "Source for this plugin and catalog metadata.",
       "title": "agentic-plugins repository",
       "url": "https://github.com/RHEcosystemAppEng/agentic-plugins"
     }

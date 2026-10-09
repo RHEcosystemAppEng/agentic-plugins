@@ -3,7 +3,7 @@
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: openshift-virtualization
-name: Agentic skill pack for Red Hat OpenShift Virtualization
+name: Agent plugin for Red Hat OpenShift Virtualization
 provider: Red Hat
 version: 0.1.0
 categories:
@@ -24,7 +24,7 @@ summary: |
   The rh-virt collection ships 10 skills for OpenShift Virtualization operations with confirmations on destructive steps.
 contents:
   description: |
-    The pack provides 10 skills for rh virt workflows on Red Hat platforms; see AGENTS.md for intent routing.
+    The plugin provides 10 skills for rh virt workflows on Red Hat platforms; see AGENTS.md for intent routing.
   skills:
   - name: vm-clone
     description: "Clone existing virtual machines for testing, scaling, or creating templates."
@@ -186,7 +186,7 @@ resources:
   description: "KubeVirt concepts underlying OpenShift Virtualization."
 - title: "agentic-plugins repository"
   url: https://github.com/RHEcosystemAppEng/agentic-plugins
-  description: "Source for this pack and catalog metadata."
+  description: "Source for this plugin and catalog metadata."
 legal_resources:
   license_agreement_url: https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/LICENSE
   privacy_policy_url: https://www.redhat.com/en/about/privacy-policy

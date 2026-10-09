@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Validate agentic collection pack structure (mcps.json, AGENTS.md; plugin.json optional).
+Validate agentic collection plugin structure (mcps.json, AGENTS.md; plugin.json optional).
 
 Skill-level validation (frontmatter, sections, security) is handled by
 validate_skills_tier1.py and validate_skills_tier2.py.
@@ -15,7 +15,7 @@ import re
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _EXCLUDE = {"scripts", "catalog", ".claude", ".github", ".lola", "docs", "eval"}
 
-PACK_DIRS = sorted(
+PLUGIN_DIRS = sorted(
     d.name for d in _REPO_ROOT.iterdir()
     if d.is_dir() and d.name not in _EXCLUDE and not d.name.startswith(".")
     and ((d / "AGENTS.md").exists() or (d / "skills").is_dir())
@@ -25,18 +25,18 @@ AGENTS_MD_FILENAME = "AGENTS.md"
 AGENTS_MD_DEPRECATED = "CLAUDE.md"
 
 
-def validate_plugin_json(pack_dir: str) -> List[str]:
+def validate_plugin_json(plugin_dir: str) -> List[str]:
     """
     Validate plugin.json structure when `.claude-plugin/plugin.json` exists.
 
     Args:
-        pack_dir: Collection directory name
+        plugin_dir: Collection directory name
 
     Returns:
         List of error messages (empty if valid or file absent)
     """
     errors = []
-    plugin_path = Path(pack_dir) / '.claude-plugin' / 'plugin.json'
+    plugin_path = Path(plugin_dir) / '.claude-plugin' / 'plugin.json'
 
     if not plugin_path.exists():
         # plugin.json is optional
@@ -48,16 +48,16 @@ def validate_plugin_json(pack_dir: str) -> List[str]:
 
         # Check required fields
         if 'name' not in data:
-            errors.append(f"{pack_dir}: plugin.json missing required field 'name'")
+            errors.append(f"{plugin_dir}: plugin.json missing required field 'name'")
         if 'version' not in data:
-            errors.append(f"{pack_dir}: plugin.json missing required field 'version'")
+            errors.append(f"{plugin_dir}: plugin.json missing required field 'version'")
         if 'description' not in data:
-            errors.append(f"{pack_dir}: plugin.json missing required field 'description'")
+            errors.append(f"{plugin_dir}: plugin.json missing required field 'description'")
 
     except json.JSONDecodeError as e:
-        errors.append(f"{pack_dir}: Invalid JSON in plugin.json: {e}")
+        errors.append(f"{plugin_dir}: Invalid JSON in plugin.json: {e}")
     except Exception as e:
-        errors.append(f"{pack_dir}: Error reading plugin.json: {e}")
+        errors.append(f"{plugin_dir}: Error reading plugin.json: {e}")
 
     return errors
 
@@ -66,25 +66,25 @@ MCP_FILENAME = "mcps.json"
 MCP_DEPRECATED = ".mcp.json"
 
 
-def validate_mcp_json(pack_dir: str) -> List[str]:
+def validate_mcp_json(plugin_dir: str) -> List[str]:
     """
     Validate mcps.json structure.
     Errors if deprecated .mcp.json exists (must be renamed to mcps.json).
 
     Args:
-        pack_dir: Pack directory name
+        plugin_dir: Plugin directory name
 
     Returns:
         List of error messages (empty if valid)
     """
     errors = []
-    pack_path = Path(pack_dir)
-    deprecated_path = pack_path / MCP_DEPRECATED
-    mcp_path = pack_path / MCP_FILENAME
+    plugin_path = Path(plugin_dir)
+    deprecated_path = plugin_path / MCP_DEPRECATED
+    mcp_path = plugin_path / MCP_FILENAME
 
     if deprecated_path.exists():
         errors.append(
-            f"{pack_dir}: deprecated {MCP_DEPRECATED} found; rename to {MCP_FILENAME}"
+            f"{plugin_dir}: deprecated {MCP_DEPRECATED} found; rename to {MCP_FILENAME}"
         )
         return errors
 
@@ -98,14 +98,14 @@ def validate_mcp_json(pack_dir: str) -> List[str]:
 
         # Check for mcpServers key
         if 'mcpServers' not in data:
-            errors.append(f"{pack_dir}: {MCP_FILENAME} missing 'mcpServers' key")
+            errors.append(f"{plugin_dir}: {MCP_FILENAME} missing 'mcpServers' key")
         elif not isinstance(data['mcpServers'], dict):
-            errors.append(f"{pack_dir}: {MCP_FILENAME} 'mcpServers' must be an object")
+            errors.append(f"{plugin_dir}: {MCP_FILENAME} 'mcpServers' must be an object")
 
     except json.JSONDecodeError as e:
-        errors.append(f"{pack_dir}: Invalid JSON in {MCP_FILENAME}: {e}")
+        errors.append(f"{plugin_dir}: Invalid JSON in {MCP_FILENAME}: {e}")
     except Exception as e:
-        errors.append(f"{pack_dir}: Error reading {MCP_FILENAME}: {e}")
+        errors.append(f"{plugin_dir}: Error reading {MCP_FILENAME}: {e}")
 
     return errors
 
@@ -118,31 +118,31 @@ AGENTS_MD_REQUIRED_SECTIONS = [
 ]
 
 
-def validate_agents_md(pack_dir: str) -> List[str]:
+def validate_agents_md(plugin_dir: str) -> List[str]:
     """
     Validate AGENTS.md presence and structure.
 
-    Required for any pack that has skills. Checks for required sections
+    Required for any plugin that has skills. Checks for required sections
     and verifies that all skills appear in the intent routing content.
-    Errors if deprecated pack-level CLAUDE.md exists (Lola manages AGENTS.md).
+    Errors if deprecated plugin-level CLAUDE.md exists (Lola manages AGENTS.md).
 
     Args:
-        pack_dir: Pack directory name
+        plugin_dir: Plugin directory name
 
     Returns:
         List of error messages (empty if valid)
     """
     errors = []
-    pack_path = Path(pack_dir)
-    deprecated_path = pack_path / AGENTS_MD_DEPRECATED
-    agents_path = pack_path / AGENTS_MD_FILENAME
-    skills_dir = pack_path / 'skills'
+    plugin_path = Path(plugin_dir)
+    deprecated_path = plugin_path / AGENTS_MD_DEPRECATED
+    agents_path = plugin_path / AGENTS_MD_FILENAME
+    skills_dir = plugin_path / 'skills'
 
     has_skills = skills_dir.exists() and any(skills_dir.glob('*/SKILL.md'))
 
     if deprecated_path.exists():
         errors.append(
-            f"{pack_dir}: deprecated pack-level {AGENTS_MD_DEPRECATED} found; "
+            f"{plugin_dir}: deprecated plugin-level {AGENTS_MD_DEPRECATED} found; "
             f"rename to {AGENTS_MD_FILENAME} (Lola AI Context Module convention)"
         )
         return errors
@@ -150,7 +150,7 @@ def validate_agents_md(pack_dir: str) -> List[str]:
     if not agents_path.exists():
         if has_skills:
             errors.append(
-                f"{pack_dir}: Missing {AGENTS_MD_FILENAME} (required for packs with skills)"
+                f"{plugin_dir}: Missing {AGENTS_MD_FILENAME} (required for plugins with skills)"
             )
         return errors
 
@@ -163,7 +163,7 @@ def validate_agents_md(pack_dir: str) -> List[str]:
         for section in AGENTS_MD_REQUIRED_SECTIONS:
             if not any(section in h for h in headings):
                 errors.append(
-                    f"{pack_dir}: {AGENTS_MD_FILENAME} missing required section '## {section}'"
+                    f"{plugin_dir}: {AGENTS_MD_FILENAME} missing required section '## {section}'"
                 )
 
         # Check intent routing completeness
@@ -172,40 +172,40 @@ def validate_agents_md(pack_dir: str) -> List[str]:
             for skill_name in skill_names:
                 if skill_name not in content:
                     errors.append(
-                        f"{pack_dir}: {AGENTS_MD_FILENAME} intent routing missing skill '{skill_name}'"
+                        f"{plugin_dir}: {AGENTS_MD_FILENAME} intent routing missing skill '{skill_name}'"
                     )
 
     except Exception as e:
-        errors.append(f"{pack_dir}: Error reading {AGENTS_MD_FILENAME}: {e}")
+        errors.append(f"{plugin_dir}: Error reading {AGENTS_MD_FILENAME}: {e}")
 
     return errors
 
 
-def validate_pack(pack_dir: str) -> List[str]:
+def validate_plugin(plugin_dir: str) -> List[str]:
     """
-    Validate a single pack.
+    Validate a single plugin.
 
     Args:
-        pack_dir: Pack directory name
+        plugin_dir: Plugin directory name
 
     Returns:
         List of error messages (empty if valid)
     """
     errors = []
 
-    # Check if pack directory exists
-    if not Path(pack_dir).exists():
-        errors.append(f"{pack_dir}: Pack directory does not exist")
+    # Check if plugin directory exists
+    if not Path(plugin_dir).exists():
+        errors.append(f"{plugin_dir}: Plugin directory does not exist")
         return errors
 
     # Validate plugin.json
-    errors.extend(validate_plugin_json(pack_dir))
+    errors.extend(validate_plugin_json(plugin_dir))
 
     # Validate mcps.json
-    errors.extend(validate_mcp_json(pack_dir))
+    errors.extend(validate_mcp_json(plugin_dir))
 
     # Validate AGENTS.md
-    errors.extend(validate_agents_md(pack_dir))
+    errors.extend(validate_agents_md(plugin_dir))
 
     return errors
 
@@ -219,9 +219,9 @@ def main():
 
     all_errors = []
 
-    for pack_dir in PACK_DIRS:
-        print(f"Validating {pack_dir}...", end=' ')
-        errors = validate_pack(pack_dir)
+    for plugin_dir in PLUGIN_DIRS:
+        print(f"Validating {plugin_dir}...", end=' ')
+        errors = validate_plugin(plugin_dir)
 
         if errors:
             print("❌")

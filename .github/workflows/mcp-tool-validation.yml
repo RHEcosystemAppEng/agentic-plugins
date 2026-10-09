@@ -13,8 +13,8 @@ on:
       - '**/skills/*/SKILL.md'
   workflow_dispatch:
     inputs:
-      pack:
-        description: 'Pack name to validate (empty = all packs)'
+      plugin:
+        description: 'Plugin name to validate (empty = all plugins)'
         required: false
         type: string
 
@@ -35,7 +35,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          fetch-depth: 0  # full history required for git diff in pack detection
+          fetch-depth: 0  # full history required for git diff in plugin detection
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -80,7 +80,7 @@ jobs:
           KUBECONFIG
           echo "KUBECONFIG=$HOME/.kube/config" >> "$GITHUB_ENV"
 
-      - name: Detect changed packs
+      - name: Detect changed plugins
         if: github.event_name == 'pull_request'
         id: detect
         env:
@@ -94,28 +94,28 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "packs=$CHANGED" >> "$GITHUB_OUTPUT"
-            echo "Changed packs: $CHANGED"
+            echo "plugins=$CHANGED" >> "$GITHUB_OUTPUT"
+            echo "Changed plugins: $CHANGED"
           fi
 
       - name: Validate MCP tools
         env:
           KUBECONFIG: ${{ env.KUBECONFIG }}
           EVENT_NAME: ${{ github.event_name }}
-          INPUT_PACK: ${{ inputs.pack }}
-          CHANGED_PACKS: ${{ steps.detect.outputs.packs }}
-          PACKS_CHANGED: ${{ steps.detect.outputs.changed }}
+          INPUT_PLUGIN: ${{ inputs.plugin }}
+          CHANGED_PLUGINS: ${{ steps.detect.outputs.plugins }}
+          PLUGINS_CHANGED: ${{ steps.detect.outputs.changed }}
         run: |
-          # Dispatch: manual with pack > PR changed packs > all packs
-          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$INPUT_PACK" ]; then
-            echo "Manual dispatch: validating pack '$INPUT_PACK'"
-            python scripts/validate_mcp_tools.py "$INPUT_PACK"
-          elif [ "$EVENT_NAME" = "pull_request" ] && [ "$PACKS_CHANGED" != "true" ]; then
-            echo "No packs changed in this PR, skipping"
+          # Dispatch: manual with plugin > PR changed plugins > all plugins
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$INPUT_PLUGIN" ]; then
+            echo "Manual dispatch: validating plugin '$INPUT_PLUGIN'"
+            python scripts/validate_mcp_tools.py "$INPUT_PLUGIN"
+          elif [ "$EVENT_NAME" = "pull_request" ] && [ "$PLUGINS_CHANGED" != "true" ]; then
+            echo "No plugins changed in this PR, skipping"
           elif [ "$EVENT_NAME" = "pull_request" ]; then
-            echo "Validating changed packs: $CHANGED_PACKS"
-            python scripts/validate_mcp_tools.py $CHANGED_PACKS
+            echo "Validating changed plugins: $CHANGED_PLUGINS"
+            python scripts/validate_mcp_tools.py $CHANGED_PLUGINS
           else
-            echo "Validating all packs..."
+            echo "Validating all plugins..."
             python scripts/validate_mcp_tools.py
           fi

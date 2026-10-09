@@ -4,7 +4,7 @@
 -->
 
 ## Deploy and use
-**Note:** This skill pack is released as Developer Preview. Developer Preview features provide early access to functionality in advance of possible inclusion in a Red Hat product offering. For more information about the support scope of Red Hat Developer Preview features, see [Developer Preview Support Scope](https://access.redhat.com/support/offerings/devpreview).
+**Note:** This agent plugin is released as Developer Preview. Developer Preview features provide early access to functionality in advance of possible inclusion in a Red Hat product offering. For more information about the support scope of Red Hat Developer Preview features, see [Developer Preview Support Scope](https://access.redhat.com/support/offerings/devpreview).
 
 ### Prerequisites
 
@@ -22,13 +22,13 @@
   - [cosign](https://github.com/sigstore/cosign)
   - [syft](https://github.com/anchore/syft) (optional, fallback SBOM generation)
 
-### Step 1: Install the skill pack
+### Step 1: Install the agent plugin
 
 ```bash
 # Add the Red Hat Agentic marketplace (one-time setup)
 lola market add rh-agentic-plugins https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-catalog/main/marketplace/rh-agentic-collection.yml
 
-# Install the ocp-admin pack (replace claude-code with your AI assistant)
+# Install the ocp-admin plugin (replace claude-code with your AI assistant)
 # Valid targets: claude-code, copilot-cli, copilot-vscode, cursor, opencode
 lola install ocp-admin -a claude-code
 ```
@@ -43,7 +43,7 @@ lola list
 
 ### Step 2: Configure environment variables
 
-The pack uses three MCP servers, each requiring specific credentials passed as environment variables. **Never hardcode tokens or paths — always use environment variables.**
+The plugin uses three MCP servers, each requiring specific credentials passed as environment variables. **Never hardcode tokens or paths — always use environment variables.**
 
 **For cluster creation and inventory** (`openshift-self-managed`, `openshift-ocm-managed`):
 
@@ -63,11 +63,11 @@ export KUBECONFIG="/path/to/your/kubeconfig"
 
 ### Step 3: Use the skills
 
-The pack provides 8 skills. See the [ocp-admin README](../README.md) for the full list with descriptions and usage examples.
+The plugin provides 8 skills. See the [ocp-admin README](../README.md) for the full list with descriptions and usage examples.
 
 ### Uninstall
 
-Remove the skill pack from your project:
+Remove the agent plugin from your project:
 
 ```bash
 lola uninstall ocp-admin

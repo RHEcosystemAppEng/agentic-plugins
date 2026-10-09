@@ -55,7 +55,7 @@ MARKETING_BUZZWORDS = re.compile(
     re.IGNORECASE,
 )
 
-DEFAULT_PACKS = [
+DEFAULT_PLUGINS = [
     "rh-sre", "rh-developer", "ocp-admin", "rh-virt",
     "rh-ai-engineer", "rh-automation", "rh-basic",
 ]
@@ -129,8 +129,8 @@ def _rel(path: Path) -> str:
         return str(path)
 
 
-def _pack_name(skill_path: Path) -> str:
-    """Extract pack name from a skill path like rh-sre/skills/cve-impact/SKILL.md."""
+def _plugin_name(skill_path: Path) -> str:
+    """Extract plugin name from a skill path like rh-sre/skills/cve-impact/SKILL.md."""
     if skill_path.parent.parent.name == "skills":
         return str(skill_path.parent.parent.parent)
     return str(skill_path.parent)
@@ -316,8 +316,8 @@ def main() -> int:
     parser.add_argument(
         "paths",
         nargs="*",
-        default=DEFAULT_PACKS,
-        help="Pack directories or specific SKILL.md paths to validate",
+        default=DEFAULT_PLUGINS,
+        help="Plugin directories or specific SKILL.md paths to validate",
     )
     parser.add_argument(
         "--warnings-as-errors",
@@ -349,12 +349,12 @@ def main() -> int:
     all_errors: list[tuple[Path, str]] = []
     all_warnings: list[tuple[Path, str]] = []
 
-    # Validate and group results by pack
-    results_by_pack: dict[str, list[tuple[Path, ValidationResult]]] = {}
+    # Validate and group results by plugin
+    results_by_plugin: dict[str, list[tuple[Path, ValidationResult]]] = {}
     for skill_path in sorted(skill_files):
         r = validate_skill(skill_path)
-        pack = _pack_name(skill_path)
-        results_by_pack.setdefault(pack, []).append((skill_path, r))
+        plugin = _plugin_name(skill_path)
+        results_by_plugin.setdefault(plugin, []).append((skill_path, r))
 
         for err in r.errors:
             all_errors.append((skill_path, err))
@@ -363,18 +363,18 @@ def main() -> int:
             if args.warnings_as_errors:
                 all_errors.append((skill_path, f"[WARN] {warn}"))
 
-    # Print results grouped by pack
+    # Print results grouped by plugin
     total_skills = 0
     passed_skills = 0
     warned_skills = 0
     failed_skills = 0
 
-    for pack, pack_results in sorted(results_by_pack.items()):
+    for plugin, plugin_results in sorted(results_by_plugin.items()):
         print(SEPARATOR)
-        print(f"{BOLD}  Pack: {pack}{NC}")
+        print(f"{BOLD}  Plugin: {plugin}{NC}")
         print(SEPARATOR)
 
-        for skill_path, r in pack_results:
+        for skill_path, r in plugin_results:
             skill_name = skill_path.parent.name
             total_skills += 1
 

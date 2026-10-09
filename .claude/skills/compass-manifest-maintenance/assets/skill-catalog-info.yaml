@@ -1,6 +1,6 @@
 # Template: skills/<skill-name>/catalog-info.yaml
-# Replace <pack>, <skill-name>, title, description, tags, disciplines, categories, dependsOn.
-# lifecycle: copy from <pack>/<pack>-plugin.yaml spec.lifecycle (default); may downgrade only — see relationship-rules.md
+# Replace <plugin>, <skill-name>, title, description, tags, disciplines, categories, dependsOn.
+# lifecycle: copy from <plugin>/<plugin>-plugin.yaml spec.lifecycle (default); may downgrade only — see relationship-rules.md
 apiVersion: backstage.io/v1alpha1
 kind: AiResource
 metadata:
@@ -13,7 +13,7 @@ metadata:
     distribution: external
   annotations:
     backstage.io/source-location: >-
-      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/<pack>/skills/<skill-name>/SKILL.md
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/<plugin>/skills/<skill-name>/SKILL.md
   tags:
     - ai-skill
     - <domain-tag>
@@ -23,7 +23,7 @@ metadata:
       icon: github
 spec:
   type: skill
-  lifecycle: <plugin-lifecycle>  # from <pack>/<pack>-plugin.yaml; same or less mature than plugin
+  lifecycle: <plugin-lifecycle>  # from <plugin>/<plugin>-plugin.yaml; same or less mature than plugin
   owner: group:redhat/ai5-marketplace
   disciplines:
     - <discipline>
@@ -31,7 +31,7 @@ spec:
     - <category>
   agents: []
   dependsOn:
-    - airesource:ai5-marketplace/<pack>
+    - airesource:ai5-marketplace/<plugin>
     # Add mcpserver: and airesource: (other skills) only when SKILL.md uses them
   dependencyOf: []
   # dependencyOf: list orchestration skills that dependsOn this skill (COMPASS-1288)

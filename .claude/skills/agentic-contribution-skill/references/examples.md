@@ -14,7 +14,7 @@ What does it do? For which Red Hat product(s) is this skill targeted?
 What role uses it?
 > "Virt admins"
 
-✅ Detected pack: rh-virt. Use it? (yes/no)
+✅ Detected plugin: rh-virt. Use it? (yes/no)
 > yes
 
 What MCP tools does this skill need?
@@ -72,7 +72,7 @@ Workflow steps with MCP tools:
 
 ## Review Before Generation
 
-**Pack**: rh-virt | **Skill**: vm-backup-create | **Color**: green
+**Plugin**: rh-virt | **Skill**: vm-backup-create | **Color**: green
 
 **Purpose**: Create VM backups using snapshots for OpenShift Virtualization
 **Red Hat Product**: OpenShift Virtualization
@@ -150,7 +150,7 @@ Reading ./my-skills/cluster-backup/SKILL.md...
 
 Analyzed: ./my-skills/cluster-backup/SKILL.md
 Name: cluster-backup | Lines: 180 | Frontmatter: needs-fixes (missing model, color)
-Suggested pack: ocp-admin (keywords: cluster, etcd, backup, restore)
+Suggested plugin: ocp-admin (keywords: cluster, etcd, backup, restore)
 
 No color in frontmatter. Analyzing operations...
 Inferred color: red — Reason: skill performs etcd backup and restore, which are irreversible operations
@@ -163,7 +163,7 @@ MCP tools referenced: resources_get, pods_exec, pods_log
 
 Analyzed: ./my-skills/cluster-backup/SKILL.md
 Name: cluster-backup | Lines: 180 | Frontmatter: needs-fixes (missing model, color)
-Suggested pack: ocp-admin (keywords: cluster, etcd, backup, restore)
+Suggested plugin: ocp-admin (keywords: cluster, etcd, backup, restore)
 Color: red (inferred)
 MCP tools: 3 verified, 0 not found
 Missing sections: Prerequisites, Dependencies

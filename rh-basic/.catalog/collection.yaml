@@ -3,7 +3,7 @@
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: rh-basic
-name: Agentic skill pack for Red Hat customers
+name: Agent plugin for Red Hat customers
 provider: Red Hat
 version: 0.1.0
 categories:
@@ -22,7 +22,7 @@ description: "Essential Red Hat skills for IT professionals: CVE explanation, di
 summary: Lightweight, self-contained skills for everyday Red Hat operations and support tasks. Skills fall back to public Red Hat documentation when MCP tools are unavailable.
 contents:
   description: |
-    The pack provides 6 skills covering the most common Red Hat support and operations workflows.
+    The plugin provides 6 skills covering the most common Red Hat support and operations workflows.
     All skills are self-contained, and those using the Red Hat Security MCP server fall back to WebFetch when it is unavailable.
   skills:
   - name: red-hat-cve-explainer
@@ -53,7 +53,7 @@ contents:
   - name: red-hat-get-started
     description: Bootstrap Installer (self-removes after use)
     summary_markdown: |
-      Fetch and install all skills from Agentic skill pack for Red Hat customers into the current project. Removes itself after running.
+      Fetch and install all skills from Agent plugin for Red Hat customers into the current project. Removes itself after running.
       **Use when:**
       - Setting up Red Hat skills for the first time in a project
       **What it does:**
@@ -116,7 +116,7 @@ contents:
     reason: Maps situation to Sev 1-4 and shows SLA for Premium and Standard support.
   - user_request: '"Install Red Hat skills" or "Set up Red Hat agent skills"'
     skill_to_use: red-hat-get-started
-    reason: Bootstrap installer that downloads and installs all skills in the pack.
+    reason: Bootstrap installer that downloads and installs all skills in the plugin.
   - user_request: '"Set up the Red Hat Security MCP server" or "Add red-hat-security to my MCP config"'
     skill_to_use: red-hat-security-mcp-setup
     reason: Configures the HTTP-transport Red Hat Security MCP endpoint and explains browser SSO login.
