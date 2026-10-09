@@ -30,11 +30,11 @@ Invoke this skill when the user wants to:
    ```
    This validates only staged and unstaged skill changes.
 
-3. **Alternative: validate all skills or a specific pack**:
+3. **Alternative: validate all skills or a specific plugin**:
    ```bash
    make validate-skill-design
-   # Or validate a specific pack:
-   make validate-skill-design PACK=rh-sre
+   # Or validate a specific plugin:
+   make validate-skill-design PLUGIN=rh-sre
    ```
 
 4. **Report results** to the user:

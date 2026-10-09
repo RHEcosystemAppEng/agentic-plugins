@@ -1,6 +1,6 @@
-# Agentic skill pack for Site Reliability Engineers
+# Agent plugin for Site Reliability Engineers
 
-Agentic tools and automation for managing Red Hat platforms and infrastructure. This pack provides comprehensive capabilities for SRE tasks including vulnerability management, fleet inventory, system monitoring, and operational excellence
+Agentic tools and automation for managing Red Hat platforms and infrastructure. This plugin provides comprehensive capabilities for SRE tasks including vulnerability management, fleet inventory, system monitoring, and operational excellence
 
 **Persona**: Site Reliability Engineer
 **Marketplaces**: Claude Code, Cursor
@@ -138,7 +138,7 @@ export LIGHTSPEED_CLIENT_SECRET="your-service-account-client-secret"
 
 ### Installation (Lola)
 
-Install the pack with [Lola](https://github.com/LobsterTrap/lola):
+Install the plugin with [Lola](https://github.com/LobsterTrap/lola):
 
 ```bash
 lola market add rh-agentic-plugins https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-catalog/main/marketplace/rh-agentic-collection.yml
@@ -153,7 +153,7 @@ lola list
 
 ## Skills
 
-The pack provides 13 skills for common SRE operations, including one orchestration skill for end-to-end remediation:
+The plugin provides 13 skills for common SRE operations, including one orchestration skill for end-to-end remediation:
 
 ### 1. **remediation** - End-to-End CVE Remediation (Orchestration)
 Orchestrates 6 specialized skills for complete CVE remediation workflows.
@@ -384,7 +384,7 @@ The remediation skill orchestrates 6 specialized skills to provide complete CVE 
 
 ## Documentation
 
-The rh-sre pack includes AI-optimized documentation under `references/` (pack index) and `skills/*/references/` (runtime skill docs):
+The rh-sre plugin includes AI-optimized documentation under `references/` (plugin index) and `skills/*/references/` (runtime skill docs):
 
 ### Semantic Indexing System
 
@@ -404,7 +404,7 @@ See [references/INDEX.md](references/INDEX.md) for the complete documentation ma
 
 ## MCP Server Integrations
 
-The pack integrates with three MCP servers (configured in `mcps.json`):
+The plugin integrates with three MCP servers (configured in `mcps.json`):
 
 ### 1. **lightspeed-mcp** - Red Hat Lightspeed Platform
 - CVE data and vulnerability management
@@ -585,7 +585,7 @@ MCP servers are configured in `mcps.json`:
 
 ## Architecture Reference
 
-This pack demonstrates the complete agentic pack architecture:
+This plugin demonstrates the complete agent plugin architecture:
 
 ### Directory Structure
 ```
@@ -606,7 +606,7 @@ rh-sre/
 │   ├── job-template-creator/SKILL.md
 │   ├── job-template-remediation-validator/SKILL.md
 │   └── execution-summary/SKILL.md
-└── references/                  # Pack documentation map and attributions
+└── references/                  # Plugin documentation map and attributions
     ├── INDEX.md
     ├── SOURCES.md
     └── .ai-index/               # Semantic indexing
@@ -634,7 +634,7 @@ See main repository [CLAUDE.md](../CLAUDE.md) for:
 
 ## References
 
-- [Agentic skill pack for Site Reliability Engineers repository](https://github.com/RHEcosystemAppEng/agentic-plugins/tree/main/rh-sre) - Documentation and details for this skill pack
+- [Agent plugin for Site Reliability Engineers repository](https://github.com/RHEcosystemAppEng/agentic-plugins/tree/main/rh-sre) - Documentation and details for this agent plugin
 - [Red Hat Lightspeed](https://www.redhat.com/en/lightspeed)
 - [Red Hat Hybrid Cloud Console](https://console.redhat.com)
 - [Red Hat Lightspeed MCP](https://github.com/RedHatInsights/insights-mcp)

@@ -1,5 +1,5 @@
 """
-Shared validation for <pack>/.catalog/collection.yaml (JSON Schema in catalog/schema.yaml, roster, banners,
+Shared validation for <plugin>/.catalog/collection.yaml (JSON Schema in catalog/schema.yaml, roster, banners,
 #fragment refs on top-level prose fields, JSON mirror).
 Used by validate_collection_schema.py and validate_collection_compliance.py.
 """
@@ -16,13 +16,13 @@ from jsonschema import Draft202012Validator
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-_PACK_EXCLUDE = {"scripts", "catalog", ".claude", ".github", ".lola", "docs", "eval"}
+_PLUGIN_EXCLUDE = {"scripts", "catalog", ".claude", ".github", ".lola", "docs", "eval"}
 
 
-def _discover_packs(root: Path) -> List[str]:
+def _discover_plugins(root: Path) -> List[str]:
     return sorted(
         d.name for d in root.iterdir()
-        if d.is_dir() and d.name not in _PACK_EXCLUDE and not d.name.startswith(".")
+        if d.is_dir() and d.name not in _PLUGIN_EXCLUDE and not d.name.startswith(".")
         and ((d / "AGENTS.md").exists() or (d / "skills").is_dir())
     )
 SCHEMA_YAML_PATH = REPO_ROOT / "catalog" / "schema.yaml"
@@ -58,7 +58,7 @@ _VALIDATOR_CACHE: Optional[Draft202012Validator] = None
 
 
 def normalize_external_file_ref(ref: str) -> str:
-    """Strip leading ``#`` and optional ``.catalog/`` prefix; remainder is a path under ``<pack>/.catalog/``."""
+    """Strip leading ``#`` and optional ``.catalog/`` prefix; remainder is a path under ``<plugin>/.catalog/``."""
     s = ref.strip()
     if s.startswith("#"):
         s = s[1:].lstrip()
@@ -111,25 +111,25 @@ def collection_json_dumps(data: Any) -> str:
     return json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
 
 
-def read_yaml_catalog(pack_dir: str, root: Optional[Path] = None) -> Tuple[Optional[Dict[str, Any]], List[str]]:
+def read_yaml_catalog(plugin_dir: str, root: Optional[Path] = None) -> Tuple[Optional[Dict[str, Any]], List[str]]:
     root = root or REPO_ROOT
-    p = root / pack_dir / ".catalog" / "collection.yaml"
+    p = root / plugin_dir / ".catalog" / "collection.yaml"
     if not p.exists():
-        return None, [f"{pack_dir}: missing {p.relative_to(root)}"]
+        return None, [f"{plugin_dir}: missing {p.relative_to(root)}"]
     try:
         with open(p, "r", encoding="utf-8") as f:
             raw = f.read()
         data = yaml.safe_load(raw)
         if not isinstance(data, dict):
-            return None, [f"{pack_dir}: collection.yaml must parse to a mapping"]
+            return None, [f"{plugin_dir}: collection.yaml must parse to a mapping"]
         return data, []
     except Exception as e:
-        return None, [f"{pack_dir}: failed to parse collection.yaml: {e}"]
+        return None, [f"{plugin_dir}: failed to parse collection.yaml: {e}"]
 
 
-def catalog_yaml_path(pack_dir: str, root: Optional[Path] = None) -> Path:
+def catalog_yaml_path(plugin_dir: str, root: Optional[Path] = None) -> Path:
     root = root or REPO_ROOT
-    return root / pack_dir / ".catalog" / "collection.yaml"
+    return root / plugin_dir / ".catalog" / "collection.yaml"
 
 
 def _parse_yaml_scalar(value: str) -> str:
@@ -184,22 +184,22 @@ def catalog_decision_guide_skill_line_map(yaml_path: Path) -> Dict[str, int]:
     return result
 
 
-def _yaml_loc(pack_dir: str, yaml_path: Path, line: Optional[int], root: Path) -> str:
+def _yaml_loc(plugin_dir: str, yaml_path: Path, line: Optional[int], root: Path) -> str:
     rel = yaml_path.relative_to(root)
     return f"{rel}:{line}" if line else str(rel)
 
 
 def describe_json_mirror_drift(
-    pack_dir: str, yaml_data: Dict[str, Any], root: Optional[Path] = None,
+    plugin_dir: str, yaml_data: Dict[str, Any], root: Optional[Path] = None,
 ) -> List[str]:
     """Explain how collection.json differs from collection.yaml with field paths and line numbers."""
     root = root or REPO_ROOT
-    yaml_path = catalog_yaml_path(pack_dir, root)
-    json_path = root / pack_dir / ".catalog" / "collection.json"
+    yaml_path = catalog_yaml_path(plugin_dir, root)
+    json_path = root / plugin_dir / ".catalog" / "collection.json"
     try:
         json_data = json.loads(json_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        return [f"{pack_dir}: .catalog/collection.json is invalid JSON: {exc}"]
+        return [f"{plugin_dir}: .catalog/collection.json is invalid JSON: {exc}"]
 
     errs: List[str] = []
     skill_lines = catalog_skill_name_line_map(yaml_path)
@@ -219,9 +219,9 @@ def describe_json_mirror_drift(
             if yn == jn:
                 continue
             line = skill_lines.get(str(yn or "")) or skill_lines.get(str(jn or ""))
-            loc = _yaml_loc(pack_dir, yaml_path, line, root)
+            loc = _yaml_loc(plugin_dir, yaml_path, line, root)
             errs.append(
-                f"{pack_dir}: {loc} {group}[{i}].name out of sync: "
+                f"{plugin_dir}: {loc} {group}[{i}].name out of sync: "
                 f"collection.yaml={yn!r}, collection.json={jn!r}"
             )
 
@@ -230,51 +230,51 @@ def describe_json_mirror_drift(
         jv = json_data.get(key)
         if yv != jv:
             line = _find_top_level_key_line(yaml_path, key)
-            loc = _yaml_loc(pack_dir, yaml_path, line, root)
+            loc = _yaml_loc(plugin_dir, yaml_path, line, root)
             errs.append(
-                f"{pack_dir}: {loc} {key} out of sync: "
+                f"{plugin_dir}: {loc} {key} out of sync: "
                 f"collection.yaml={yv!r}, collection.json={jv!r}"
             )
 
     if not errs:
         errs.append(
-            f"{pack_dir}: .catalog/collection.json content differs from collection.yaml "
+            f"{plugin_dir}: .catalog/collection.json content differs from collection.yaml "
             "(run diff or regenerate JSON to inspect)"
         )
     errs.append(
-        f"{pack_dir}: regenerate mirror with: "
-        f"uv run python scripts/catalog_yaml_to_json.py --pack {pack_dir}"
+        f"{plugin_dir}: regenerate mirror with: "
+        f"uv run python scripts/catalog_yaml_to_json.py --plugin {plugin_dir}"
     )
     return errs
 
 
-def validate_yaml_banner(pack_dir: str, root: Optional[Path] = None) -> List[str]:
+def validate_yaml_banner(plugin_dir: str, root: Optional[Path] = None) -> List[str]:
     root = root or REPO_ROOT
-    p = root / pack_dir / ".catalog" / "collection.yaml"
+    p = root / plugin_dir / ".catalog" / "collection.yaml"
     if not p.exists():
         return []
     try:
         text = p.read_text(encoding="utf-8")
     except OSError as e:
-        return [f"{pack_dir}: cannot read collection.yaml: {e}"]
+        return [f"{plugin_dir}: cannot read collection.yaml: {e}"]
     head = "\n".join(text.splitlines()[:40])
     missing = [m for m in YAML_BANNER_MARKERS if m not in head]
     if missing:
         return [
-            f"{pack_dir}: collection.yaml must start with a # comment banner mentioning: "
+            f"{plugin_dir}: collection.yaml must start with a # comment banner mentioning: "
             + ", ".join(YAML_BANNER_MARKERS)
         ]
     return []
 
 
-def validate_deprecated_catalog_file_keys(pack_dir: str, data: Dict[str, Any]) -> List[str]:
+def validate_deprecated_catalog_file_keys(plugin_dir: str, data: Dict[str, Any]) -> List[str]:
     """Reject legacy ``*_file`` split keys; prose fields use the same key for inline or ``#fragment.md``."""
     errs: List[str] = []
     for k in DEPRECATED_CATALOG_FILE_KEYS:
         if k in data and data[k] is not None and str(data[k]).strip() != "":
             base = k[: -len("_file")]
             errs.append(
-                f"{pack_dir}: deprecated key {k!r}; use {base!r} with inline markdown or "
+                f"{plugin_dir}: deprecated key {k!r}; use {base!r} with inline markdown or "
                 f"a one-line fragment ref like '#{base}.md' (same pattern as deploy_and_use; see COLLECTION_SPEC.md)."
             )
     return errs
@@ -290,40 +290,40 @@ def _collect_top_level_catalog_fragment_refs(data: Dict[str, Any]) -> List[str]:
     return refs
 
 
-def validate_file_refs(pack_dir: str, data: Dict[str, Any], root: Optional[Path] = None) -> List[str]:
+def validate_file_refs(plugin_dir: str, data: Dict[str, Any], root: Optional[Path] = None) -> List[str]:
     root = root or REPO_ROOT
     refs = _collect_top_level_catalog_fragment_refs(data)
     errs: List[str] = []
-    pack_root = root / pack_dir
-    catalog_dir = (pack_root / ".catalog").resolve()
+    plugin_root = root / plugin_dir
+    catalog_dir = (plugin_root / ".catalog").resolve()
     for ref in refs:
         if not ref.strip().startswith("#"):
             errs.append(
-                f"{pack_dir}: fragment ref must start with '#' (e.g. #install.md), got {ref!r}"
+                f"{plugin_dir}: fragment ref must start with '#' (e.g. #install.md), got {ref!r}"
             )
             continue
         path_part = normalize_external_file_ref(ref)
         if not path_part:
-            errs.append(f"{pack_dir}: empty fragment path after normalizing {ref!r}")
+            errs.append(f"{plugin_dir}: empty fragment path after normalizing {ref!r}")
             continue
         if ".." in path_part or path_part.startswith("/"):
-            errs.append(f"{pack_dir}: invalid fragment path {ref!r}")
+            errs.append(f"{plugin_dir}: invalid fragment path {ref!r}")
             continue
         target = (catalog_dir / path_part).resolve()
         try:
             target.relative_to(catalog_dir)
         except ValueError:
-            errs.append(f"{pack_dir}: fragment {ref!r} escapes .catalog/ directory")
+            errs.append(f"{plugin_dir}: fragment {ref!r} escapes .catalog/ directory")
             continue
         if not target.is_file():
-            errs.append(f"{pack_dir}: missing fragment file {path_part} (from {ref!r})")
+            errs.append(f"{plugin_dir}: missing fragment file {path_part} (from {ref!r})")
     return errs
 
 
-def validate_embedded_docs(pack_dir: str, data: Dict[str, Any], root: Optional[Path] = None) -> List[str]:
+def validate_embedded_docs(plugin_dir: str, data: Dict[str, Any], root: Optional[Path] = None) -> List[str]:
     root = root or REPO_ROOT
     errs: List[str] = []
-    pack_root = root / pack_dir
+    plugin_root = root / plugin_dir
     for i, r in enumerate(data.get("resources") or []):
         if not isinstance(r, dict):
             continue
@@ -331,15 +331,15 @@ def validate_embedded_docs(pack_dir: str, data: Dict[str, Any], root: Optional[P
         if not ed or not str(ed).strip():
             continue
         rel = str(ed).strip()
-        target = (pack_root / rel).resolve()
+        target = (plugin_root / rel).resolve()
         if not target.is_file():
-            errs.append(f"{pack_dir}: resources[{i}].embedded_doc missing file {rel}")
+            errs.append(f"{plugin_dir}: resources[{i}].embedded_doc missing file {rel}")
     return errs
 
 
-def list_disk_skill_names(pack_dir: str, root: Optional[Path] = None) -> List[str]:
+def list_disk_skill_names(plugin_dir: str, root: Optional[Path] = None) -> List[str]:
     root = root or REPO_ROOT
-    skills_dir = root / pack_dir / "skills"
+    skills_dir = root / plugin_dir / "skills"
     if not skills_dir.is_dir():
         return []
     names = sorted(p.name for p in skills_dir.iterdir() if p.is_dir() and (p / "SKILL.md").is_file())
@@ -361,78 +361,78 @@ def catalog_skill_names(data: Dict[str, Any]) -> Tuple[List[str], List[str]]:
     return reg, orch
 
 
-def validate_skill_roster(pack_dir: str, data: Dict[str, Any], root: Optional[Path] = None) -> List[str]:
-    disk = set(list_disk_skill_names(pack_dir, root))
+def validate_skill_roster(plugin_dir: str, data: Dict[str, Any], root: Optional[Path] = None) -> List[str]:
+    disk = set(list_disk_skill_names(plugin_dir, root))
     reg, orch = catalog_skill_names(data)
     yaml_names = reg + orch
     errs: List[str] = []
 
     if len(yaml_names) != len(set(yaml_names)):
-        errs.append(f"{pack_dir}: duplicate skill name in contents.skills / orchestration_skills")
+        errs.append(f"{plugin_dir}: duplicate skill name in contents.skills / orchestration_skills")
 
     seen = set(reg) | set(orch)
     for n in reg + orch:
         if n not in disk:
-            errs.append(f"{pack_dir}: YAML lists skill {n!r} with no skills/{n}/SKILL.md on disk")
+            errs.append(f"{plugin_dir}: YAML lists skill {n!r} with no skills/{n}/SKILL.md on disk")
 
     for d in disk:
         if d not in seen:
-            errs.append(f"{pack_dir}: on-disk skill {d!r} missing from collection.yaml contents")
+            errs.append(f"{plugin_dir}: on-disk skill {d!r} missing from collection.yaml contents")
     return errs
 
 
-def validate_json_mirror(pack_dir: str, data: Dict[str, Any], root: Optional[Path] = None) -> List[str]:
+def validate_json_mirror(plugin_dir: str, data: Dict[str, Any], root: Optional[Path] = None) -> List[str]:
     root = root or REPO_ROOT
-    json_path = root / pack_dir / ".catalog" / "collection.json"
+    json_path = root / plugin_dir / ".catalog" / "collection.json"
     if not json_path.exists():
-        return [f"{pack_dir}: missing .catalog/collection.json (run make catalog-mirror-json)"]
+        return [f"{plugin_dir}: missing .catalog/collection.json (run make catalog-mirror-json)"]
     expected = collection_json_dumps(data)
     actual = json_path.read_text(encoding="utf-8")
     if actual != expected:
-        return describe_json_mirror_drift(pack_dir, data, root)
+        return describe_json_mirror_drift(plugin_dir, data, root)
     return []
 
 
-def validate_schema_instance(pack_dir: str, data: Dict[str, Any]) -> List[str]:
+def validate_schema_instance(plugin_dir: str, data: Dict[str, Any]) -> List[str]:
     v = get_validator()
-    errs = [f"{pack_dir}: schema: {'/'.join(str(x) for x in e.path)}: {e.message}" for e in v.iter_errors(data)]
+    errs = [f"{plugin_dir}: schema: {'/'.join(str(x) for x in e.path)}: {e.message}" for e in v.iter_errors(data)]
     return errs
 
 
-def validate_pack_iteration3(
-    pack_dir: str, root: Optional[Path] = None, check_banner: bool = True,
+def validate_plugin_iteration3(
+    plugin_dir: str, root: Optional[Path] = None, check_banner: bool = True,
 ) -> List[str]:
     """Iteration 3: schema + fragment refs + roster + optional YAML banner (no collection.json mirror)."""
     root = root or REPO_ROOT
-    data, errs = read_yaml_catalog(pack_dir, root)
+    data, errs = read_yaml_catalog(plugin_dir, root)
     if errs or data is None:
         return errs
     out: List[str] = []
-    out.extend(validate_deprecated_catalog_file_keys(pack_dir, data))
-    out.extend(validate_schema_instance(pack_dir, data))
-    out.extend(validate_file_refs(pack_dir, data, root))
-    out.extend(validate_skill_roster(pack_dir, data, root))
+    out.extend(validate_deprecated_catalog_file_keys(plugin_dir, data))
+    out.extend(validate_schema_instance(plugin_dir, data))
+    out.extend(validate_file_refs(plugin_dir, data, root))
+    out.extend(validate_skill_roster(plugin_dir, data, root))
     if check_banner:
-        out.extend(validate_yaml_banner(pack_dir, root))
+        out.extend(validate_yaml_banner(plugin_dir, root))
     return out
 
 
-def validate_pack_iteration5(
-    pack_dir: str, root: Optional[Path] = None,
+def validate_plugin_iteration5(
+    plugin_dir: str, root: Optional[Path] = None,
 ) -> List[str]:
     """Full collection compliance: Iteration 3 + semantic rules + JSON mirror drift."""
     root = root or REPO_ROOT
-    errs = validate_pack_iteration3(pack_dir, root, check_banner=True)
-    data, e = read_yaml_catalog(pack_dir, root)
+    errs = validate_plugin_iteration3(plugin_dir, root, check_banner=True)
+    data, e = read_yaml_catalog(plugin_dir, root)
     errs.extend(e)
     if data:
-        errs.extend(validate_pack_catalog_compliance_extra(pack_dir, data, root))
-        errs.extend(validate_json_mirror(pack_dir, data, root))
+        errs.extend(validate_plugin_catalog_compliance_extra(plugin_dir, data, root))
+        errs.extend(validate_json_mirror(plugin_dir, data, root))
     return errs
 
 
-def validate_pack_catalog_compliance_extra(
-    pack_dir: str, data: Dict[str, Any], root: Optional[Path] = None,
+def validate_plugin_catalog_compliance_extra(
+    plugin_dir: str, data: Dict[str, Any], root: Optional[Path] = None,
 ) -> List[str]:
     """Iteration 5 semantic checks."""
     root = root or REPO_ROOT
@@ -450,26 +450,26 @@ def validate_pack_catalog_compliance_extra(
                 desc = (s.get("description") or "").strip()
                 sm = (s.get("summary_markdown") or "").strip()
                 if not name or not desc:
-                    errs.append(f"{pack_dir}: {label}[{i}] requires name and description")
+                    errs.append(f"{plugin_dir}: {label}[{i}] requires name and description")
                 if len(sm) < 20:
-                    errs.append(f"{pack_dir}: {label}[{i}] summary_markdown too short (<20 chars)")
-                skill_md = (root / pack_dir / "skills" / str(name) / "SKILL.md")
+                    errs.append(f"{plugin_dir}: {label}[{i}] summary_markdown too short (<20 chars)")
+                skill_md = (root / plugin_dir / "skills" / str(name) / "SKILL.md")
                 if not skill_md.is_file():
                     errs.append(
-                        f"{pack_dir}: {label}[{i}] name {name!r} must match skills/<name>/ directory "
+                        f"{plugin_dir}: {label}[{i}] name {name!r} must match skills/<name>/ directory "
                         f"(missing {skill_md.relative_to(root)})"
                     )
 
-    disk_skill_names = set(list_disk_skill_names(pack_dir, root))
+    disk_skill_names = set(list_disk_skill_names(plugin_dir, root))
     guide = (contents or {}).get("skills_decision_guide") or []
     if not disk_skill_names and guide:
-        errs.append(f"{pack_dir}: skills_decision_guide must be empty when the pack has no skills/")
+        errs.append(f"{plugin_dir}: skills_decision_guide must be empty when the plugin has no skills/")
     for i, row in enumerate(guide):
         if not isinstance(row, dict):
             continue
         st = row.get("skill_to_use")
         if disk_skill_names and st and st not in disk_skill_names:
-            errs.append(f"{pack_dir}: skills_decision_guide[{i}] skill_to_use {st!r} not a known skill dir")
+            errs.append(f"{plugin_dir}: skills_decision_guide[{i}] skill_to_use {st!r} not a known skill dir")
 
     for i, wf in enumerate(data.get("sample_workflows") or []):
         if not isinstance(wf, dict):
@@ -477,18 +477,18 @@ def validate_pack_catalog_compliance_extra(
         w = (wf.get("workflow") or "")
         for tok in FORBIDDEN_WORKFLOW_TOKENS:
             if tok in w:
-                errs.append(f"{pack_dir}: sample_workflows[{i}] contains forbidden token {tok!r}")
+                errs.append(f"{plugin_dir}: sample_workflows[{i}] contains forbidden token {tok!r}")
         if "User:" not in w and 'User: "' not in w:
-            errs.append(f"{pack_dir}: sample_workflows[{i}] workflow must include User: line")
+            errs.append(f"{plugin_dir}: sample_workflows[{i}] workflow must include User: line")
         if "-" not in w:
-            errs.append(f"{pack_dir}: sample_workflows[{i}] workflow must use bullet lines (-)")
+            errs.append(f"{plugin_dir}: sample_workflows[{i}] workflow must use bullet lines (-)")
 
-    errs.extend(validate_embedded_docs(pack_dir, data, root))
-    errs.extend(validate_catalog_inline_length(pack_dir, data))
+    errs.extend(validate_embedded_docs(plugin_dir, data, root))
+    errs.extend(validate_catalog_inline_length(plugin_dir, data))
     return errs
 
 
-def validate_catalog_inline_length(pack_dir: str, data: Dict[str, Any]) -> List[str]:
+def validate_catalog_inline_length(plugin_dir: str, data: Dict[str, Any]) -> List[str]:
     """Require long prose to use a #fragment .md ref (sibling of collection.yaml), not huge inline strings."""
     errs: List[str] = []
     for key in CATALOG_INLINE_LENGTH_KEYS:
@@ -499,7 +499,7 @@ def validate_catalog_inline_length(pack_dir: str, data: Dict[str, Any]) -> List[
             continue
         if len(val) > CATALOG_INLINE_CHAR_LIMIT:
             errs.append(
-                f"{pack_dir}: {key} is {len(val)} chars (limit {CATALOG_INLINE_CHAR_LIMIT}); "
+                f"{plugin_dir}: {key} is {len(val)} chars (limit {CATALOG_INLINE_CHAR_LIMIT}); "
                 f"move prose to a sibling .md under .catalog/ and set {key}: '#<filename>.md' "
                 f"(same pattern as deploy_and_use)."
             )
@@ -507,7 +507,7 @@ def validate_catalog_inline_length(pack_dir: str, data: Dict[str, Any]) -> List[
     if isinstance(dau, str) and not deploy_and_use_external_rel_path(dau):
         if len(dau) > CATALOG_INLINE_CHAR_LIMIT:
             errs.append(
-                f"{pack_dir}: deploy_and_use is {len(dau)} chars inline (limit {CATALOG_INLINE_CHAR_LIMIT}); "
+                f"{plugin_dir}: deploy_and_use is {len(dau)} chars inline (limit {CATALOG_INLINE_CHAR_LIMIT}); "
                 "use markdown in a sibling .md and deploy_and_use: #<filename>.md"
             )
     return errs
@@ -516,22 +516,22 @@ def validate_catalog_inline_length(pack_dir: str, data: Dict[str, Any]) -> List[
 def validate_all_iteration3(root: Optional[Path] = None, check_banner: bool = True) -> List[str]:
     root = root or REPO_ROOT
     all_errs: List[str] = []
-    for pack in _discover_packs(root):
-        cat = root / pack / ".catalog" / "collection.yaml"
+    for plugin in _discover_plugins(root):
+        cat = root / plugin / ".catalog" / "collection.yaml"
         if not cat.exists():
-            all_errs.append(f"{pack}: missing .catalog/collection.yaml")
+            all_errs.append(f"{plugin}: missing .catalog/collection.yaml")
             continue
-        all_errs.extend(validate_pack_iteration3(pack, root, check_banner=check_banner))
+        all_errs.extend(validate_plugin_iteration3(plugin, root, check_banner=check_banner))
     return all_errs
 
 
 def validate_all_iteration5(root: Optional[Path] = None) -> List[str]:
     root = root or REPO_ROOT
     all_errs: List[str] = []
-    for pack in _discover_packs(root):
-        cat = root / pack / ".catalog" / "collection.yaml"
+    for plugin in _discover_plugins(root):
+        cat = root / plugin / ".catalog" / "collection.yaml"
         if not cat.exists():
-            all_errs.append(f"{pack}: missing .catalog/collection.yaml")
+            all_errs.append(f"{plugin}: missing .catalog/collection.yaml")
             continue
-        all_errs.extend(validate_pack_iteration5(pack, root))
+        all_errs.extend(validate_plugin_iteration5(plugin, root))
     return all_errs

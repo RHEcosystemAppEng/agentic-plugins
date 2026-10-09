@@ -5,7 +5,7 @@ metadata:
   title: Agentic Plugins MCP Servers
   description: >
     Points to the MCP system and all MCP server manifests
-    used across agentic packs.
+    used across agent plugins.
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"

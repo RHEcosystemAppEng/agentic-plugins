@@ -3,7 +3,7 @@
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: rh-sre
-name: Agentic skill pack for Security Reliability Engineers
+name: Agent plugin for Site Reliability Engineers
 provider: Red Hat
 version: 0.1.0
 categories:
@@ -20,7 +20,7 @@ description: Site reliability engineering tools and automation for managing Red 
 summary: The rh-sre collection provides skills for site reliability tasks.
 contents:
   description: |
-    The pack provides 13 skills for common SRE operations, including one orchestration skill for end-to-end remediation.
+    The plugin provides 13 skills for common SRE operations, including one orchestration skill for end-to-end remediation.
   skills:
   - name: fleet-inventory
     description: System Discovery and Fleet Management

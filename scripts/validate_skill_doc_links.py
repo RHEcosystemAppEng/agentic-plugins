@@ -3,13 +3,13 @@
 Validate skill markdown links to enforce skill-local references convention.
 
 Rules:
-- Forbid upward traversal into pack docs (../references, ../../references, etc).
+- Forbid upward traversal into plugin docs (../references, ../../references, etc).
 - Internal docs links must use references/... path from skill directory.
 - Linked reference files must exist (symlinks allowed, dangling symlinks rejected).
-- Resolved targets must stay within the pack root.
+- Resolved targets must stay within the plugin root.
 
 Scans SKILL.md and other skill-root markdown (for example REBALANCE_*.md).
-Pack-level references/**/*.md is covered by validate_docs_tree_links.py.
+Plugin-level references/**/*.md is covered by validate_docs_tree_links.py.
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
 
-DEFAULT_PACKS = [
+DEFAULT_PLUGINS = [
     "rh-sre",
     "rh-developer",
     "ocp-admin",
@@ -65,9 +65,9 @@ def iter_skill_files(paths: Iterable[str]) -> list[Path]:
             if skills_dir.exists():
                 files.extend(_skill_root_markdown(skills_dir))
                 continue
-        pack_path = Path(p)
-        if (pack_path / "skills").exists():
-            files.extend(_skill_root_markdown(pack_path / "skills"))
+        plugin_path = Path(p)
+        if (plugin_path / "skills").exists():
+            files.extend(_skill_root_markdown(plugin_path / "skills"))
     dedup = sorted(set(files))
     return dedup
 
@@ -89,7 +89,7 @@ def _is_skill_local_references_link(target: str) -> bool:
 
 def validate_skill_file(skill_file: Path, result: ValidationResult) -> None:
     skill_dir = skill_file.parent
-    pack_root = skill_file.parent.parent.parent.resolve()
+    plugin_root = skill_file.parent.parent.parent.resolve()
     text = skill_file.read_text(encoding="utf-8")
 
     for line_no, line in enumerate(text.splitlines(), start=1):
@@ -153,10 +153,10 @@ def validate_skill_file(skill_file: Path, result: ValidationResult) -> None:
                 continue
 
             try:
-                resolved.relative_to(pack_root)
+                resolved.relative_to(plugin_root)
             except ValueError:
                 result.errors.append(
-                    f"{skill_file}:{line_no}: linked doc escapes pack root '{raw_target}' -> '{resolved}'"
+                    f"{skill_file}:{line_no}: linked doc escapes plugin root '{raw_target}' -> '{resolved}'"
                 )
 
 
@@ -167,8 +167,8 @@ def main() -> int:
     parser.add_argument(
         "paths",
         nargs="*",
-        default=DEFAULT_PACKS,
-        help="Pack directories or SKILL.md paths to validate",
+        default=DEFAULT_PLUGINS,
+        help="Plugin directories or SKILL.md paths to validate",
     )
     parser.add_argument(
         "--json-out",

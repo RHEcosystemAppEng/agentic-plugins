@@ -11,7 +11,7 @@ Design principles checked:
   Frontmatter: description should include 'NOT for' anti-pattern (WARNING)
   Heading:     first heading should follow '# /<name> Skill' format
   Heading:     overview paragraph after heading (WARNING)
-  DP0: Pack layout (Lola format) - mcps.json only, error if .mcp.json exists
+  DP0: Plugin layout (Lola format) - mcps.json only, error if .mcp.json exists
   DP1: Document Consultation - correct format (Action: Read, Output to user)
   DP2: Parameter order - Document Consultation before MCP Tool/Parameters
   DP3: Conciseness - description length, "Use when" examples
@@ -124,19 +124,19 @@ CREDENTIAL_PLACEHOLDER_PATTERNS = re.compile(
     re.IGNORECASE,
 )
 
-# Pack layout (Lola format)
+# Plugin layout (Lola format)
 MCP_FILENAME = "mcps.json"
 MCP_DEPRECATED = ".mcp.json"
 
 
-def validate_pack_layout(pack_dir: Path) -> list[str]:
+def validate_plugin_layout(plugin_dir: Path) -> list[str]:
     """
-    DP0: Pack layout (Lola format).
+    DP0: Plugin layout (Lola format).
     Error if .mcp.json exists; validate mcps.json structure if present.
     """
     errors = []
-    deprecated = pack_dir / MCP_DEPRECATED
-    mcp_file = pack_dir / MCP_FILENAME
+    deprecated = plugin_dir / MCP_DEPRECATED
+    mcp_file = plugin_dir / MCP_FILENAME
 
     if deprecated.exists():
         errors.append(
@@ -172,10 +172,10 @@ class ValidationResult:
         return len(self.errors) == 0
 
 
-def find_skill_files(pack_dirs: list[str]) -> Iterator[Path]:
-    """Yield paths to all SKILL.md files in pack directories."""
-    for pack_dir in pack_dirs:
-        skills_dir = Path(pack_dir) / "skills"
+def find_skill_files(plugin_dirs: list[str]) -> Iterator[Path]:
+    """Yield paths to all SKILL.md files in plugin directories."""
+    for plugin_dir in plugin_dirs:
+        skills_dir = Path(plugin_dir) / "skills"
         if skills_dir.exists():
             yield from skills_dir.glob("*/SKILL.md")
 
@@ -726,8 +726,8 @@ def _rel(path: Path) -> Path:
     return path.relative_to(cwd) if path.is_relative_to(cwd) else path
 
 
-def _pack_name(skill_path: Path) -> str:
-    """Extract pack name from a skill path like rh-sre/skills/cve-impact/SKILL.md."""
+def _plugin_name(skill_path: Path) -> str:
+    """Extract plugin name from a skill path like rh-sre/skills/cve-impact/SKILL.md."""
     if skill_path.parent.parent.name == "skills":
         return str(skill_path.parent.parent.parent)
     return str(skill_path.parent)
@@ -742,7 +742,7 @@ def main() -> int:
         "paths",
         nargs="*",
         default=["rh-sre", "rh-developer", "ocp-admin", "rh-virt", "rh-ai-engineer", "rh-automation", "rh-basic"],
-        help="Pack directories or specific SKILL.md paths to validate",
+        help="Plugin directories or specific SKILL.md paths to validate",
     )
     parser.add_argument(
         "--warnings-as-errors",
@@ -762,33 +762,33 @@ def main() -> int:
             if skills_dir.exists():
                 skill_files.extend(skills_dir.glob("*/SKILL.md"))
         else:
-            pack_path = Path(p)
-            if (pack_path / "skills").exists():
-                skill_files.extend((pack_path / "skills").glob("*/SKILL.md"))
+            plugin_path = Path(p)
+            if (plugin_path / "skills").exists():
+                skill_files.extend((plugin_path / "skills").glob("*/SKILL.md"))
 
     all_errors: list[tuple[Path, str]] = []
     all_warnings: list[tuple[Path, str]] = []
 
-    # Collect pack dirs for layout validation
-    pack_dirs: set[Path] = set()
+    # Collect plugin dirs for layout validation
+    plugin_dirs: set[Path] = set()
     for p in args.paths:
         path = Path(p)
         if path.is_dir() and path.exists():
-            pack_dirs.add(path)
+            plugin_dirs.add(path)
     for sf in skill_files:
         if sf.parent.parent.name == "skills":
-            pack_dirs.add(sf.parent.parent.parent)
+            plugin_dirs.add(sf.parent.parent.parent)
 
-    # DP0: Pack layout (Lola format)
-    for pack_dir in sorted(pack_dirs):
-        if pack_dir.exists():
-            layout_errors = validate_pack_layout(pack_dir)
+    # DP0: Plugin layout (Lola format)
+    for plugin_dir in sorted(plugin_dirs):
+        if plugin_dir.exists():
+            layout_errors = validate_plugin_layout(plugin_dir)
             for err in layout_errors:
-                all_errors.append((pack_dir, err))
+                all_errors.append((plugin_dir, err))
 
     if not skill_files:
         if all_errors:
-            print(f"{RED}❌ Pack layout validation failed:{NC}")
+            print(f"{RED}❌ Plugin layout validation failed:{NC}")
             for path, err in all_errors:
                 print(f"  • {path}: {err}")
             return 1
@@ -800,12 +800,12 @@ def main() -> int:
     print(SEPARATOR)
     print()
 
-    # Validate and group results by pack
-    results_by_pack: dict[str, list[tuple[Path, ValidationResult]]] = {}
+    # Validate and group results by plugin
+    results_by_plugin: dict[str, list[tuple[Path, ValidationResult]]] = {}
     for skill_path in sorted(skill_files):
         result = validate_skill(skill_path)
-        pack = _pack_name(skill_path)
-        results_by_pack.setdefault(pack, []).append((skill_path, result))
+        plugin = _plugin_name(skill_path)
+        results_by_plugin.setdefault(plugin, []).append((skill_path, result))
 
         if result.errors:
             for err in result.errors:
@@ -816,18 +816,18 @@ def main() -> int:
                 if args.warnings_as_errors:
                     all_errors.append((skill_path, f"[WARN] {warn}"))
 
-    # Print results grouped by pack
+    # Print results grouped by plugin
     total_skills = 0
     passed_skills = 0
     warned_skills = 0
     failed_skills = 0
 
-    for pack, pack_results in sorted(results_by_pack.items()):
+    for plugin, plugin_results in sorted(results_by_plugin.items()):
         print(SEPARATOR)
-        print(f"{BOLD}  Pack: {pack}{NC}")
+        print(f"{BOLD}  Plugin: {plugin}{NC}")
         print(SEPARATOR)
 
-        for skill_path, result in pack_results:
+        for skill_path, result in plugin_results:
             skill_name = skill_path.parent.name
             total_skills += 1
 
@@ -849,11 +849,11 @@ def main() -> int:
 
         print()
 
-    # DP0 pack layout errors
+    # DP0 plugin layout errors
     if all_errors and any(e.startswith("DP0:") for _, e in all_errors):
         layout_errs = [(p, e) for p, e in all_errors if e.startswith("DP0:")]
         print(SEPARATOR)
-        print(f"{BOLD}  Pack Layout (DP0){NC}")
+        print(f"{BOLD}  Plugin Layout (DP0){NC}")
         print(SEPARATOR)
         for path, err in layout_errs:
             print(f"  {RED}❌{NC} {_rel(path)}: {err}")

@@ -4,7 +4,7 @@
 -->
 
 ## Deploy and use
-**Note:** This skill pack is released as Developer Preview. Developer Preview features provide early access to functionality in advance of possible inclusion in a Red Hat product offering. For more information about the support scope of Red Hat Developer Preview features, see [Developer Preview Support Scope](https://access.redhat.com/support/offerings/devpreview).
+**Note:** This agent plugin is released as Developer Preview. Developer Preview features provide early access to functionality in advance of possible inclusion in a Red Hat product offering. For more information about the support scope of Red Hat Developer Preview features, see [Developer Preview Support Scope](https://access.redhat.com/support/offerings/devpreview).
 
 ### Prerequisites
 
@@ -15,13 +15,13 @@
   - [OpenCode](https://opencode.ai/)
 - [Lola](https://github.com/LobsterTrap/lola) CLI installed
 
-### Step 1: Install the skill pack
+### Step 1: Install the agent plugin
 
 ```bash
 # Add the Red Hat Agentic marketplace (one-time setup)
 lola market add rh-agentic-plugins https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-catalog/main/marketplace/rh-agentic-collection.yml
 
-# Install the rh-basic pack (replace claude-code with your AI assistant)
+# Install the rh-basic plugin (replace claude-code with your AI assistant)
 # Valid targets: claude-code, copilot-cli, copilot-vscode, cursor, opencode
 lola install rh-basic -a claude-code
 ```
@@ -36,7 +36,7 @@ lola list
 
 ### Step 2: Set up the MCP server
 
-This pack uses the Red Hat Security MCP server, which authenticates via browser SSO — no environment variables are required.
+This plugin uses the Red Hat Security MCP server, which authenticates via browser SSO — no environment variables are required.
 
 After installation, run the setup skill to configure the server:
 
@@ -48,11 +48,11 @@ This adds the Red Hat Security MCP server to your project's `.mcp.json` and guid
 
 ### Step 3: Use the skills
 
-The pack provides 6 skills. See the [rh-basic README](../README.md) for the full list with descriptions and usage examples.
+The plugin provides 6 skills. See the [rh-basic README](../README.md) for the full list with descriptions and usage examples.
 
 ### Uninstall
 
-Remove the skill pack from your project:
+Remove the agent plugin from your project:
 
 ```bash
 lola uninstall rh-basic

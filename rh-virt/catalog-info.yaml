@@ -2,9 +2,9 @@ apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: rh-virt
-  title: Virtualization Management Agentic Pack
+  title: Virtualization Management Agent Plugin
   description: >
-    Points to all AI skill catalog entities in the rh-virt agentic pack
+    Points to all AI skill catalog entities in the rh-virt agent plugin
     for Red Hat OpenShift Virtualization management.
   annotations:
     agentic-plugins.redhat.com/version: "1.0"

@@ -1,4 +1,4 @@
-# Red Hat Developer Agentic Pack
+# Red Hat Developer Agent Plugin
 
 A Claude Code plugin for building and deploying applications on Red Hat platforms.
 

@@ -13,7 +13,7 @@
     "Vulnerability Management"
   ],
   "contents": {
-    "description": "The pack provides eight skills for cluster lifecycle, fleet visibility, security validation, and network\nsecurity on OpenShift, using Assisted Installer and OCM APIs for cluster management, read-only cluster APIs\nfor consolidated reports, Python helper scripts for CVE/SBOM/VEX-based security validation, and MCP-based\nNetworkPolicy design with live cluster verification.\n",
+    "description": "The plugin provides eight skills for cluster lifecycle, fleet visibility, security validation, and network\nsecurity on OpenShift, using Assisted Installer and OCM APIs for cluster management, read-only cluster APIs\nfor consolidated reports, Python helper scripts for CVE/SBOM/VEX-based security validation, and MCP-based\nNetworkPolicy design with live cluster verification.\n",
     "orchestration_skills": [],
     "skills": [
       {
@@ -131,7 +131,7 @@
   ],
   "maturity": "GREEN",
   "mcp_section": "#mcp_section.md",
-  "name": "Agentic skill pack for Red Hat OpenShift",
+  "name": "Agent plugin for Red Hat OpenShift",
   "personas": [
     "OpenShift Administrator",
     "Security Engineer",
@@ -146,7 +146,7 @@
       "url": "https://docs.redhat.com/en/documentation/openshift_container_platform/"
     },
     {
-      "description": "Source repository for these packs, skills, and catalog metadata.",
+      "description": "Source repository for these plugins, skills, and catalog metadata.",
       "title": "agentic-plugins repository",
       "url": "https://github.com/RHEcosystemAppEng/agentic-plugins"
     },

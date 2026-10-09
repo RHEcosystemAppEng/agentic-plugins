@@ -11,7 +11,7 @@ last_updated: 2026-02-24
 
 # Red Hat Remediation Agent - Documentation Index
 
-This knowledge base provides comprehensive Red Hat-specific patterns for CVE remediation on Kubernetes-managed RHEL systems. Canonical runtime documents live under `skills/<name>/references/`; this pack-level index is for navigation and source attribution.
+This knowledge base provides comprehensive Red Hat-specific patterns for CVE remediation on Kubernetes-managed RHEL systems. Canonical runtime documents live under `skills/<name>/references/`; this plugin-level index is for navigation and source attribution.
 
 ## Quick Navigation
 
@@ -103,7 +103,7 @@ This knowledge base provides comprehensive Red Hat-specific patterns for CVE rem
 
 ```
 rh-sre/
-├── references/                 # Pack navigation and source attribution (this tree)
+├── references/                 # Plugin navigation and source attribution (this tree)
 │   ├── INDEX.md (this file) ✅
 │   ├── SOURCES.md ✅
 │   └── .ai-index/            # AI inference optimization
@@ -141,7 +141,7 @@ Shared copies in other skills are symlinks to these canonical files. Do **not** 
 ```
 Read: references/.ai-index/semantic-index.json (~200 tokens)
 
-Index `path` values are pack-relative (from `rh-sre/`).
+Index `path` values are plugin-relative (from `rh-sre/`).
 ```
 
 The semantic index enables:

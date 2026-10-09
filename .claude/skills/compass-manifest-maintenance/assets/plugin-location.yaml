@@ -1,20 +1,20 @@
-# Template: <pack>/catalog-info.yaml (Location)
+# Template: <plugin>/catalog-info.yaml (Location)
 apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
-  name: <pack>
-  title: <Pack Title> Agentic Pack
+  name: <plugin>
+  title: <Plugin Title> Agent Plugin
   description: >
-    Points to all AI skill catalog entities in the <pack> agentic pack.
+    Points to all AI skill catalog entities in the <plugin> agent plugin.
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
     agentic.redhat.com/lola-module: "true"
-    agentic.redhat.com/lola-module-name: <pack>
+    agentic.redhat.com/lola-module-name: <plugin>
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
-    agentic.redhat.com/path: <pack>
+    agentic.redhat.com/path: <plugin>
 spec:
   targets:
-    - ./<pack>-plugin.yaml
+    - ./<plugin>-plugin.yaml
     - ./skills/<skill-name>/catalog-info.yaml
     # List every skill manifest under skills/

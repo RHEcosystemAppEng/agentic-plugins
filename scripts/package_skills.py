@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package skill packs into self-contained ZIPs."""
+"""Package agent plugins into self-contained ZIPs."""
 
 import argparse
 import logging
@@ -12,28 +12,28 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
-_PACK_EXCLUDE = {"scripts", "catalog", ".claude", ".github", ".lola", "docs", "eval"}
+_PLUGIN_EXCLUDE = {"scripts", "catalog", ".claude", ".github", ".lola", "docs", "eval"}
 
 
 @dataclass
 class PackageReport:
-    total_packs: int = 0
+    total_plugins: int = 0
     total_skills: int = 0
     total_size_bytes: int = 0
     broken_symlinks: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
 
 
-def discover_packs(root: Path) -> list[str]:
+def discover_plugins(root: Path) -> list[str]:
     return sorted(
         d.name for d in root.iterdir()
-        if d.is_dir() and d.name not in _PACK_EXCLUDE and not d.name.startswith(".")
+        if d.is_dir() and d.name not in _PLUGIN_EXCLUDE and not d.name.startswith(".")
         and ((d / "AGENTS.md").exists() or (d / "skills").is_dir())
     )
 
 
-def discover_skills(pack_dir: Path) -> list[Path]:
-    skills_dir = pack_dir / "skills"
+def discover_skills(plugin_dir: Path) -> list[Path]:
+    skills_dir = plugin_dir / "skills"
     if not skills_dir.is_dir():
         return []
     return sorted(
@@ -42,9 +42,9 @@ def discover_skills(pack_dir: Path) -> list[Path]:
     )
 
 
-def create_pack_zip(pack_dir: Path, output_path: Path) -> tuple[int, int, list[str]]:
-    """Create a single ZIP containing all skills for a pack. Returns (skill_count, file_count, broken_symlinks)."""
-    skills = discover_skills(pack_dir)
+def create_plugin_zip(plugin_dir: Path, output_path: Path) -> tuple[int, int, list[str]]:
+    """Create a single ZIP containing all skills for a plugin. Returns (skill_count, file_count, broken_symlinks)."""
+    skills = discover_skills(plugin_dir)
     if not skills:
         return 0, 0, []
 
@@ -80,39 +80,39 @@ def create_pack_zip(pack_dir: Path, output_path: Path) -> tuple[int, int, list[s
 def package_all(
     root: Path,
     output_dir: Path,
-    packs: list[str] | None = None,
+    plugins: list[str] | None = None,
 ) -> PackageReport:
     report = PackageReport()
 
-    all_packs = discover_packs(root)
-    target_packs = [p for p in all_packs if p in packs] if packs else all_packs
-    report.total_packs = len(target_packs)
+    all_plugins = discover_plugins(root)
+    target_plugins = [p for p in all_plugins if p in plugins] if plugins else all_plugins
+    report.total_plugins = len(target_plugins)
 
-    for pack_name in target_packs:
-        pack_dir = root / pack_name
-        zip_path = output_dir / f"{pack_name}.zip"
+    for plugin_name in target_plugins:
+        plugin_dir = root / plugin_name
+        zip_path = output_dir / f"{plugin_name}.zip"
 
         try:
-            skill_count, file_count, broken = create_pack_zip(pack_dir, zip_path)
+            skill_count, file_count, broken = create_plugin_zip(plugin_dir, zip_path)
             if skill_count == 0:
-                logger.info("Pack %s has no skills, skipping", pack_name)
+                logger.info("Plugin %s has no skills, skipping", plugin_name)
                 continue
             report.broken_symlinks.extend(broken)
             report.total_skills += skill_count
             zip_size = zip_path.stat().st_size
             report.total_size_bytes += zip_size
-            logger.info("Packaged %s (%d skills, %d files, %d KB)", pack_name, skill_count, file_count, zip_size // 1024)
+            logger.info("Packaged %s (%d skills, %d files, %d KB)", plugin_name, skill_count, file_count, zip_size // 1024)
         except Exception as e:
-            report.errors.append(f"{pack_name}: {e}")
-            logger.error("Failed to package %s: %s", pack_name, e)
+            report.errors.append(f"{plugin_name}: {e}")
+            logger.error("Failed to package %s: %s", plugin_name, e)
 
     return report
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Package skill packs into self-contained ZIPs")
+    parser = argparse.ArgumentParser(description="Package agent plugins into self-contained ZIPs")
     parser.add_argument("--output-dir", default="dist", help="Output directory (default: dist)")
-    parser.add_argument("--packs", nargs="+", help="Only package these packs (default: all)")
+    parser.add_argument("--plugins", nargs="+", help="Only package these plugins (default: all)")
     parser.add_argument("--root", default=str(_REPO_ROOT), help="Repository root (default: auto-detect)")
     args = parser.parse_args()
 
@@ -123,9 +123,9 @@ def main() -> int:
     if not output_dir.is_absolute():
         output_dir = root / output_dir
 
-    report = package_all(root=root, output_dir=output_dir, packs=args.packs)
+    report = package_all(root=root, output_dir=output_dir, plugins=args.plugins)
 
-    print(f"\nPackaging complete: {report.total_packs} packs, {report.total_skills} skills, {report.total_size_bytes // 1024} KB")
+    print(f"\nPackaging complete: {report.total_plugins} plugins, {report.total_skills} skills, {report.total_size_bytes // 1024} KB")
     if report.broken_symlinks:
         print(f"  Warnings: {len(report.broken_symlinks)} broken symlinks skipped")
     if report.errors:

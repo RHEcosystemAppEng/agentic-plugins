@@ -22,7 +22,7 @@ Network access to GitHub to download skill files.
 
 ## When to Use This Skill
 
-When setting up Agentic skill pack for Red Hat customers for the first time in a project.
+When setting up Agent plugin for Red Hat customers for the first time in a project.
 
 ## Workflow
 

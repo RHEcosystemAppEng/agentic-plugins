@@ -3,7 +3,7 @@
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: rh-ai-engineer
-name: Agentic skill pack for OpenShift AI Engineers
+name: Agent plugin for OpenShift AI Engineers
 provider: Red Hat
 version: 0.1.0
 categories:
@@ -30,7 +30,7 @@ summary: |
   guardrails, and inference troubleshooting across 11 skills.
 contents:
   description: |
-    The pack provides 10 skills and 1 orchestration skill for OpenShift AI workflows on Red Hat platforms; see AGENTS.md
+    The plugin provides 10 skills and 1 orchestration skill for OpenShift AI workflows on Red Hat platforms; see AGENTS.md
     for intent routing.
   skills:
   - name: ai-observability
@@ -215,7 +215,7 @@ resources:
   description: Model serving patterns used with OpenShift AI.
 - title: agentic-plugins repository
   url: https://github.com/RHEcosystemAppEng/agentic-plugins
-  description: Source for this pack and catalog metadata.
+  description: Source for this plugin and catalog metadata.
 legal_resources:
   license_agreement_url: https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/LICENSE
   privacy_policy_url: https://www.redhat.com/en/about/privacy-policy

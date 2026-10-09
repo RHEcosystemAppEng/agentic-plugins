@@ -1,7 +1,7 @@
 # Skill Code Review Workflow
 #
 # Automated code review using Google Gemini, validating PRs against project
-# rules (CLAUDE.md, SKILL_DESIGN_PRINCIPLES.md, pack-level AGENTS.md).
+# rules (CLAUDE.md, SKILL_DESIGN_PRINCIPLES.md, plugin-level AGENTS.md).
 #
 # Trigger methods:
 #   1. PR comment:       Maintainer comments "/skill-code-review"
@@ -178,13 +178,13 @@ jobs:
             cat SKILL_DESIGN_PRINCIPLES.md 2>/dev/null || echo "(not found)"
           } > /tmp/project_rules.txt
 
-          CHANGED_PACKS=$(grep -oP '^diff --git a/([^/]+)/' /tmp/pr.diff | sort -u | sed 's|diff --git a/||;s|/||')
-          for pack in $CHANGED_PACKS; do
-            if [ -f "$pack/AGENTS.md" ]; then
+          CHANGED_PLUGINS=$(grep -oP '^diff --git a/([^/]+)/' /tmp/pr.diff | sort -u | sed 's|diff --git a/||;s|/||')
+          for plugin in $CHANGED_PLUGINS; do
+            if [ -f "$plugin/AGENTS.md" ]; then
               {
                 echo ""
-                echo "=== PACK RULES: $pack/AGENTS.md ==="
-                cat "$pack/AGENTS.md"
+                echo "=== PLUGIN RULES: $plugin/AGENTS.md ==="
+                cat "$plugin/AGENTS.md"
               } >> /tmp/project_rules.txt
             fi
           done

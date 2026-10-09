@@ -8,7 +8,7 @@
     "Security"
   ],
   "contents": {
-    "description": "The pack provides 13 skills for common SRE operations, including one orchestration skill for end-to-end remediation.\n",
+    "description": "The plugin provides 13 skills for common SRE operations, including one orchestration skill for end-to-end remediation.\n",
     "orchestration_skills": [
       {
         "description": "End-to-End CVE Remediation",
@@ -129,7 +129,7 @@
   ],
   "maturity": "GREEN",
   "mcp_section": "#mcp_section.md",
-  "name": "Agentic skill pack for Security Reliability Engineers",
+  "name": "Agent plugin for Site Reliability Engineers",
   "personas": [
     "Site Reliability Engineer"
   ],

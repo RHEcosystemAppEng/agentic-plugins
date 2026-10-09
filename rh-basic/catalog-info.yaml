@@ -2,9 +2,9 @@ apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: rh-basic
-  title: Getting Started Agentic Pack
+  title: Getting Started Agent Plugin
   description: >
-    Points to all AI skill catalog entities in the rh-basic agentic pack
+    Points to all AI skill catalog entities in the rh-basic agent plugin
     for Red Hat product exploration and getting started workflows.
   annotations:
     agentic-plugins.redhat.com/version: "1.0"

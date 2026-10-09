@@ -25,7 +25,7 @@ repos:
           (?x)^(
             catalog/.*|
             marketplace/.*|
-            scripts/(validate_structure|validate_collection_compliance|validate_collection_schema|validate_compass_manifests|collection_validate_lib|pack_registry|catalog_yaml_to_json)\.py|
+            scripts/(validate_structure|validate_collection_compliance|validate_collection_schema|validate_compass_manifests|collection_validate_lib|catalog_yaml_to_json)\.py|
             (rh-[-a-z0-9]+|ocp-admin)/\.catalog/.*|
             (rh-[-a-z0-9]+|ocp-admin)/skills/[^/]+/SKILL\.md|
             (rh-[-a-z0-9]+|ocp-admin)/skills/[^/]+/catalog-info\.yaml|

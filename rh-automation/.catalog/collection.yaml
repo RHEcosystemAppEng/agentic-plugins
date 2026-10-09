@@ -3,7 +3,7 @@
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: rh-automation
-name: Agentic skill pack for Automation Engineers
+name: Agent plugin for Automation Engineers
 provider: Red Hat
 version: 0.1.0
 categories:
@@ -26,7 +26,7 @@ summary: |
   The rh-automation collection ships 11 catalogued skills for Red Hat automation workflows described in README and AGENTS.md; orchestration entries coordinate sub-skills with explicit approvals.
 contents:
   description: |
-    The pack provides 8 skills and 3 orchestration skills for rh automation workflows on Red Hat platforms; see AGENTS.md for intent routing.
+    The plugin provides 8 skills and 3 orchestration skills for rh automation workflows on Red Hat platforms; see AGENTS.md for intent routing.
   skills:
   - name: aap-mcp-validator
     description: "Validate that required AAP MCP servers are accessible before executing automation skills."
@@ -192,7 +192,7 @@ resources:
   description: "Official AAP documentation for controllers and execution."
 - title: "agentic-plugins repository"
   url: https://github.com/RHEcosystemAppEng/agentic-plugins
-  description: "Source for this pack and catalog metadata."
+  description: "Source for this plugin and catalog metadata."
 legal_resources:
   license_agreement_url: https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/LICENSE
   privacy_policy_url: https://www.redhat.com/en/about/privacy-policy

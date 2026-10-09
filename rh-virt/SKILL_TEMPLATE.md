@@ -873,7 +873,7 @@ For complete details, see [SKILL_DESIGN_PRINCIPLES.md](/SKILL_DESIGN_PRINCIPLES.
 **Documentation**: skills/*/references/troubleshooting/ contains error resolution guides (6 documents)
 
 **Related Collections**:
-- rh-sre: Reference implementation with pack references/ index and semantic indexing
+- rh-sre: Reference implementation with plugin references/ index and semantic indexing
 - Use rh-sre as architectural reference for advanced patterns
 
 ---

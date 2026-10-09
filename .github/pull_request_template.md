@@ -1,6 +1,6 @@
 <!--
   TIP: Run /agentic-contribution-skill in Claude Code to create or import skills.
-  It handles validation, pack selection, and AGENTS.md routing automatically.
+  It handles validation, plugin selection, and AGENTS.md routing automatically.
   See CONTRIBUTING.md for details.
 -->
 
@@ -8,7 +8,7 @@
 
 <!-- What does this PR do and why? -->
 
-## Pack(s) affected
+## Plugin(s) affected
 
 - [ ] `ocp-admin`
 - [ ] `rh-ai-engineer`
@@ -23,7 +23,7 @@
 
 - [ ] New skill
 - [ ] New agent
-- [ ] New pack
+- [ ] New plugin
 - [ ] Update existing skill / agent
 - [ ] MCP server config (`mcps.json`)
 - [ ] Docs / README
@@ -34,9 +34,9 @@
 - [ ] Created/imported with `/agentic-contribution-skill`
 - [ ] Manual contribution (validated with `make validate` + `make validate-skill-design-changed`)
 
-## Pack-persona alignment (new skills only)
+## Plugin-persona alignment (new skills only)
 
-<!-- Why does this skill belong in the selected pack? (1-2 sentences) -->
+<!-- Why does this skill belong in the selected plugin? (1-2 sentences) -->
 
 ## AGENTS.md compliance
 

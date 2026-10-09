@@ -11,7 +11,7 @@
     "Virt"
   ],
   "contents": {
-    "description": "The pack provides 10 skills for rh virt workflows on Red Hat platforms; see AGENTS.md for intent routing.\n",
+    "description": "The plugin provides 10 skills for rh virt workflows on Red Hat platforms; see AGENTS.md for intent routing.\n",
     "orchestration_skills": [],
     "skills": [
       {
@@ -115,7 +115,7 @@
   ],
   "maturity": "GREEN",
   "mcp_section": "#mcp_section.md",
-  "name": "Agentic skill pack for Red Hat OpenShift Virtualization",
+  "name": "Agent plugin for Red Hat OpenShift Virtualization",
   "personas": [
     "Red Hat platform engineer"
   ],
@@ -133,7 +133,7 @@
       "url": "https://kubevirt.io/user-guide/"
     },
     {
-      "description": "Source for this pack and catalog metadata.",
+      "description": "Source for this plugin and catalog metadata.",
       "title": "agentic-plugins repository",
       "url": "https://github.com/RHEcosystemAppEng/agentic-plugins"
     }

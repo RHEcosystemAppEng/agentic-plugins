@@ -3,7 +3,7 @@
 # Do not edit ad hoc — follow COLLECTION_SPEC.md and the create-collection skill.
 
 id: rh-developer
-name: Agentic skill pack for Software Developers
+name: Agent plugin for Software Developers
 provider: Red Hat
 version: 0.1.0
 categories:
@@ -23,7 +23,7 @@ summary: The rh-developer collection provides skills to detect projects, build i
   validate environments, and debug builds, pods, pipelines, networks, and hosts.
 contents:
   description: |
-    The pack provides 17 skills for developer workflows on OpenShift and RHEL, including two orchestration skills
+    The plugin provides 17 skills for developer workflows on OpenShift and RHEL, including two orchestration skills
     for end-to-end containerize-and-deploy and structured incident investigation.
   skills:
   - name: detect-project
@@ -86,7 +86,7 @@ contents:
       - "Deploy on RHEL over SSH"
       - "systemd unit for my container"
       **What it does:**
-      - Uses SSH and host workflows from pack docs.
+      - Uses SSH and host workflows from plugin docs.
       - Optional Lightspeed context when configured.
   - name: validate-environment
     description: Environment validation
@@ -291,13 +291,13 @@ resources:
   embedded_doc: skills/recommend-image/references/image-selection-criteria.md
 - title: Podman
   url: https://docs.podman.io/
-  description: Local container workflows used by the pack.
+  description: Local container workflows used by the plugin.
   embedded_doc: skills/debug-build/references/debugging-patterns.md
-- title: Human-in-the-loop (pack)
+- title: Human-in-the-loop (plugin)
   url: https://github.com/RHEcosystemAppEng/agentic-plugins
-  description: Pack policy for confirmations and destructive actions.
+  description: Plugin policy for confirmations and destructive actions.
   embedded_doc: skills/validate-environment/references/human-in-the-loop.md
-- title: RHEL deployment notes (pack)
+- title: RHEL deployment notes (plugin)
   url: https://github.com/RHEcosystemAppEng/agentic-plugins
   description: SSH/systemd patterns for `/rhel-deploy`.
   embedded_doc: skills/rhel-deploy/references/rhel-deployment.md

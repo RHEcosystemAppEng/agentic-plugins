@@ -4,7 +4,7 @@
 -->
 
 ## Deploy and use
-**Note:** This skill pack is released as Developer Preview. Developer Preview features provide early access to functionality in advance of possible inclusion in a Red Hat product offering. For more information about the support scope of Red Hat Developer Preview features, see [Developer Preview Support Scope](https://access.redhat.com/support/offerings/devpreview).
+**Note:** This agent plugin is released as Developer Preview. Developer Preview features provide early access to functionality in advance of possible inclusion in a Red Hat product offering. For more information about the support scope of Red Hat Developer Preview features, see [Developer Preview Support Scope](https://access.redhat.com/support/offerings/devpreview).
 
 ### Prerequisites
 
@@ -18,13 +18,13 @@
 - OpenShift cluster (**>= 4.19**) with the **OpenShift Virtualization** operator installed
 - A kubeconfig with RBAC sufficient for VirtualMachine and related KubeVirt resources in target namespaces
 
-### Step 1: Install the skill pack
+### Step 1: Install the agent plugin
 
 ```bash
 # Add the Red Hat Agentic marketplace (one-time setup)
 lola market add rh-agentic-plugins https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-catalog/main/marketplace/rh-agentic-collection.yml
 
-# Install the rh-virt pack (replace claude-code with your AI assistant)
+# Install the rh-virt plugin (replace claude-code with your AI assistant)
 # Valid targets: claude-code, copilot-cli, copilot-vscode, cursor, opencode
 lola install rh-virt -a claude-code
 ```
@@ -39,7 +39,7 @@ lola list
 
 ### Step 2: Configure environment variables
 
-The pack uses an MCP server that requires a kubeconfig passed as an environment variable. **Never hardcode kubeconfig contents — always use environment variables.**
+The plugin uses an MCP server that requires a kubeconfig passed as an environment variable. **Never hardcode kubeconfig contents — always use environment variables.**
 
 **For cluster operations** (`openshift-virtualization`):
 
@@ -55,11 +55,11 @@ oc get virtualmachines -A
 
 ### Step 3: Use the skills
 
-The pack provides 10 skills. See the [rh-virt README](../README.md) for the full list with descriptions and usage examples.
+The plugin provides 10 skills. See the [rh-virt README](../README.md) for the full list with descriptions and usage examples.
 
 ### Uninstall
 
-Remove the skill pack from your project:
+Remove the agent plugin from your project:
 
 ```bash
 lola uninstall rh-virt

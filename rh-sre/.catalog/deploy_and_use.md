@@ -4,7 +4,7 @@
 -->
 
 ## Deploy and use
-**Note:** This skill pack is released as Developer Preview. Developer Preview features provide early access to functionality in advance of possible inclusion in a Red Hat product offering. For more information about the support scope of Red Hat Developer Preview features, see [Developer Preview Support Scope](https://access.redhat.com/support/offerings/devpreview).
+**Note:** This agent plugin is released as Developer Preview. Developer Preview features provide early access to functionality in advance of possible inclusion in a Red Hat product offering. For more information about the support scope of Red Hat Developer Preview features, see [Developer Preview Support Scope](https://access.redhat.com/support/offerings/devpreview).
 
 ### Prerequisites
 
@@ -16,13 +16,13 @@
 - [Lola](https://github.com/LobsterTrap/lola) CLI installed
 - [Podman](https://podman.io/) (or Docker) — the MCP servers run as containers
 
-### Step 1: Install the skill pack
+### Step 1: Install the agent plugin
 
 ```bash
 # Add the Red Hat Agentic marketplace (one-time setup)
 lola market add rh-agentic-plugins https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-catalog/main/marketplace/rh-agentic-collection.yml
 
-# Install the rh-sre pack (replace claude-code with your AI assistant)
+# Install the rh-sre plugin (replace claude-code with your AI assistant)
 # Valid targets: claude-code, copilot-cli, copilot-vscode, cursor, opencode
 lola install rh-sre -a claude-code
 ```
@@ -37,7 +37,7 @@ lola list
 
 ### Step 2: Configure environment variables
 
-The pack uses three MCP servers that require credentials passed as environment variables. **Never hardcode tokens — always use environment variables.**
+The plugin uses three MCP servers that require credentials passed as environment variables. **Never hardcode tokens — always use environment variables.**
 
 **For CVE discovery and remediation** (`lightspeed-mcp`):
 
@@ -60,11 +60,11 @@ export AAP_API_TOKEN="<your-api-token>"
 
 ### Step 3: Use the skills
 
-The pack provides 13 skills. See the [rh-sre README](../README.md) for the full list with descriptions and usage examples.
+The plugin provides 13 skills. See the [rh-sre README](../README.md) for the full list with descriptions and usage examples.
 
 ### Uninstall
 
-Remove the skill pack from your project:
+Remove the agent plugin from your project:
 
 ```bash
 lola uninstall rh-sre

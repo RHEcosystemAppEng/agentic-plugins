@@ -7,7 +7,7 @@ last_updated: 2026-03-02
 
 # Skill Invocation Reference
 
-Guidance for correctly invoking skills in the rh-sre pack across different AI hosts (Cursor, Claude Code, etc.).
+Guidance for correctly invoking skills in the rh-sre plugin across different AI hosts (Cursor, Claude Code, etc.).
 
 ## Invoking Skills (All Sub-Skills)
 

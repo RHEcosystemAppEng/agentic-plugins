@@ -9,7 +9,7 @@
     "Support"
   ],
   "contents": {
-    "description": "The pack provides 6 skills covering the most common Red Hat support and operations workflows.\nAll skills are self-contained, and those using the Red Hat Security MCP server fall back to WebFetch when it is unavailable.\n",
+    "description": "The plugin provides 6 skills covering the most common Red Hat support and operations workflows.\nAll skills are self-contained, and those using the Red Hat Security MCP server fall back to WebFetch when it is unavailable.\n",
     "orchestration_skills": [],
     "skills": [
       {
@@ -25,7 +25,7 @@
       {
         "description": "Bootstrap Installer (self-removes after use)",
         "name": "red-hat-get-started",
-        "summary_markdown": "Fetch and install all skills from Agentic skill pack for Red Hat customers into the current project. Removes itself after running.\n**Use when:**\n- Setting up Red Hat skills for the first time in a project\n**What it does:**\n- Downloads each skill from the canonical source URL\n- Creates skill directories under .claude/skills/\n- Reports any download failures for manual recovery\n- Deletes itself on completion\n"
+        "summary_markdown": "Fetch and install all skills from Agent plugin for Red Hat customers into the current project. Removes itself after running.\n**Use when:**\n- Setting up Red Hat skills for the first time in a project\n**What it does:**\n- Downloads each skill from the canonical source URL\n- Creates skill directories under .claude/skills/\n- Reports any download failures for manual recovery\n- Deletes itself on completion\n"
       },
       {
         "description": "Product Lifecycle Status and Support Phase Lookup",
@@ -65,7 +65,7 @@
         "user_request": "\"What severity should I file this support case?\" or \"What SLA do I get?\""
       },
       {
-        "reason": "Bootstrap installer that downloads and installs all skills in the pack.",
+        "reason": "Bootstrap installer that downloads and installs all skills in the plugin.",
         "skill_to_use": "red-hat-get-started",
         "user_request": "\"Install Red Hat skills\" or \"Set up Red Hat agent skills\""
       },
@@ -101,7 +101,7 @@
   ],
   "maturity": "GREEN",
   "mcp_section": "#mcp_section.md",
-  "name": "Agentic skill pack for Red Hat customers",
+  "name": "Agent plugin for Red Hat customers",
   "personas": [
     "IT Professional",
     "Red Hat Customer"

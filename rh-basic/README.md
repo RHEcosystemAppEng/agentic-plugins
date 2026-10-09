@@ -1,13 +1,13 @@
-# Agentic skill pack for Red Hat customers
+# Agent plugin for Red Hat customers
 
-Essential Red Hat skills for IT professionals working with Red Hat products. This pack covers everyday tasks: understanding CVEs, gathering diagnostics, checking product lifecycle status, and filing support cases at the right severity.
+Essential Red Hat skills for IT professionals working with Red Hat products. This plugin covers everyday tasks: understanding CVEs, gathering diagnostics, checking product lifecycle status, and filing support cases at the right severity.
 
 **Persona**: IT Professional / Red Hat Customer
 **Marketplaces**: Claude Code, Cursor
 
 ## Overview
 
-Agentic skill pack for Red Hat customers provides lightweight, self-contained skills that work with or without a configured MCP server. Each skill falls back to web sources when MCP tools are unavailable.
+Agent plugin for Red Hat customers provides lightweight, self-contained skills that work with or without a configured MCP server. Each skill falls back to web sources when MCP tools are unavailable.
 
 - **6 skills** covering the most common Red Hat support and operations workflows
 - **1 MCP server integration** (Red Hat Security MCP) for live CVE and advisory data
@@ -94,7 +94,7 @@ Determines the correct severity for a Red Hat support ticket and explains the SL
 
 ### 5. **red-hat-get-started** - Bootstrap Installer
 
-Fetches and installs all skills from Agentic skill pack for Red Hat customers into the current project. Removes itself after running.
+Fetches and installs all skills from Agent plugin for Red Hat customers into the current project. Removes itself after running.
 
 **Use when:**
 - Setting up Red Hat skills for the first time in a project
@@ -135,7 +135,7 @@ Provides CVE, advisory, and errata data from the Red Hat Security API.
 - **Transport:** HTTP (`https://security-mcp.api.redhat.com/mcp`)
 - **Authentication:** Red Hat Customer Portal SSO (browser login, no env vars required)
 
-**Skills fall back to `WebFetch` on Red Hat documentation if MCP is unavailable** — you do not need MCP configured to use this pack.
+**Skills fall back to `WebFetch` on Red Hat documentation if MCP is unavailable** — you do not need MCP configured to use this plugin.
 
 ## Security Model
 

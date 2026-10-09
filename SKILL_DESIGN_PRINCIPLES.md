@@ -4,11 +4,11 @@ Repository-specific design principles for creating skills and agents in agentic 
 
 **Scope**: Tier 2 requirements - repository enhancements beyond base agentskills.io specification (Tier 1 validated by linter).
 
-**Distribution (Lola):** Packs are installed with the [Lola](https://github.com/LobsterTrap/lola) package manager from the registry in [`marketplace/rh-agentic-collection.yml`](https://github.com/RHEcosystemAppEng/agentic-catalog/blob/main/marketplace/rh-agentic-collection.yml) (hosted in [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog)). Layout and install flow are documented in [CLAUDE.md](CLAUDE.md) and the root [README.md](README.md).
+**Distribution (Lola):** Plugins are installed with the [Lola](https://github.com/LobsterTrap/lola) package manager from the registry in [`marketplace/rh-agentic-collection.yml`](https://github.com/RHEcosystemAppEng/agentic-catalog/blob/main/marketplace/rh-agentic-collection.yml) (hosted in [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog)). Layout and install flow are documented in [CLAUDE.md](CLAUDE.md) and the root [README.md](README.md).
 
-**Collection catalog (pack-local):** Each pack may include **`<pack>/.catalog/collection.yaml`** and a **`collection.json`** mirror so tooling and docs can show a structured view of the collection. Authors follow [COLLECTION_SPEC.md](COLLECTION_SPEC.md) and the **create-collection** skill; field constraints are defined in **[`catalog/schema.yaml`](catalog/schema.yaml)** (JSON Schema in YAML). Pack **`SKILL.md`**, **`README.md`**, **`AGENTS.md`**, and **`marketplace/rh-agentic-collection.yml`** (in [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog)) stay the **sources of truth**; the catalog aggregates and summarizes them and does **not** replace or regenerate README or marketplace content.
+**Collection catalog (plugin-local):** Each plugin may include **`<plugin>/.catalog/collection.yaml`** and a **`collection.json`** mirror so tooling and docs can show a structured view of the collection. Authors follow [COLLECTION_SPEC.md](COLLECTION_SPEC.md) and the **create-collection** skill; field constraints are defined in **[`catalog/schema.yaml`](catalog/schema.yaml)** (JSON Schema in YAML). Plugin **`SKILL.md`**, **`README.md`**, **`AGENTS.md`**, and **`marketplace/rh-agentic-collection.yml`** (in [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog)) stay the **sources of truth**; the catalog aggregates and summarizes them and does **not** replace or regenerate README or marketplace content.
 
-**MCP configuration:** Use `<pack>/mcps.json` for MCP server definitions (never hardcode secrets; use `${VAR}` references). The deprecated filename `.mcp.json` is not used in this repository.
+**MCP configuration:** Use `<plugin>/mcps.json` for MCP server definitions (never hardcode secrets; use `${VAR}` references). The deprecated filename `.mcp.json` is not used in this repository.
 
 **Optional Claude Code manifest:** `.claude-plugin/plugin.json` is optional—only needed for Claude Code–specific plugin publishing. It is not required for Lola installation or for Tier 2 skill content compliance.
 
@@ -183,17 +183,17 @@ Every skill MUST include a **Dependencies** section listing:
 
 **Skill-local docs rule (required):**
 - Internal docs consumed by a skill must resolve under that skill directory using `references/...` or `./references/...` links in `SKILL.md`.
-- Do **not** use upward traversal links to pack-level docs such as `../references/...`, `../../references/...`, or `../../../references/...`.
+- Do **not** use upward traversal links to plugin-level docs such as `../references/...`, `../../references/...`, or `../../../references/...`.
 - Shared docs may be reused via symlinks under `skills/<skill>/references/...`. Link targets inside shared pool files must resolve when the file is opened through a skill symlink (use same-directory or `references/...` paths from the symlink location).
 - After migrating `docs/` → `references/`, **delete** the `skills/<name>/docs/` directory — do not leave empty or stale folders.
 - Do **not** nest `references/references/` inside a skill. If `docs/references/` existed, flatten files into `skills/<name>/references/`.
-- Pack-level `<pack>/references/` or skill-level `skills/<name>/references/` are the only allowed reference locations.
-- Pack-level `references/INDEX.md` and `references/SOURCES.md` may exist for repository navigation/source attribution, but skills must not depend on them at execution time.
+- Plugin-level `<plugin>/references/` or skill-level `skills/<name>/references/` are the only allowed reference locations.
+- Plugin-level `references/INDEX.md` and `references/SOURCES.md` may exist for repository navigation/source attribution, but skills must not depend on them at execution time.
 
 **Skill-local scripts rule (required):**
-- Scripts the agent runs must live under `skills/<skill>/scripts/` (often as symlinks into `<pack>/scripts/<group>/`).
+- Scripts the agent runs must live under `skills/<skill>/scripts/` (often as symlinks into `<plugin>/scripts/<group>/`).
 - If a skill symlinks any file from `scripts/<group>/`, symlink **every** non-test file in that group (YAML, JSON, and config files included — not only `.py`).
-- In skill markdown, document commands with skill-local paths (`python3 scripts/foo.py`, `oc apply -f scripts/manifest.yaml`). Do not use `<pack>/scripts/...` paths meant for the authoring repo.
+- In skill markdown, document commands with skill-local paths (`python3 scripts/foo.py`, `oc apply -f scripts/manifest.yaml`). Do not use `<plugin>/scripts/...` paths meant for the authoring repo.
 
 **Rationale**: Makes dependencies explicit for debugging and troubleshooting.
 
@@ -386,9 +386,9 @@ One clear purpose per skill.
 
 ---
 
-### 11. Pack-Level AGENTS.md
+### 11. Plugin-Level AGENTS.md
 
-Every pack with skills MUST have an `AGENTS.md` in its root directory. This file is the [Lola AI Context Module](https://lobstertrap.org/lola/guides/creating-modules/#add-an-agentsmd) instruction router for the pack persona, intent routing, and global rules. Do **not** use pack-level `CLAUDE.md` — Lola manages `AGENTS.md`, not `CLAUDE.md`.
+Every plugin with skills MUST have an `AGENTS.md` in its root directory. This file is the [Lola AI Context Module](https://lobstertrap.org/lola/guides/creating-modules/#add-an-agentsmd) instruction router for the plugin persona, intent routing, and global rules. Do **not** use plugin-level `CLAUDE.md` — Lola manages `AGENTS.md`, not `CLAUDE.md`.
 
 **Required Sections:**
 - `## Skill-First Rule` — enforce skill invocation over direct MCP tool calls
@@ -396,11 +396,11 @@ Every pack with skills MUST have an `AGENTS.md` in its root directory. This file
 - `## MCP Servers` — list available MCP servers with descriptions
 - `## Global Rules` — credential safety, confirmation requirements, next-step suggestions
 
-**When adding a new skill**, update the pack's `AGENTS.md` intent routing table to include it.
+**When adding a new skill**, update the plugin's `AGENTS.md` intent routing table to include it.
 
 **Reference:** [rh-ai-engineer/AGENTS.md](rh-ai-engineer/AGENTS.md)
 
-**Validated by:** `scripts/validate_structure.py` (automated — checks existence, required sections, intent routing completeness, and rejects deprecated pack-level `CLAUDE.md`)
+**Validated by:** `scripts/validate_structure.py` (automated — checks existence, required sections, intent routing completeness, and rejects deprecated plugin-level `CLAUDE.md`)
 
 ---
 
@@ -573,7 +573,7 @@ Ask: "Proceed?" Wait for confirmation.
 8. **Single Responsibility** - One purpose per skill
 9. **Naming Conventions** - kebab-case
 10. **Content Quality** - Production-ready examples
-11. **Pack-Level AGENTS.md** - Instruction routing for every pack with skills (Lola convention)
+11. **Plugin-Level AGENTS.md** - Instruction routing for every plugin with skills (Lola convention)
 
 ---
 

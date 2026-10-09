@@ -121,7 +121,7 @@ Docs: <doc1>,<doc2>,...
    - Example: `aap-mcp-job-management:job_templates_list`
    - Separate with commas: `lightspeed-mcp:get_cve,lightspeed-mcp:get_host_details`
 
-4. **Doc names**: Pack-relative path from `skills/` or pack `references/`
+4. **Doc names**: Plugin-relative path from `skills/` or plugin `references/`
    - Format: `skills/skill-name/references/category/filename.md` or `skills/skill-name/SKILL.md`
    - Example: `skills/playbook-generator/references/ansible/cve-remediation-templates.md`
    - Example: `skills/fleet-inventory/SKILL.md`
@@ -308,7 +308,7 @@ Note: "unknown-plugin:custom-skill" origin unclear - verify plugin source.
 5. **Compact format** - No spaces after commas
 6. **Include all categories** - Even if "None"
 7. **Extract docs from "I consulted" statements** - These indicate documentation usage
-8. **Pack-relative paths** - Use `skills/.../references/...` or `skills/.../SKILL.md`, not full filesystem paths
+8. **Plugin-relative paths** - Use `skills/.../references/...` or `skills/.../SKILL.md`, not full filesystem paths
 9. **Brief explanation** - Help user understand the summary
 10. **Handle edge cases gracefully** - Empty workflows, incomplete history
 

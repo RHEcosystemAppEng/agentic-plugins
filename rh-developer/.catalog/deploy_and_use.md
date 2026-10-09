@@ -55,6 +55,6 @@ lola install -f rh-developer -a cursor
 
 ### MCP configuration
 
-Servers are defined in **`mcps.json`** at the pack root. Use **`${VAR}`** placeholders only.
+Servers are defined in **`mcps.json`** at the plugin root. Use **`${VAR}`** placeholders only.
 
-**Note (Linux vs macOS):** the OpenShift MCP `Podman` invocation may include user-namespace flags for `KUBECONFIG` readability; on macOS Podman-in-VM may require adjusting `mcps.json` per the pack README.
+**Note (Linux vs macOS):** the OpenShift MCP `Podman` invocation may include user-namespace flags for `KUBECONFIG` readability; on macOS Podman-in-VM may require adjusting `mcps.json` per the plugin README.

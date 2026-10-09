@@ -12,9 +12,9 @@
 
 ### In-repository documentation
 
-This pack ships an AI-oriented knowledge base under **`references/`** (index and source attribution) and **`skills/*/references/`** (runtime skill docs). Start at **[references/INDEX.md](references/INDEX.md)** and use **`references/.ai-index/`** (semantic index, task mapping) for token-efficient discovery.
+This plugin ships an AI-oriented knowledge base under **`references/`** (index and source attribution) and **`skills/*/references/`** (runtime skill docs). Start at **[references/INDEX.md](references/INDEX.md)** and use **`references/.ai-index/`** (semantic index, task mapping) for token-efficient discovery.
 
 ### Configuration and architecture
 
 - Environment variables for Lightspeed and AAP are declared only as `${VAR}` placeholders in **`mcps.json`**.
-- Orchestration (**`/remediation`**) chains impact, validation, context, playbook generation, execution, and verification; see pack **AGENTS.md** for routing when you need a single step only.
+- Orchestration (**`/remediation`**) chains impact, validation, context, playbook generation, execution, and verification; see plugin **AGENTS.md** for routing when you need a single step only.

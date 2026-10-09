@@ -2,9 +2,9 @@ apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: rh-sre
-  title: Site Reliability Engineering Agentic Pack
+  title: Site Reliability Engineering Agent Plugin
   description: >
-    Points to all AI skill catalog entities in the rh-sre agentic pack
+    Points to all AI skill catalog entities in the rh-sre agent plugin
     for Red Hat Site Reliability Engineering workflows.
   annotations:
     agentic-plugins.redhat.com/version: "1.0"

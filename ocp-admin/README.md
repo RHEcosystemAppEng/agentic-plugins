@@ -1,4 +1,4 @@
-# Agentic skill pack for Red Hat OpenShift administration
+# Agent plugin for Red Hat OpenShift administration
 
 Administration and management tools for OpenShift Container Platform including cluster lifecycle management, multi-cluster operations, workload orchestration, and security policies
 
@@ -42,7 +42,7 @@ The ocp-admin collection provides specialized tools for managing OpenShift clust
 
 ### Installation (Lola)
 
-Install the pack with [Lola](https://github.com/LobsterTrap/lola):
+Install the plugin with [Lola](https://github.com/LobsterTrap/lola):
 
 ```bash
 lola market add rh-agentic-plugins https://raw.githubusercontent.com/RHEcosystemAppEng/agentic-catalog/main/marketplace/rh-agentic-collection.yml
@@ -472,7 +472,7 @@ See [skills/cluster-report/references/multi-cluster-auth.md](skills/cluster-repo
 
 ## MCP Server Integration
 
-The pack integrates with two MCP servers for comprehensive cluster management:
+The plugin integrates with two MCP servers for comprehensive cluster management:
 
 ### **openshift-installer** - Assisted Service MCP Server
 
@@ -677,7 +677,7 @@ Result: Real-time installation status without leaving Claude
 
 ## Documentation
 
-The pack includes 17 comprehensive reference documents covering all aspects of OpenShift administration:
+The plugin includes 17 comprehensive reference documents covering all aspects of OpenShift administration:
 
 ### Installation & Planning
 - [Input Validation Guide](skills/cluster-creator/references/input-validation-guide.md) - Parameter validation rules
@@ -879,7 +879,7 @@ See main repository [README.md](../README.md) for:
 
 ## References
 
-- [Agentic skill pack for Red Hat OpenShift administration repository](https://github.com/RHEcosystemAppEng/agentic-plugins/tree/main/ocp-admin) - Documentation and details for this skill pack
+- [Agent plugin for Red Hat OpenShift administration repository](https://github.com/RHEcosystemAppEng/agentic-plugins/tree/main/ocp-admin) - Documentation and details for this agent plugin
 - [OpenShift Container Platform documentation](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18) - Documentation for Red Hat OpenShift Container Platform
 - [Assisted Installer documentation](https://docs.redhat.com/en/documentation/assisted_installer_for_openshift_container_platform) - Documentation for Red Hat OpenShift Container Platform Assisted Installer
 - [Assisted Service MCP Server](https://github.com/openshift-assisted/assisted-service-mcp) - Documentation for Assisted Service MCP Server

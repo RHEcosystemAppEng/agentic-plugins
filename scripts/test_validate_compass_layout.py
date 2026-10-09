@@ -47,7 +47,7 @@ Read [target.md](references/target.md) before acting.
 
 
 class _RepoFixtureTestCase(unittest.TestCase):
-    """Create pack fixtures under the repo so compass checks can build rel paths."""
+    """Create plugin fixtures under the repo so compass checks can build rel paths."""
 
     fixture_root: Path
 
@@ -97,29 +97,29 @@ class TestCompassSkillDocsLayout(_RepoFixtureTestCase):
         self.assertIn("references/references/", errors[0])
 
     def test_missing_shared_script_symlink_flagged(self) -> None:
-        pack_dir = self.fixture_root
-        group_dir = pack_dir / "scripts" / "demo-group"
+        plugin_dir = self.fixture_root
+        group_dir = plugin_dir / "scripts" / "demo-group"
         group_dir.mkdir(parents=True)
         (group_dir / "run.py").write_text("# run\n", encoding="utf-8")
         (group_dir / "config.yaml").write_text("key: value\n", encoding="utf-8")
 
-        scripts_dir = pack_dir / "skills" / "demo-skill" / "scripts"
+        scripts_dir = plugin_dir / "skills" / "demo-skill" / "scripts"
         scripts_dir.mkdir(parents=True)
         os.symlink("../../../scripts/demo-group/run.py", scripts_dir / "run.py")
 
         errors: list[str] = []
         compass._check_skill_scripts_layout(
-            pack_dir.name, pack_dir / "skills" / "demo-skill", errors
+            plugin_dir.name, plugin_dir / "skills" / "demo-skill", errors
         )
 
         self.assertTrue(errors)
         self.assertIn("config.yaml", errors[0])
 
-    def test_forbidden_pack_scripts_path_in_skill_markdown_flagged(self) -> None:
-        pack_dir = self.fixture_root
-        pack = pack_dir.name
-        skill_dir = pack_dir / "skills" / "demo-skill"
-        group_dir = pack_dir / "scripts" / "demo-group"
+    def test_forbidden_plugin_scripts_path_in_skill_markdown_flagged(self) -> None:
+        plugin_dir = self.fixture_root
+        plugin = plugin_dir.name
+        skill_dir = plugin_dir / "skills" / "demo-skill"
+        group_dir = plugin_dir / "scripts" / "demo-group"
         group_dir.mkdir(parents=True)
         (group_dir / "run.py").write_text("# run\n", encoding="utf-8")
 
@@ -130,24 +130,24 @@ class TestCompassSkillDocsLayout(_RepoFixtureTestCase):
         refs = skill_dir / "references"
         refs.mkdir(parents=True)
         (refs / "guide.md").write_text(
-            f"Run python3 {pack}/scripts/demo-group/run.py\n",
+            f"Run python3 {plugin}/scripts/demo-group/run.py\n",
             encoding="utf-8",
         )
 
         errors: list[str] = []
-        compass._check_skill_scripts_layout(pack, skill_dir, errors)
+        compass._check_skill_scripts_layout(plugin, skill_dir, errors)
 
         self.assertTrue(errors)
         self.assertTrue(
-            any(f"{pack}/scripts/" in err and "authoring-repo" in err for err in errors),
-            msg=f"expected pack scripts path error, got: {errors}",
+            any(f"{plugin}/scripts/" in err and "authoring-repo" in err for err in errors),
+            msg=f"expected plugin scripts path error, got: {errors}",
         )
 
     def test_shared_script_symlinks_complete_passes(self) -> None:
-        pack_dir = self.fixture_root
-        pack = pack_dir.name
-        skill_dir = pack_dir / "skills" / "demo-skill"
-        group_dir = pack_dir / "scripts" / "demo-group"
+        plugin_dir = self.fixture_root
+        plugin = plugin_dir.name
+        skill_dir = plugin_dir / "skills" / "demo-skill"
+        group_dir = plugin_dir / "scripts" / "demo-group"
         group_dir.mkdir(parents=True)
         (group_dir / "run.py").write_text("# run\n", encoding="utf-8")
         (group_dir / "config.yaml").write_text("key: value\n", encoding="utf-8")
@@ -168,7 +168,7 @@ class TestCompassSkillDocsLayout(_RepoFixtureTestCase):
         )
 
         errors: list[str] = []
-        compass._check_skill_scripts_layout(pack, skill_dir, errors)
+        compass._check_skill_scripts_layout(plugin, skill_dir, errors)
 
         self.assertEqual(errors, [])
 
@@ -201,14 +201,14 @@ class TestCompassSkillDocsLayout(_RepoFixtureTestCase):
 class TestDocsTreeLinks(unittest.TestCase):
     def test_readme_docs_link_flagged(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            pack = Path(tmp) / "demo-pack"
-            (pack / "skills" / "demo-skill").mkdir(parents=True)
-            readme = pack / "README.md"
+            plugin = Path(tmp) / "demo-plugin"
+            (plugin / "skills" / "demo-skill").mkdir(parents=True)
+            readme = plugin / "README.md"
             readme.write_text(
                 "See [docs index](docs/INDEX.md) for navigation.\n", encoding="utf-8"
             )
 
-            errors = docs_tree.validate_file(readme, pack)
+            errors = docs_tree.validate_file(readme, plugin)
             self.assertTrue(errors)
             self.assertIn("docs/INDEX.md", errors[0])
 
@@ -216,8 +216,8 @@ class TestDocsTreeLinks(unittest.TestCase):
 class TestSkillDocLinks(unittest.TestCase):
     def test_symlink_chain_detected_without_premature_resolve(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            pack = Path(tmp) / "demo-pack"
-            skill_dir = pack / "skills" / "demo-skill"
+            plugin = Path(tmp) / "demo-plugin"
+            skill_dir = plugin / "skills" / "demo-skill"
             refs = skill_dir / "references"
             refs.mkdir(parents=True)
             (refs / "leaf.md").write_text("# leaf\n", encoding="utf-8")

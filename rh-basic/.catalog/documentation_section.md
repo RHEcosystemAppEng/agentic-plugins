@@ -3,7 +3,7 @@
   Golden sources: skills/*/SKILL.md, README.md, AGENTS.md
 -->
 
-Skills source authoritative content from official Red Hat documentation/APIs at runtime using `WebFetch` or the documented APIs. No offline doc corpus is bundled; the pack stays lean and always reflects current Red Hat guidance.
+Skills source authoritative content from official Red Hat documentation/APIs at runtime using `WebFetch` or the documented APIs. No offline doc corpus is bundled; the plugin stays lean and always reflects current Red Hat guidance.
 
 Key reference sources used by skills:
 

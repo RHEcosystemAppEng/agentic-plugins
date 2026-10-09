@@ -2,9 +2,9 @@ apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: ocp-admin
-  title: OpenShift Administration Agentic Pack
+  title: OpenShift Administration Agent Plugin
   description: >
-    Points to all AI skill catalog entities in the ocp-admin agentic pack
+    Points to all AI skill catalog entities in the ocp-admin agent plugin
     for Red Hat OpenShift administration.
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
