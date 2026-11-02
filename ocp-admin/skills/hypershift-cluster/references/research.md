@@ -67,34 +67,26 @@ sequence in [operations.md](operations.md), preserve evidence in a redacted run
 report, and improve the skill only from observed outcomes. After one provider
 passes, other providers remain unverified until their own tests pass.
 
-The 2026-10-30 AWS test completed guest creation/access and two application
-revisions against OpenShift
-4.22.18, using operator/CLI source `c87e4905311af782d166e0f06ee102a5bebdf487`.
-It also exercised live identity rejection and management preservation comparisons.
-The earlier source links above document the initial research snapshot; the live
-run's pinned versions and setup adjustments are recorded in the repository's
-`reports/hyper3-live-test-2026-10-30.md`. Non-AWS provisioning remains unverified live.
+One AWS validation run completed guest creation/access, two application revisions,
+identity rejection, and management-preservation comparisons against OpenShift
+4.22.18. The result supports the workflow described here; it does not establish
+support for every provider, release, or infrastructure configuration.
 
-A second AWS run created a separate OpenShift 4.22.18 guest and installed RHTAS
-Operator 1.5.0 through its own OLM catalog. The CSV succeeded, all eight owned CRDs
-were Established, and management preservation checks passed. That run verified an
-operator installation, not a configured signing service or artifact signing. Its
-results are in `reports/rhtas-dev-2026-10-30.md`; the reusable workflow is in
-[guest-operators.md](guest-operators.md).
+A second AWS validation installed an operator through the guest's OLM catalog.
+The CSV and owned CRDs became ready, and management-preservation checks passed.
+That validated operator installation only, not a configured signing service or
+artifact signing. See the reusable workflow in [guest-operators.md](guest-operators.md).
 
-The user subsequently requested teardown of that RHTAS guest. The helper's AWS
-destroy completed, and independent inventory checks verified Kubernetes, compute,
-volumes, networking, load balancers, guest IAM/OIDC, registry and DNS cleanup while
-preserving management, shared dependencies and the earlier guest. This adds live
-AWS teardown validation; it does not establish other providers' cleanup behavior.
-The repository report is `reports/rhtas-dev-teardown-2026-10-30.md`.
+An AWS teardown validation independently checked Kubernetes, compute, volumes,
+networking, load balancers, guest IAM/OIDC, registry, and DNS cleanup while
+preserving management and shared dependencies. This adds AWS teardown evidence;
+it does not establish other providers' cleanup behavior.
 
 ## Development workflow practices
 
-Reviewed the user's local `agent-remote-dev` checkout on branch
-`aws-provider-parity`, commit `4c50bcf`, including its skill, launcher/configuration
-helpers, persistent task receipts, contributor/security guidance and behavioral
-tests. Transferable practices are explicit profile routing across follow-ups,
+Reviewed a separate provider-lifecycle workflow with launcher/configuration helpers,
+persistent task receipts, contributor/security guidance, and behavioral tests.
+Transferable practices are explicit profile routing across follow-ups,
 private generated state, atomic receipt replacement, pure previews, separate setup
 and daily use, authentication errors distinguished from missing targets, verified
 access, failure-oriented testing and review of commit candidates. Several already

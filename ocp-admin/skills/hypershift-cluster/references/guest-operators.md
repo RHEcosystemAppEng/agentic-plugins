@@ -75,15 +75,13 @@ Only create operands needed for the user's request and with their required input
 do not create a signing service with invented identity-provider settings merely to
 exercise the operator. Compare management and existing-guest health after the work.
 
-## Observed RHTAS case, not universal defaults
+## Observed operator-installation pattern, not universal defaults
 
-On 2026-10-30, AWS guest `rhtas-dev` ran OpenShift 4.22.18 with two `m5.large` workers.
-Its catalog supplied `rhtas-operator.v1.5.0` on `stable-v1.5`, suggested namespace
-`openshift-rhtas-operator`, and supported only AllNamespaces mode. The reviewed OLM
-installation succeeded: one Ready controller pod, eight Established RHTAS CRDs,
-healthy guest platform and passing management-preservation comparison.
+One AWS validation used a two-worker OpenShift 4.22 guest. Its catalog supplied an
+operator package and channel, suggested a dedicated namespace, and supported only
+AllNamespaces mode. The reviewed OLM installation succeeded: one Ready controller
+pod, owned CRDs became Established, and management-preservation checks passed.
 
 No Securesign operand or OIDC provider was configured. A functioning signing
 service therefore was not tested. Rediscover package versions and requirements on
 future targets; this one AWS run does not validate other providers or all operators.
-The repository report is `reports/rhtas-dev-2026-10-30.md`.

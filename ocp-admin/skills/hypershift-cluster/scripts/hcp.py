@@ -110,8 +110,47 @@ def flag_args(args):
     return args
 
 
+ENVIRONMENT_REFERENCE = re.compile(r"\$(?:\{([A-Za-z_][A-Za-z0-9_]*)\}|([A-Za-z_][A-Za-z0-9_]*))")
+
+
+def expand_profile_values(value, active=None):
+    """Expand environment references in profile strings without shell evaluation."""
+    active = set() if active is None else active
+    if isinstance(value, str):
+        def replacement(match):
+            name = match.group(1) or match.group(2)
+            require(name in os.environ, f"Profile references unset environment variable: {name}")
+            return os.environ[name]
+        return ENVIRONMENT_REFERENCE.sub(replacement, value)
+    if isinstance(value, list):
+        require(id(value) not in active, "Profile contains a recursive YAML alias.")
+        active.add(id(value))
+        try:
+            return [expand_profile_values(item, active) for item in value]
+        finally:
+            active.remove(id(value))
+    if isinstance(value, dict):
+        require(all(isinstance(key, str) for key in value),
+                "Profile mapping keys must be strings.")
+        require(id(value) not in active, "Profile contains a recursive YAML alias.")
+        active.add(id(value))
+        try:
+            return {key: expand_profile_values(item, active) for key, item in value.items()}
+        finally:
+            active.remove(id(value))
+    return value
+
+
 def load_profile(path):
-    p = json.loads(Path(path).read_text())
+    profile_path = Path(path)
+    try:
+        raw = profile_path.read_text()
+        document = yaml.safe_load(raw) if profile_path.suffix.lower() in (".yaml", ".yml") else json.loads(raw)
+    except OSError as exc:
+        raise Error(f"Unable to read profile: {exc}") from exc
+    except (json.JSONDecodeError, yaml.YAMLError):
+        raise Error("Profile is not valid JSON or YAML.") from None
+    p = expand_profile_values(document)
     require(isinstance(p, dict), "Profile must be an object.")
     allowed = {"schema_version", "name", "namespace", "provider", "cli", "management",
                "release_image", "pull_secret", "replicas", "create_args", "destroy_args", "infra_id",

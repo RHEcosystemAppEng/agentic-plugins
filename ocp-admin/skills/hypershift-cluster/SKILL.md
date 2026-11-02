@@ -1,9 +1,9 @@
 ---
 name: hypershift-cluster
 description: |
-  Create, inspect, access, and destroy provider-neutral HyperShift hosted
-  OpenShift clusters (guests) on an existing HyperShift management cluster, then
-  deploy application code into the verified guest.
+  Rapidly create disposable provider-neutral HyperShift hosted OpenShift
+  development environments, deploy and test code in verified guests, and clean
+  them up safely.
 
   Use when:
   - "Create a HyperShift hosted cluster / guest"
@@ -32,11 +32,19 @@ metadata:
 
 # /hypershift-cluster Skill
 
-Create a small development guest with an isolated Kubernetes API and worker nodes.
-Use the existing HyperShift installation. Read [providers.md](references/providers.md)
-for the selected provider and [operations.md](references/operations.md) for command
-usage, readiness, deployment, recovery, and teardown. Research provenance and limits
-are in [research.md](references/research.md).
+Use an existing HyperShift installation for the rapid prototype loop: configure,
+preflight, create, deploy, test or benchmark, iterate, and destroy. The upstream
+`hypershift`/`hcp` binary performs provider mechanics; this skill owns environment
+discovery, safety checks, orchestration, verification, cost/ownership awareness,
+and the evidence-backed report.
+
+Use a private JSON or YAML profile. `hcp.py` expands `${ENVIRONMENT_VARIABLE}`
+references without shell evaluation, so shareable profiles do not contain personal
+paths, account IDs, domains, or credentials. See [profile.example.yaml](assets/profile.example.yaml)
+and [rapid-prototyping.md](references/rapid-prototyping.md).
+Read [providers.md](references/providers.md) for the selected provider and
+[operations.md](references/operations.md) for command usage, readiness, deployment,
+recovery, and teardown. Research provenance and limits are in [research.md](references/research.md).
 If the user explicitly requests installing HyperShift, first read
 [bootstrap.md](references/bootstrap.md). Do not bootstrap it implicitly during
 ordinary guest creation.
@@ -124,10 +132,13 @@ Collect:
   HyperShift does not provide ROSA's generic expiration contract: record a cleanup
   reminder or use the user's existing automation, without inventing a TTL feature.
 
-Copy [profile.example.json](assets/profile.example.json) to a **private run directory**
+Copy either [profile.example.json](assets/profile.example.json) or the equivalent
+[profile.example.yaml](assets/profile.example.yaml) to a **private run directory**
 (mode 0700), replace every example value, and adapt `create_args` / `destroy_args`
-using provider help and [providers.md](references/providers.md). Use absolute file
-paths and `--long-flag=value` tokens; do not put literal credentials into the profile.
+using provider help and [providers.md](references/providers.md). YAML is convenient
+for hand editing; JSON remains useful for automation. Use absolute file paths or
+`${ENVIRONMENT_VARIABLE}` references and `--long-flag=value` tokens; do not put
+literal credentials into the profile.
 The helper explicitly selects `SingleReplica` for both control plane and guest infra,
 appropriate for a disposable development environment, without HA guarantees. If HA
 is required, adapt that helper policy deliberately before creating anything.
