@@ -22,5 +22,6 @@ spec:
     - ./skills/container-cve-validator/catalog-info.yaml
     - ./skills/coreos-cve-validator/catalog-info.yaml
     - ./skills/cve-recon/catalog-info.yaml
+    - ./skills/hypershift-cluster/catalog-info.yaml
     - ./skills/image-inspect/catalog-info.yaml
     - ./skills/network-policy-architect/catalog-info.yaml

@@ -1,0 +1,40 @@
+apiVersion: backstage.io/v1alpha1
+kind: AiResource
+metadata:
+  name: hypershift-cluster
+  namespace: ai5-marketplace
+  title: HyperShift Hosted Cluster Lifecycle
+  description: >
+    Create, access, deploy application code into, and destroy provider-neutral
+    HyperShift hosted OpenShift clusters (guests) on an existing management
+    cluster, with strict identity pinning and read-only cleanup verification.
+  labels:
+    distribution: external
+  annotations:
+    backstage.io/source-location: >-
+      url:https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/ocp-admin/skills/hypershift-cluster/SKILL.md
+
+  tags:
+    - ai-skill
+    - openshift
+    - hypershift
+    - hosted-control-planes
+    - cluster-management
+    - provisioning
+  links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins
+      title: Source Repository
+      icon: github
+spec:
+  type: skill
+  lifecycle: beta
+  owner: group:redhat/ai5-marketplace
+  disciplines:
+    - devops
+    - infrastructure
+  categories:
+    - cluster-management
+    - provisioning
+  agents: []
+  dependsOn:
+    - airesource:ai5-marketplace/ocp-admin
