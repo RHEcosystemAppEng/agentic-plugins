@@ -2,7 +2,7 @@
 
 The upstream lifecycle CLI deletes the guest. The helper's cleanup module only
 reads Kubernetes and AWS APIs; it does not issue cloud deletion commands.
-Use the same private profile/state directory throughout. Destroy authorization
+Use the same private profile and target identity throughout. Destroy authorization
 includes the selected guest's data; carry forward preservation decisions and
 identify retained external data before executing. Never delete shared namespaces,
 operators, networks or finalizers to make a check pass.
@@ -88,8 +88,9 @@ python3 "$SKILL_DIR/scripts/hcp.py" --profile /private/run/profile.json \
 The optional grace period is seconds; installed CLI help must advertise the native
 flag. Planning/preview remains local and checks neither credentials nor state.
 Only execute validates the receipt and installed CLI. State uses a POSIX advisory
-lock inherited by the native CLI. Do not remove the lock file: closing processes
-releases the lock, while deleting the file could defeat concurrency protection.
+lock inherited by the native CLI plus a ConfigMap `resourceVersion` lock shared by
+authorized hosts. Do not remove the lock file or edit the lifecycle ConfigMap while
+an operation is active.
 Preserve the process/session handle while observing long operations.
 
 `destroy-operation.json` binds attempts to the inventory digest and records outcome
@@ -104,7 +105,10 @@ python3 "$SKILL_DIR/scripts/hcp.py" --profile /private/run/profile.json \
 
 The helper rejects replacement HCs, changed inventory/provider arguments and
 unrecorded deletes. With the configured AWS adapter it can resume provider cleanup
-after HC disappearance, using the pinned infra ID, region and account. Other
+after HC disappearance, using the pinned infra ID, region and account. Teardown
+fingerprints use stable target/ownership fields, not local kubeconfig, context or
+credentials paths; another host must still pass live management and cloud identity
+checks. Other
 providers need the original HC still present or a separate provider recovery plan.
 It never infers a missing target
 from a cluster name. Do not manufacture receipts for old manual operations: inspect

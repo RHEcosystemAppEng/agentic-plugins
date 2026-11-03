@@ -14,11 +14,13 @@ import os
 from pathlib import Path
 import re
 import shlex
+import socket
 import subprocess
 import sys
 import tempfile
 import time
 from urllib.parse import urlsplit
+import uuid
 
 import yaml
 
@@ -152,7 +154,7 @@ def load_profile(path):
         raise Error("Profile is not valid JSON or YAML.") from None
     p = expand_profile_values(document)
     require(isinstance(p, dict), "Profile must be an object.")
-    allowed = {"schema_version", "name", "namespace", "provider", "cli", "management",
+    allowed = {"schema_version", "name", "namespace", "provider", "cli", "management", "cloud_identity",
                "release_image", "pull_secret", "secret_creds", "replicas", "create_args", "destroy_args", "infra_id",
                "node_pools", "aws_cleanup"}
     require(not p.keys() - allowed, "Unknown profile fields; check spelling before proceeding.")
@@ -168,6 +170,18 @@ def load_profile(path):
     require(all(isinstance(m.get(k), str) and m[k] for k in ("kubeconfig", "context", "kube_system_uid")),
             "Set management kubeconfig, context, and kube_system_uid.")
     require(Path(m["kubeconfig"]).is_absolute(), "Use an absolute management kubeconfig path.")
+    cloud_identity = p.get("cloud_identity")
+    if cloud_identity is not None:
+        require(isinstance(cloud_identity, dict) and not cloud_identity.keys() - {"kind", "account_id", "region", "project"},
+                "Unknown cloud_identity fields; check profile structure.")
+        require(isinstance(cloud_identity.get("kind"), str) and cloud_identity["kind"] in
+                {"aws", "azure", "gcp", "openstack", "powervs"}, "Unsupported cloud_identity kind.")
+        required = {"aws": ("account_id", "region"), "azure": ("account_id",),
+                    "gcp": ("project",), "openstack": ("project",), "powervs": ("account_id",)}[cloud_identity["kind"]]
+        require(all(isinstance(cloud_identity.get(k), str) and cloud_identity[k] for k in required),
+                f"cloud_identity requires {', '.join(required)}.")
+        if cloud_identity["kind"] == "aws":
+            require(re.fullmatch(r"\d{12}", cloud_identity["account_id"]), "AWS cloud_identity account_id must contain 12 digits.")
     pull_secret = p.get("pull_secret")
     secret_creds = p.get("secret_creds")
     require((pull_secret is None) != (secret_creds is None),
@@ -288,6 +302,21 @@ def check_guest_credentials(config):
                 "Guest credentials must be embedded, without executable plugins or file references.")
 
 
+def provider_options(args):
+    return {value.split("=", 1)[0]: value.split("=", 1)[1] if "=" in value else "true"
+            for value in args}
+
+
+def reject_credential_overrides(provider, args):
+    overrides = {
+        "aws": {"--sts-creds", "--vpc-owner-aws-creds", "--aws-credentials-file"},
+        "gcp": {"--service-account", "--service-account-key-file", "--impersonate-service-account"},
+        "openstack": {"--openstack-credentials-file", "--openstack-cloud"},
+    }.get(provider, set())
+    require(not provider_options(args).keys() & overrides,
+            "Unsupported provider credential override; use a validated ambient/mode-specific credential path.")
+
+
 class Session:
     def __init__(self, p, directory):
         self.p = p
@@ -298,6 +327,9 @@ class Session:
         os.chmod(self.directory, 0o700)
         self.binding_file = self.directory / "identity.json"
         self.binding = json.loads(self.binding_file.read_text()) if self.binding_file.exists() else {}
+        self.shared_state = {}
+        self.shared_lock_active = False
+        self.lock_holder = None
 
     def oc(self, *args, guest=False, **kwargs):
         if guest:
@@ -310,6 +342,78 @@ class Session:
 
     def external(self, argv, **kwargs):
         return run(argv, log_dir=self.directory, **kwargs)
+
+    def aws_secret_environment(self):
+        require(self.p["provider"] == "aws" and self.p.get("secret_creds"), "AWS Secret credential mode is not selected.")
+        identity = self.p.get("cloud_identity")
+        require(identity and identity.get("kind") == "aws", "AWS requires pinned cloud_identity account_id and region.")
+        secret = self.get("secret", self.p["secret_creds"], namespace=self.p["namespace"])
+        try:
+            credentials = base64.b64decode(secret["data"]["sts-creds"], validate=True)
+        except (KeyError, TypeError, ValueError):
+            raise Error("Credential Secret is missing valid base64 sts-creds data.") from None
+        credentials_path = self.directory / "aws-secret-creds"
+        private_write(credentials_path, credentials)
+        cfg = {"credentials_file": str(credentials_path), "profile": "default",
+               "region": identity["region"], "account_id": identity["account_id"]}
+        return cleanup.check_aws_account(self, cfg, require)
+
+    def validate_aws_identity(self, options, for_destroy=False):
+        identity = self.p.get("cloud_identity")
+        require(identity and identity.get("kind") == "aws", "AWS requires pinned cloud_identity account_id and region.")
+        require(options.get("--region") == identity["region"], "AWS provider region must match cloud_identity.region.")
+        if self.p.get("secret_creds"):
+            env = self.aws_secret_environment()
+        elif self.p.get("aws_cleanup"):
+            cfg = self.p["aws_cleanup"]
+            require(cfg["account_id"] == identity["account_id"], "AWS cleanup and cloud identities must use the same account.")
+            env = cleanup.check_aws_account(self, cfg, require)
+        else:
+            value = json.loads(self.external(
+                ["aws", "--region", identity["region"], "--no-cli-pager", "sts", "get-caller-identity", "--output", "json"],
+                timeout=90))
+            require(value["Account"] == identity["account_id"], "AWS creation account mismatch.")
+            env = None
+        role = options.get("--role-arn")
+        if role:
+            match = re.fullmatch(r"arn:[^:]+:iam::([0-9]{12}):role/.+", role)
+            require(match and match.group(1) == identity["account_id"],
+                    "AWS role ARN must target the pinned cloud_identity account.")
+        if for_destroy and self.p.get("aws_cleanup"):
+            cfg = self.p["aws_cleanup"]
+            require(cfg["account_id"] == identity["account_id"], "AWS cleanup and cloud identities must use the same account.")
+        return env
+
+    def validate_cloud_identity(self, action):
+        provider = self.p["provider"]
+        args = self.p.get(f"{action}_args", [])
+        reject_credential_overrides(provider, args)
+        options = provider_options(args)
+        if provider == "aws":
+            return self.validate_aws_identity(options, for_destroy=(action == "destroy"))
+        if provider in {"kubevirt", "agent", "none"}:
+            require(not self.p.get("cloud_identity"), f"{provider} uses the pinned management cluster, not a separate cloud_identity.")
+            return None
+        identity = self.p.get("cloud_identity")
+        require(identity, f"{provider} requires a pinned cloud_identity before creation.")
+        kind = identity.get("kind")
+        if provider == "azure":
+            require(kind == "azure", "Azure cloud_identity kind mismatch.")
+            value = json.loads(self.external(["az", "account", "show", "--output", "json"], timeout=90))
+            require(value["id"] == identity["account_id"], "Azure subscription mismatch.")
+        elif provider == "gcp":
+            require(kind == "gcp", "GCP cloud_identity kind mismatch.")
+            value = self.external(["gcloud", "config", "get-value", "project"], timeout=90).strip()
+            require(value == identity["project"], "GCP project mismatch.")
+        elif provider == "openstack":
+            require(kind == "openstack", "OpenStack cloud_identity kind mismatch.")
+            value = json.loads(self.external(["openstack", "token", "issue", "-f", "json"], timeout=90))
+            require(value["project_id"] == identity["project"], "OpenStack project mismatch.")
+        elif provider == "powervs":
+            require(kind == "powervs", "PowerVS cloud_identity kind mismatch.")
+            value = json.loads(self.external(["ibmcloud", "account", "show", "--output", "json"], timeout=90))
+            require(str(value.get("GUID", value.get("guid"))) == identity["account_id"], "IBM Cloud account mismatch.")
+        return None
 
     def get(self, resource, name=None, guest=False, namespace=None, optional=False):
         args = ["get", resource]
@@ -326,10 +430,21 @@ class Session:
     def management(self):
         uid = self.get("namespace", "kube-system")["metadata"]["uid"]
         require(uid == self.p["management"]["kube_system_uid"], "Management cluster UID mismatch; stopping.")
+        shared = self.load_shared_state()
+        identity = shared.get("identity", {})
+        for key, value in (("management_uid", uid), ("namespace", self.p["namespace"]), ("name", self.p["name"])):
+            require(key not in identity or identity[key] == value,
+                    "Shared lifecycle state is bound to another target.")
+            self.binding.setdefault(key, value)
+            require(self.binding[key] == value, "State directory is bound to another cluster; use the correct directory.")
+            self.binding[key] = value
+        for key in ("hostedcluster_uid", "guest_context", "guest_uid"):
+            if key in identity:
+                require(key not in self.binding or self.binding[key] == identity[key],
+                        "Saved identity changed during this operation; inspect before continuing.")
+                self.binding[key] = identity[key]
+        self.shared_state = shared
         key = {"management_uid": uid, "namespace": self.p["namespace"], "name": self.p["name"]}
-        require(all(self.binding.get(k, v) == v for k, v in key.items()),
-                "State directory is bound to another cluster; use the correct directory.")
-        self.binding.update(key)
         return uid
 
     def save(self):
@@ -344,7 +459,119 @@ class Session:
             if current.get("create_attempted"):
                 merged["create_attempted"] = True
             private_write(self.binding_file, json.dumps(merged, indent=2) + "\n")
+            if self.shared_lock_active:
+                self.save_shared_state({"identity": merged})
             self.binding = merged
+
+    def state_configmap_name(self):
+        return f"hypershift-lifecycle-{self.p['name']}"
+
+    def load_shared_state(self):
+        obj = self.get("configmap", self.state_configmap_name(), namespace=self.p["namespace"], optional=True)
+        if obj is None:
+            return {}
+        raw = obj.get("data", {}).get("state.json")
+        require(isinstance(raw, str), "Shared lifecycle ConfigMap has no state.json value.")
+        try:
+            state = json.loads(raw)
+        except json.JSONDecodeError:
+            raise Error("Shared lifecycle state is not valid JSON.") from None
+        require(isinstance(state, dict) and state.get("schema_version") == 1, "Unsupported shared lifecycle state.")
+        target = state.get("target")
+        require(target == {"management_uid": self.p["management"]["kube_system_uid"],
+                           "namespace": self.p["namespace"], "name": self.p["name"]},
+                "Shared lifecycle state is bound to another target.")
+        return state
+
+    def save_shared_state(self, updates):
+        state = {**self.shared_state, **updates, "schema_version": 1,
+                 "target": {"management_uid": self.p["management"]["kube_system_uid"],
+                            "namespace": self.p["namespace"], "name": self.p["name"]}}
+        encoded = json.dumps(state, indent=2, sort_keys=True) + "\n"
+        require(len(encoded.encode()) < 900_000, "Shared lifecycle state exceeds the ConfigMap safety limit.")
+        name = self.state_configmap_name()
+        for _ in range(5):
+            current = self.get("configmap", name, namespace=self.p["namespace"], optional=True)
+            if current is None:
+                try:
+                    self.oc("create", "configmap", name, "--namespace", self.p["namespace"])
+                    current = self.get("configmap", name, namespace=self.p["namespace"])
+                except Error:
+                    current = self.get("configmap", name, namespace=self.p["namespace"], optional=True)
+                    require(current is not None, "Unable to create shared lifecycle state.")
+            previous = json.loads(current.get("data", {}).get("state.json", "{}"))
+            lock = previous.get("lock")
+            if lock and lock.get("holder") != self.lock_holder:
+                expires = lock.get("expires_at", 0)
+                require(type(expires) in (int, float) and time.time() >= expires,
+                        "Another host holds the shared lifecycle lock.")
+            merged = {**previous, **state}
+            if previous.get("lock", {}).get("holder") == self.lock_holder:
+                merged["lock"] = previous["lock"]
+            resource = {"apiVersion": "v1", "kind": "ConfigMap",
+                        "metadata": {"name": name, "namespace": self.p["namespace"],
+                                     "resourceVersion": current["metadata"]["resourceVersion"]},
+                        "data": {"state.json": json.dumps(merged, indent=2, sort_keys=True) + "\n"}}
+            try:
+                self.oc("replace", "--namespace", self.p["namespace"], "-", data=json.dumps(resource))
+                self.shared_state = merged
+                return
+            except Error:
+                continue
+        raise Error("Shared lifecycle state changed concurrently; retry the operation.")
+
+    @contextmanager
+    def shared_lock(self, seconds=93600):
+        self.lock_holder = f"{socket.gethostname()}-{os.getpid()}-{uuid.uuid4()}"
+        self.shared_lock_active = True
+        name = self.state_configmap_name()
+        acquired = False
+        for _ in range(10):
+            current = self.get("configmap", name, namespace=self.p["namespace"], optional=True)
+            if current is None:
+                try:
+                    self.oc("create", "configmap", name, "--namespace", self.p["namespace"])
+                    current = self.get("configmap", name, namespace=self.p["namespace"])
+                except Error:
+                    current = self.get("configmap", name, namespace=self.p["namespace"], optional=True)
+                    require(current is not None, "Unable to create shared lifecycle lock.")
+            try:
+                previous = json.loads(current.get("data", {}).get("state.json", "{}"))
+            except json.JSONDecodeError:
+                raise Error("Shared lifecycle state is not valid JSON.") from None
+            lock = previous.get("lock")
+            if lock:
+                expires = lock.get("expires_at", 0)
+                require(type(expires) in (int, float) and time.time() >= expires,
+                        "Another host holds the shared lifecycle lock.")
+            previous["lock"] = {"holder": self.lock_holder, "expires_at": time.time() + seconds}
+            resource = {"apiVersion": "v1", "kind": "ConfigMap",
+                        "metadata": {"name": name, "namespace": self.p["namespace"],
+                                     "resourceVersion": current["metadata"]["resourceVersion"]},
+                        "data": {"state.json": json.dumps(previous, indent=2, sort_keys=True) + "\n"}}
+            try:
+                self.oc("replace", "--namespace", self.p["namespace"], "-", data=json.dumps(resource))
+                self.shared_state = previous
+                acquired = True
+                break
+            except Error:
+                continue
+        require(acquired, "Unable to acquire the shared lifecycle lock.")
+        self.shared_lock_active = True
+        try:
+            yield
+        finally:
+            current = self.get("configmap", name, namespace=self.p["namespace"])
+            state = json.loads(current.get("data", {}).get("state.json", "{}"))
+            if state.get("lock", {}).get("holder") == self.lock_holder:
+                state.pop("lock", None)
+                resource = {"apiVersion": "v1", "kind": "ConfigMap",
+                            "metadata": {"name": name, "namespace": self.p["namespace"],
+                                         "resourceVersion": current["metadata"]["resourceVersion"]},
+                            "data": {"state.json": json.dumps(state, indent=2, sort_keys=True) + "\n"}}
+                self.oc("replace", "--namespace", self.p["namespace"], "-", data=json.dumps(resource))
+                self.shared_state = state
+            self.shared_lock_active = False
 
     @contextmanager
     def lock(self, name="lifecycle.lock", blocking=False):
@@ -362,21 +589,28 @@ class Session:
             os.close(fd)
 
     def fingerprint(self):
-        fields = {k: self.p.get(k) for k in ("name", "namespace", "provider", "cli", "management",
-                                            "infra_id", "destroy_args", "aws_cleanup")}
+        aws = self.p.get("aws_cleanup")
+        if aws is not None:
+            aws = {k: aws.get(k) for k in ("account_id", "region", "owned", "preserve", "dns_records", "oidc_documents")}
+        fields = {k: self.p.get(k) for k in ("name", "namespace", "provider", "cli", "infra_id", "destroy_args")}
+        fields["management_uid"] = self.p["management"]["kube_system_uid"]
+        fields["aws_cleanup"] = aws
+        fields["cloud_identity"] = self.p.get("cloud_identity")
         return hashlib.sha256(json.dumps(fields, sort_keys=True).encode()).hexdigest()
 
     def inventory(self, skip_guest=False):
-        with self.lock():
+        with self.shared_lock(), self.lock():
             self.management()
             hc = self.hc()
             require(not hc["metadata"].get("deletionTimestamp"), "Deletion already started; retain the original inventory.")
-            require(not (self.directory / "destroy-operation.json").exists(), "Destroy receipt exists; do not replace its inventory.")
+            require(not (self.directory / "destroy-operation.json").exists() and
+                    not self.shared_state.get("destroy_operation"), "Destroy receipt exists; do not replace its inventory.")
             require(self.p.get("infra_id") == hc["spec"].get("infraID") and self.p.get("infra_id"),
                     "Set profile infra_id from the live HostedCluster before recording teardown inventory.")
             result = cleanup.capture(self, hc, skip_guest, require)
             result["fingerprint"] = self.fingerprint()
             private_write(self.directory / "teardown-inventory.json", json.dumps(result, indent=2) + "\n")
+            self.save_shared_state({"teardown_inventory": result})
             self.save()
             return {"inventory_saved": True, "path": str(self.directory / "teardown-inventory.json"),
                     "guest_storage_observed": result["guest_storage_observed"],
@@ -385,9 +619,13 @@ class Session:
 
     def teardown_inventory(self):
         path = self.directory / "teardown-inventory.json"
-        require(path.is_file(), "Record and review inventory before destroy or cleanup verification.")
-        raw = path.read_bytes()
-        data = json.loads(raw)
+        if path.is_file():
+            raw = path.read_bytes()
+            data = json.loads(raw)
+        else:
+            data = self.shared_state.get("teardown_inventory")
+            require(data is not None, "Record and review inventory before destroy or cleanup verification.")
+            raw = json.dumps(data, sort_keys=True).encode()
         require(data["fingerprint"] == self.fingerprint(), "Teardown profile changed; do not reuse the recorded ownership plan.")
         require(data["target"] == {"management_uid": self.binding["management_uid"],
                 "namespace": self.p["namespace"], "name": self.p["name"],
@@ -397,12 +635,15 @@ class Session:
         return data, hashlib.sha256(raw).hexdigest()
 
     def verify_cleanup(self):
-        with self.lock():
+        with self.shared_lock(), self.lock():
             self.management()
             inventory, digest = self.teardown_inventory()
             operation = self.directory / "destroy-operation.json"
-            require(operation.is_file(), "No recorded destroy attempt; inspect the target before cleanup verification.")
-            record = json.loads(operation.read_text())
+            if operation.is_file():
+                record = json.loads(operation.read_text())
+            else:
+                record = self.shared_state.get("destroy_operation")
+                require(record is not None, "No recorded destroy attempt; inspect the target before cleanup verification.")
             require(record["inventory_digest"] == digest and record["target"] == inventory["target"],
                     "Destroy inventory/receipt identity was modified.")
             result = cleanup.verify(self, inventory, require)
@@ -411,6 +652,7 @@ class Session:
                 (self.directory / "guest.kubeconfig").unlink(missing_ok=True)
                 result["guest_kubeconfig_removed"] = True
                 private_write(self.directory / "cleanup-complete.json", json.dumps(result, indent=2) + "\n")
+                self.save_shared_state({"cleanup_complete": result})
             return result
 
     def hc(self, optional=False):
@@ -445,7 +687,7 @@ class Session:
                     f"Installed CLI does not advertise {name}; adapt the profile/CLI before mutation.")
 
     def lifecycle(self, action, resume=False, grace_period=None):
-        with self.lock() as fd:
+        with self.shared_lock(), self.lock() as fd:
             return self._lifecycle(action, resume, grace_period, fd)
 
     def _lifecycle(self, action, resume, grace_period, lock_fd):
@@ -457,13 +699,17 @@ class Session:
         cloud_env = None
         if action == "create":
             require(not hc, "HostedCluster already exists; inspect status/access instead of recreating.")
-            require(not self.binding.get("create_attempted") and not (self.directory / "create-attempt.json").exists(),
-                    "A create was already attempted. Inspect management AND provider resources before an explicit retry.")
-            require(Path(self.p["pull_secret"]).is_file(), "Pull-secret file is missing.")
+            attempted = (self.shared_state.get("create_attempted") or self.binding.get("create_attempted") or
+                         (self.directory / "create-attempt.json").exists())
+            if attempted:
+                require(resume, "A create was already attempted. Inspect management AND provider resources, then use --resume explicitly.")
+            if self.p.get("pull_secret"):
+                require(Path(self.p["pull_secret"]).is_file(), "Pull-secret file is missing.")
             # Shared namespace provisioning is an administrator prerequisite.
             self.get("namespace", self.p["namespace"])
             self.get("customresourcedefinition", HC)
             self.get("customresourcedefinition", NP)
+            cloud_env = self.validate_cloud_identity("create")
         else:
             if not resume:
                 require(hc is not None, "HostedCluster missing; do not infer infrastructure cleanup from a name.")
@@ -480,7 +726,9 @@ class Session:
                         "Destroy inventory/receipt identity was modified.")
                 require(operation.get("attempts") and operation["attempts"][-1]["outcome"] != "cli_succeeded",
                         "CLI already succeeded; run verify-cleanup instead of repeating destroy.")
-                require(not (self.directory / "cleanup-complete.json").exists(), "Cleanup is already verified; no destroy to resume.")
+                require(not (self.directory / "cleanup-complete.json").exists() and
+                        not self.shared_state.get("cleanup_complete"),
+                        "Cleanup is already verified; no destroy to resume.")
                 require(hc is not None or (self.p["provider"] == "aws" and self.p.get("aws_cleanup")),
                         "Resume after HC disappearance requires the configured AWS ownership adapter; use a separate provider recovery plan.")
             else:
@@ -499,7 +747,7 @@ class Session:
                 if "--role-arn" in options:
                     role = re.fullmatch(r"arn:[^:]+:iam::([0-9]{12}):role/.+", options["--role-arn"])
                     require(role and role.group(1) == cfg["account_id"], "Destroy role account does not match cleanup account.")
-                cloud_env = cleanup.check_aws_account(self, cfg, require)
+            cloud_env = self.validate_cloud_identity("destroy")
         self.check_help(action, command)
         # HyperShift's lifecycle CLI may not support --context. Give it a private,
         # flattened single-context config, never the caller's ambient current-context.
@@ -512,14 +760,17 @@ class Session:
             private_write(kc, raw)
             if action == "create":
                 self.binding["create_attempted"] = True
-                private_write(self.directory / "create-attempt.json", json.dumps({
+                create_attempt = {
                     "at": cleanup.now(), "management_uid": self.binding["management_uid"],
-                    "namespace": self.p["namespace"], "name": self.p["name"], "provider": self.p["provider"]}) + "\n")
+                    "namespace": self.p["namespace"], "name": self.p["name"], "provider": self.p["provider"]}
+                self.save_shared_state({"create_attempted": True, "create_attempt": create_attempt})
+                private_write(self.directory / "create-attempt.json", json.dumps(create_attempt) + "\n")
             self.save()
             if operation is not None:
                 operation["attempts"].append({"started_at": cleanup.now(), "outcome": "observation_lost",
                                               "grace_period_seconds": grace_period})
                 private_write(operation_path, json.dumps(operation, indent=2) + "\n")
+                self.save_shared_state({"destroy_operation": operation})
             # Output may include passwords or secrets. Retain it locally, not in the conversation.
             try:
                 output = run(command, kubeconfig=kc, log_dir=self.directory,
@@ -529,37 +780,41 @@ class Session:
                 if operation is not None:
                     operation["attempts"][-1].update(outcome="cli_failed", finished_at=cleanup.now())
                     private_write(operation_path, json.dumps(operation, indent=2) + "\n")
+                    self.save_shared_state({"destroy_operation": operation})
                 raise
             if operation is not None:
                 operation["attempts"][-1].update(outcome="cli_succeeded", finished_at=cleanup.now())
                 private_write(operation_path, json.dumps(operation, indent=2) + "\n")
+                self.save_shared_state({"destroy_operation": operation})
             private_write(self.directory / f"{action}.log", output)
         return {"submitted": action, "name": self.p["name"],
                 "next": "Run verify-cleanup; CLI exit alone does not prove cleanup." if action == "destroy"
                         else "Inspect status; CLI exit alone does not prove readiness."}
 
     def access(self):
-        self.management()
-        hc = self.hc()
-        require(not hc["metadata"].get("deletionTimestamp"), "HostedCluster is deleting.")
-        secret_name = hc.get("status", {}).get("kubeconfig", {}).get("name")
-        require(secret_name, "HostedCluster has not published status.kubeconfig.name yet.")
-        secret = self.get("secret", secret_name, namespace=self.p["namespace"])
-        try:
-            raw = base64.b64decode(secret["data"]["kubeconfig"], validate=True)
-            config = yaml.safe_load(raw)
-        except (KeyError, ValueError, yaml.YAMLError):
-            raise Error("The published Secret does not contain a valid kubeconfig.") from None
-        check_guest_credentials(config)
-        context = config.get("current-context")
-        require(context, "Guest kubeconfig has no current-context.")
-        require(not self.binding.get("guest_context") or self.binding["guest_context"] == context,
-                "Guest context changed; inspect credentials before rebinding.")
-        self.binding["guest_context"] = context
-        private_write(self.directory / "guest.kubeconfig", raw)
-        result = self.verify_guest(pin=True)
-        self.save()
-        return result
+        with self.shared_lock():
+            self.management()
+            hc = self.hc()
+            require(not hc["metadata"].get("deletionTimestamp"), "HostedCluster is deleting.")
+            secret_name = hc.get("status", {}).get("kubeconfig", {}).get("name")
+            require(secret_name, "HostedCluster has not published status.kubeconfig.name yet.")
+            secret = self.get("secret", secret_name, namespace=self.p["namespace"])
+            try:
+                raw = base64.b64decode(secret["data"]["kubeconfig"], validate=True)
+                config = yaml.safe_load(raw)
+            except (KeyError, ValueError, yaml.YAMLError):
+                raise Error("The published Secret does not contain a valid kubeconfig.") from None
+            check_guest_credentials(config)
+            context = config.get("current-context")
+            require(context, "Guest kubeconfig has no current-context.")
+            require(not self.binding.get("guest_context") or self.binding["guest_context"] == context,
+                    "Guest context changed; inspect credentials before rebinding.")
+            self.binding["guest_context"] = context
+            private_write(self.directory / "guest.kubeconfig", raw)
+            with self.lock("identity.lock", blocking=True):
+                result = self.verify_guest(pin=True)
+                self.save()
+            return result
 
     def verify_guest(self, pin=False):
         management_uid = self.management()
@@ -659,8 +914,8 @@ def main():
     for command in ("create", "destroy"):
         sp = subs.add_parser(command)
         sp.add_argument("--execute", action="store_true", help="Perform the already-authorized operation")
+        sp.add_argument("--resume", action="store_true", help="Resume only a recorded operation after explicit review")
         if command == "destroy":
-            sp.add_argument("--resume", action="store_true", help="Resume only a recorded destroy attempt")
             sp.add_argument("--cluster-grace-period", type=int, help="Native CLI wait in seconds, checked against installed help")
     inventory = subs.add_parser("inventory", help="Record read-only ownership, storage and preservation inventory")
     inventory.add_argument("--skip-guest", action="store_true", help="Capture partial inventory when guest API is unavailable")
@@ -703,6 +958,10 @@ def main():
             keys = set(secret.get("data", {}))
             require({"sts-creds", "pull-secret", "base-domain"} <= keys,
                     f"Credential Secret {p['namespace']}/{p['secret_creds']} must contain sts-creds, pull-secret, and base-domain.")
+        for verb in ("get", "create", "update"):
+            require(s.oc("auth", "can-i", verb, "configmaps", "--namespace", p["namespace"]).strip() == "yes",
+                    "Missing shared lifecycle-state ConfigMap permissions.")
+        s.validate_cloud_identity("create")
         s.check_help("create")
         for verb, resource in (("create", HC), ("get", HC), ("create", NP), ("get", "secrets")):
             require(s.oc("auth", "can-i", verb, resource, "--namespace", p["namespace"]).strip() == "yes",

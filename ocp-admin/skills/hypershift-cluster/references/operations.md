@@ -74,12 +74,26 @@ context through `KUBECONFIG` because lifecycle CLIs do not consistently support
 Provider CLIs may still inherit cloud environment credentials/profile variables when
 the provider requires them. Verify the chosen cloud account/project identity before
 launch, and prefer management-cluster Secrets so workstation cloud credentials are
-not required.
+not required. External-provider profiles pin that identity in `cloud_identity`; the
+helper checks the effective AWS, Azure, GCP, OpenStack or IBM Cloud identity before
+mutation. Unsupported credential-selection flags are rejected rather than silently
+using a second account or project. AWS profiles also require matching `--region`
+provider arguments, and the `make_profile.py` builder requires
+`--cloud-account-id` and `--cloud-region`.
 For another guest on the same management cluster, use a separate profile and state
 directory. Choose a new name and infra ID, verify its network CIDRs against existing
 networks, and check cloud credential expiry for the expected operation duration.
 Reusing shared HyperShift/OIDC/DNS setup does not make the previous guest's identity
 receipt or per-guest infrastructure reusable.
+
+Durable, non-secret lifecycle identity, create attempts, teardown inventory and
+destroy receipts are stored in the management namespace as
+`hypershift-lifecycle-<name>` (a ConfigMap keyed to the management UID, namespace
+and guest name). Cross-host mutations use its Kubernetes `resourceVersion` as a
+shared lock. The operator needs `get`, `create` and `update` permission for that
+ConfigMap. A second authorized host may resume from a new private state directory
+after independently passing the same management and cloud identity checks; local
+files remain private diagnostics.
 
 The helper stores sensitive CLI output in local mode-0600 files, with a mode-0700
 state directory. Do not paste these logs into chat or commit them. `guest.kubeconfig`
@@ -190,11 +204,11 @@ back the management cluster to fix an application.
 - **CLI failure or timeout:** a private error log may contain credentials. Inspect
   locally, redact before reporting. Check the exact HC, NodePools, control-plane
   namespace, and provider resources by recorded infra ID. A create attempt is
-  recorded before invocation. `create_attempted` and `create-attempt.json` prevent
-  automatic retries even
-  if the HC never appeared: cloud/IAM setup may already exist. Only after inventory
-  proves absence or a deliberate reuse/cleanup plan, archive the receipt and use a
-  fresh state directory for a user-authorized retry. Do not assume no HC means no spend.
+  recorded before invocation in the shared ConfigMap. It prevents automatic retries
+  even if the HC never appeared: cloud/IAM setup may already exist. Only after
+  inventory proves absence or a deliberate reuse/cleanup plan, run
+  `create --resume --execute` from an authorized host. Do not assume no HC means
+  no spend.
 - **Pending control plane:** inspect HC condition reasons/messages privately,
   operator availability, target control-plane namespace pods/events/PVCs, DNS and
   endpoint publishing. Do not repair shared operator/configuration implicitly.

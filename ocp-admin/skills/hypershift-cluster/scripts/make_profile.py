@@ -105,6 +105,8 @@ def main():
     p.add_argument("--replicas", type=int, default=2)
     p.add_argument("--context", help="Management context (default: current-context of the kubeconfig)")
     p.add_argument("--kube-system-uid", help="Override; default is read from the cluster")
+    p.add_argument("--cloud-account-id", help="Pinned cloud account/subscription ID (required for AWS)")
+    p.add_argument("--cloud-region", help="Pinned cloud region (required for AWS)")
     p.add_argument("--create-arg", action="append", default=[],
                    help="Repeatable provider create arg, e.g. --create-arg=--region=us-west-1")
     p.add_argument("--destroy-arg", action="append", default=[])
@@ -145,22 +147,39 @@ def main():
         if args.provider != "aws":
             fail("--secret-creds is currently supported only for the AWS provider.")
         profile["secret_creds"] = args.secret_creds
+    if args.cloud_account_id or args.cloud_region:
+        if args.provider != "aws":
+            fail("--cloud-account-id/--cloud-region currently support the AWS provider.")
+        if not (args.cloud_account_id and args.cloud_region):
+            fail("Set both --cloud-account-id and --cloud-region for AWS.")
+        profile["cloud_identity"] = {"kind": "aws", "account_id": args.cloud_account_id,
+                                     "region": args.cloud_region}
+    elif args.provider == "aws":
+        fail("AWS requires --cloud-account-id and --cloud-region.")
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     # Write privately: atomic replace, refuse to follow a pre-existing symlink, and
     # mode 0600 (mkstemp default) — the profile carries management identity paths.
     # Reuses the skill's own private_write helper for a consistent security posture.
+    fd, temporary_path = tempfile.mkstemp(prefix=f".{out_path.name}.", dir=out_path.parent)
+    os.close(fd)
+    generated = json.dumps(profile, indent=2) + "\n"
     try:
-        hcp.private_write(out_path, json.dumps(profile, indent=2) + "\n")
+        hcp.private_write(temporary_path, generated)
     except hcp.Error as exc:
         fail(str(exc))
-    # Validate what we just wrote; load_profile raises hcp.Error on any problem.
+    # Validate before replacement so an invalid profile cannot destroy an existing one.
     try:
-        hcp.load_profile(str(out_path))
+        hcp.load_profile(temporary_path)
     except hcp.Error as exc:
-        out_path.unlink(missing_ok=True)
         fail(f"generated profile failed validation: {exc}")
+    finally:
+        Path(temporary_path).unlink(missing_ok=True)
+    try:
+        hcp.private_write(out_path, generated)
+    except hcp.Error as exc:
+        fail(str(exc))
     print(f"wrote validated profile: {out_path}  "
           f"(provider={args.provider}, context={context})")
 
