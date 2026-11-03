@@ -46,5 +46,6 @@ spec:
     - airesource:ai5-marketplace/container-cve-validator
     - airesource:ai5-marketplace/coreos-cve-validator
     - airesource:ai5-marketplace/cve-recon
+    - airesource:ai5-marketplace/hypershift-cluster
     - airesource:ai5-marketplace/image-inspect
     - airesource:ai5-marketplace/network-policy-architect

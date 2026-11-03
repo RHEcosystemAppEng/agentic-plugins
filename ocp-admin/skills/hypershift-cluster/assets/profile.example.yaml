@@ -1,0 +1,22 @@
+# Copy this file to a private 0700 run directory and replace every example value.
+# ${VARS} are expanded by hcp.py; credentials remain file references.
+schema_version: 1
+name: dev-example
+namespace: clusters
+provider: kubevirt
+cli: hypershift
+
+management:
+  kubeconfig: ${HYPERSHIFT_CONFIG}
+  context: management-context
+  kube_system_uid: REPLACE_WITH_MANAGEMENT_KUBE_SYSTEM_NAMESPACE_UID
+
+release_image: quay.io/openshift-release-dev/ocp-release@sha256:REPLACE_WITH_64_HEX_DIGEST
+pull_secret: ${OPENSHIFT_PULL_SECRET}
+replicas: 2
+
+# Provider flags are literal argv values, never shell commands.
+create_args:
+  - --cores=2
+  - --memory=6Gi
+destroy_args: []
