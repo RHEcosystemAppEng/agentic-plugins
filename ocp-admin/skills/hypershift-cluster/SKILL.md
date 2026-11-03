@@ -117,7 +117,10 @@ Collect:
   HyperShift image/version, served CRD versions, compatible guest releases, and
   capacity/storage/network/policy constraints. Do not use ambient current-context.
 - Provider; guest name and existing lifecycle namespace; pinned release image digest
-  and worker architecture; pull-secret and optional SSH public-key **file paths**.
+  and worker architecture. Prefer provider credential Secrets already defined in the
+  management cluster; use local pull-secret/AWS credential file paths only when the
+  native provider CLI has no compatible in-cluster credential path. SSH public keys
+  remain optional file paths.
 - Worker count/size, reachable API and ingress/DNS design, network CIDRs that fit
   provider routing, region/zones, and provider-specific prerequisites/credentials.
   Small does not mean zero resources: two workers are the starter example, not a
@@ -137,7 +140,9 @@ Copy either [profile.example.json](assets/profile.example.json) or the equivalen
 using provider help and [providers.md](references/providers.md). YAML is convenient
 for hand editing; JSON remains useful for automation. Use absolute file paths or
 `${ENVIRONMENT_VARIABLE}` references and `--long-flag=value` tokens; do not put
-literal credentials into the profile.
+literal credentials into the profile. For AWS, `secret_creds` names a Secret in the
+management namespace containing the native `sts-creds`, `pull-secret`, and
+`base-domain` keys; prefer it over a workstation AWS credential file.
 The helper explicitly selects `SingleReplica` for both control plane and guest infra,
 appropriate for a disposable development environment, without HA guarantees. If HA
 is required, adapt that helper policy deliberately before creating anything.

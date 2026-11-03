@@ -99,7 +99,9 @@ def main():
     p.add_argument("--cli", default="hypershift", choices=("hypershift", "hcp"))
     p.add_argument("--release-image", required=True,
                    help="Release image pinned by @sha256:<digest>")
-    p.add_argument("--pull-secret", required=True, help="Absolute path to pull secret")
+    credentials = p.add_mutually_exclusive_group(required=True)
+    credentials.add_argument("--pull-secret", help="Absolute path to a local pull secret")
+    credentials.add_argument("--secret-creds", help="Existing AWS Secret name in the management namespace; contains sts-creds, pull-secret, and base-domain")
     p.add_argument("--replicas", type=int, default=2)
     p.add_argument("--context", help="Management context (default: current-context of the kubeconfig)")
     p.add_argument("--kube-system-uid", help="Override; default is read from the cluster")
@@ -132,12 +134,17 @@ def main():
             "kube_system_uid": uid,
         },
         "release_image": args.release_image,
-        "pull_secret": str(Path(args.pull_secret).expanduser().resolve())
-        if not os.path.isabs(args.pull_secret) else args.pull_secret,
         "replicas": args.replicas,
         "create_args": args.create_arg,
         "destroy_args": args.destroy_arg,
     }
+    if args.pull_secret:
+        profile["pull_secret"] = str(Path(args.pull_secret).expanduser().resolve()) \
+            if not os.path.isabs(args.pull_secret) else args.pull_secret
+    else:
+        if args.provider != "aws":
+            fail("--secret-creds is currently supported only for the AWS provider.")
+        profile["secret_creds"] = args.secret_creds
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)

@@ -55,8 +55,15 @@ It is a command preview, not a server dry-run or a price estimate. Creation with
 `["--cores=2", "--memory=6Gi"]` apply only to KubeVirt. Replace them for other
 providers using their installed help. Provider arguments cannot override common
 target, release, count, render, or force flags. They are passed as argv, never a shell.
-Use credentials through files/environment supported by the provider CLI, never
-literal tokens in argv/profile fields. Plans display provider arguments.
+Prefer credentials already defined in the management cluster. For AWS, set
+`secret_creds` to the name of a Secret in the lifecycle namespace containing the
+native `sts-creds`, `pull-secret`, and `base-domain` keys; the helper passes it to
+the native AWS create and destroy commands with `--secret-creds=...` and never
+reads the values.
+Use local provider credential files only when no compatible in-cluster Secret or
+pre-provisioned infrastructure/IAM configuration exists. Never put literal tokens
+in argv/profile fields. Plans display provider arguments but redact no values supplied
+by the user, so keep credential-bearing paths and names non-sensitive.
 
 Creation requires an existing lifecycle namespace and installed CRDs. It does not
 install the operator or alter shared management settings. The CLI creates normal
@@ -64,8 +71,10 @@ per-guest resources and, depending on provider/options, cloud infrastructure and
 IAM. The helper supplies a private flattened management config for the chosen
 context through `KUBECONFIG` because lifecycle CLIs do not consistently support
 `--context` or `--kubeconfig`. Ambient Kubernetes configuration is not used.
-Provider CLIs still inherit cloud environment credentials/profile variables; verify
-the chosen cloud account/project identity before launch.
+Provider CLIs may still inherit cloud environment credentials/profile variables when
+the provider requires them. Verify the chosen cloud account/project identity before
+launch, and prefer management-cluster Secrets so workstation cloud credentials are
+not required.
 For another guest on the same management cluster, use a separate profile and state
 directory. Choose a new name and infra ID, verify its network CIDRs against existing
 networks, and check cloud credential expiry for the expected operation duration.

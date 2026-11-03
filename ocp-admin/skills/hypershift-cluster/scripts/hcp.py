@@ -28,7 +28,7 @@ import cleanup
 HC = "hostedclusters.hypershift.openshift.io"
 NP = "nodepools.hypershift.openshift.io"
 PROVIDERS = {"agent", "aws", "azure", "gcp", "kubevirt", "none", "openstack", "powervs"}
-RESERVED = {"name", "namespace", "kubeconfig", "context", "pull-secret", "release-image",
+RESERVED = {"name", "namespace", "kubeconfig", "context", "pull-secret", "secret-creds", "release-image",
             "release-stream", "node-pool-replicas", "control-plane-availability-policy",
             "infra-availability-policy", "wait", "timeout", "render", "render-into",
             "render-sensitive", "help", "force", "infra-id", "cluster-grace-period"}
@@ -153,7 +153,7 @@ def load_profile(path):
     p = expand_profile_values(document)
     require(isinstance(p, dict), "Profile must be an object.")
     allowed = {"schema_version", "name", "namespace", "provider", "cli", "management",
-               "release_image", "pull_secret", "replicas", "create_args", "destroy_args", "infra_id",
+               "release_image", "pull_secret", "secret_creds", "replicas", "create_args", "destroy_args", "infra_id",
                "node_pools", "aws_cleanup"}
     require(not p.keys() - allowed, "Unknown profile fields; check spelling before proceeding.")
     require(p.get("schema_version") == 1, "Unsupported profile schema_version.")
@@ -168,8 +168,18 @@ def load_profile(path):
     require(all(isinstance(m.get(k), str) and m[k] for k in ("kubeconfig", "context", "kube_system_uid")),
             "Set management kubeconfig, context, and kube_system_uid.")
     require(Path(m["kubeconfig"]).is_absolute(), "Use an absolute management kubeconfig path.")
-    require(isinstance(p.get("pull_secret"), str) and Path(p["pull_secret"]).is_absolute(),
-            "Use an absolute pull_secret file path.")
+    pull_secret = p.get("pull_secret")
+    secret_creds = p.get("secret_creds")
+    require((pull_secret is None) != (secret_creds is None),
+            "Set exactly one of pull_secret or secret_creds.")
+    if pull_secret is not None:
+        require(isinstance(pull_secret, str) and Path(pull_secret).is_absolute(),
+                "Use an absolute pull_secret file path.")
+    else:
+        require(p["provider"] == "aws", "secret_creds is currently supported only for the AWS provider.")
+        require(isinstance(secret_creds, str) and
+                re.fullmatch(r"[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?", secret_creds),
+                "Use a valid Kubernetes Secret name for secret_creds.")
     require(isinstance(p.get("release_image"), str) and
             re.fullmatch(r"[^\s]+@sha256:[a-f0-9]{64}", p["release_image"]),
             "Pin a compatible release_image by sha256 digest.")
@@ -255,8 +265,12 @@ def lifecycle_command(p, action):
             f"--namespace={p['namespace']}", f"--name={p['name']}"]
     if p.get("infra_id"):
         argv.append(f"--infra-id={p['infra_id']}")
+    if p.get("secret_creds"):
+        argv.append(f"--secret-creds={p['secret_creds']}")
     if action == "create":
-        argv += [f"--release-image={p['release_image']}", f"--pull-secret={p['pull_secret']}",
+        if p.get("pull_secret"):
+            argv.append(f"--pull-secret={p['pull_secret']}")
+        argv += [f"--release-image={p['release_image']}",
                  f"--node-pool-replicas={p['replicas']}", "--control-plane-availability-policy=SingleReplica",
                  "--infra-availability-policy=SingleReplica"]
     return argv + p.get(f"{action}_args", [])
@@ -682,11 +696,19 @@ def main():
         s.get("customresourcedefinition", HC)
         s.get("customresourcedefinition", NP)
         s.get("namespace", p["namespace"])
+        if p.get("secret_creds"):
+            secret = s.get("secret", p["secret_creds"], namespace=p["namespace"], optional=True)
+            require(secret is not None,
+                    f"Credential Secret {p['namespace']}/{p['secret_creds']} was not found.")
+            keys = set(secret.get("data", {}))
+            require({"sts-creds", "pull-secret", "base-domain"} <= keys,
+                    f"Credential Secret {p['namespace']}/{p['secret_creds']} must contain sts-creds, pull-secret, and base-domain.")
         s.check_help("create")
         for verb, resource in (("create", HC), ("get", HC), ("create", NP), ("get", "secrets")):
             require(s.oc("auth", "can-i", verb, resource, "--namespace", p["namespace"]).strip() == "yes",
                     "Missing management permissions; ask the administrator for scoped access.")
-        require(Path(p["pull_secret"]).is_file(), "Pull-secret file is missing.")
+        if p.get("pull_secret"):
+            require(Path(p["pull_secret"]).is_file(), "Pull-secret file is missing.")
         result = {"preflight": "passed", "provider_checks": "Agent must complete references/providers.md before create."}
     elif args.command in ("create", "destroy"):
         result = s.lifecycle(args.command, getattr(args, "resume", False), getattr(args, "cluster_grace_period", None))
