@@ -22,7 +22,6 @@ description: |
 license: Apache-2.0
 model: inherit
 color: green
-allowed-tools: Bash Read Write Edit Glob Grep
 metadata:
   environment_vars:
     - KUBECONFIG
