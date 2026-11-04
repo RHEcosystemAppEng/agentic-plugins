@@ -101,7 +101,6 @@ def parse_coreos_version(machine_os, ocp_version):
     new_match = re.match(r"(\d+)\.(\d+)\.([\d]+)-?", machine_os)
 
     if legacy_match and ocp_minor < 19:
-        ocp_code = legacy_match.group(1)
         rhel_code = legacy_match.group(2)
         build_id = legacy_match.group(3)
 
