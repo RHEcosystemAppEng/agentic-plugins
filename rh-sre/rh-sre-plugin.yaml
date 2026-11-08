@@ -13,6 +13,8 @@ metadata:
     - sre
     - monitoring
     - vulnerability-management
+  labels:
+    distribution: external
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -37,6 +39,52 @@ spec:
     - monitoring
     - vulnerability-management
   agents: []
+  license: Apache-2.0
+  attribution:
+    provider: Red Hat
+  skills:
+    - airesource:ai5-marketplace/cve-impact
+    - airesource:ai5-marketplace/cve-validation
+    - airesource:ai5-marketplace/execution-summary
+    - airesource:ai5-marketplace/fleet-inventory
+    - airesource:ai5-marketplace/job-template-creator
+    - airesource:ai5-marketplace/job-template-remediation-validator
+    - airesource:ai5-marketplace/mcp-aap-validator
+    - airesource:ai5-marketplace/mcp-lightspeed-validator
+    - airesource:ai5-marketplace/playbook-executor
+    - airesource:ai5-marketplace/playbook-generator
+    - airesource:ai5-marketplace/remediation-verifier
+    - airesource:ai5-marketplace/remediation
+    - airesource:ai5-marketplace/system-context
+  includes:
+    - entityRef: airesource:ai5-marketplace/cve-impact
+      type: skill
+    - entityRef: airesource:ai5-marketplace/cve-validation
+      type: skill
+    - entityRef: airesource:ai5-marketplace/execution-summary
+      type: skill
+    - entityRef: airesource:ai5-marketplace/fleet-inventory
+      type: skill
+    - entityRef: airesource:ai5-marketplace/job-template-creator
+      type: skill
+    - entityRef: airesource:ai5-marketplace/job-template-remediation-validator
+      type: skill
+    - entityRef: airesource:ai5-marketplace/mcp-aap-validator
+      type: skill
+    - entityRef: airesource:ai5-marketplace/mcp-lightspeed-validator
+      type: skill
+    - entityRef: airesource:ai5-marketplace/playbook-executor
+      type: skill
+    - entityRef: airesource:ai5-marketplace/playbook-generator
+      type: skill
+    - entityRef: airesource:ai5-marketplace/remediation-verifier
+      type: skill
+    - entityRef: airesource:ai5-marketplace/remediation
+      type: skill
+    - entityRef: airesource:ai5-marketplace/system-context
+      type: skill
+    - entityRef: mcpserver:ai5-marketplace/ansible-automation-platform
+      type: mcp-server
   dependsOn:
     - mcpserver:redhat/red-hat-lightspeed-mcp-server
     - mcpserver:ai5-marketplace/ansible-automation-platform

@@ -1,6 +1,8 @@
 # Template: <plugin>/<plugin>-plugin.yaml
-# Replace <plugin>, title, description, tags, disciplines, categories, dependencyOf, dependsOn (MCP union).
+# Replace <plugin>, title, description, tags, disciplines, categories, skills, includes, dependencyOf, dependsOn (MCP union).
 # New plugins: spec.lifecycle defaults to development (confirm with user before raising maturity).
+# Membership: spec.includes (skills + owned MCP) AND legacy spec.skills (skill refs only).
+# Canonical mcpserver:redhat/* stays on dependsOn only — never in includes.
 apiVersion: backstage.io/v1alpha1
 kind: AiResource
 metadata:
@@ -12,6 +14,8 @@ metadata:
   tags:
     - ai-skill
     - <plugin-tag>
+  labels:
+    distribution: external
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -34,10 +38,22 @@ spec:
   categories:
     - <category>
   agents: []
+  license: Apache-2.0
+  attribution:
+    provider: Red Hat
+  skills:
+    - airesource:ai5-marketplace/<skill-name>
+    # Every skill in the plugin — same set as includes type:skill and dependencyOf
+  includes:
+    - entityRef: airesource:ai5-marketplace/<skill-name>
+      type: skill
+    # - entityRef: mcpserver:ai5-marketplace/<owned-mcp>
+    #   type: mcp-server
+    # Owned MCP only. Do not add mcpserver:redhat/* here. No gitRef.
   dependsOn:
     # Union of mcpserver refs used by any skill in this plugin (omit if none)
     # - mcpserver:ai5-marketplace/<owned-mcp>
     # - mcpserver:redhat/<canonical-mcp>
   dependencyOf:
     - airesource:ai5-marketplace/<skill-name>
-    # Every skill in the plugin — bidirectional with skill dependsOn plugin
+    # Every skill in the plugin — keep until Phase C; bidirectional with skill dependsOn plugin

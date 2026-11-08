@@ -46,9 +46,11 @@ For each `mcpserver:` added to the skill’s `dependsOn`:
 
 - Add `airesource:ai5-marketplace/<skill-name>` to that MCP manifest’s `spec.dependencyOf` (owned MCPs only — canonical MCPs are maintained by their owners).
 
-## Step 5 — Plugin MCP union
+## Step 5 — Plugin MCP union and membership
 
 The plugin’s `dependsOn` MCP list = **union** of all `mcpserver:` refs across skill manifests in that plugin — not the full set of keys in `mcps.json`.
+
+Owned MCP refs (`mcpserver:ai5-marketplace/*`) also go on plugin `spec.includes` with `type: mcp-server`. Canonical `mcpserver:redhat/*` stays on `dependsOn` only — never in `includes`.
 
 ## Sanity checks
 

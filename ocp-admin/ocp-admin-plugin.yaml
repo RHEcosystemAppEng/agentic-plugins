@@ -13,6 +13,8 @@ metadata:
     - openshift
     - cluster-management
     - administration
+  labels:
+    distribution: external
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -36,6 +38,39 @@ spec:
     - cluster-management
     - administration
   agents: []
+  license: Apache-2.0
+  attribution:
+    provider: Red Hat
+  skills:
+    - airesource:ai5-marketplace/cluster-creator
+    - airesource:ai5-marketplace/cluster-inventory
+    - airesource:ai5-marketplace/cluster-report
+    - airesource:ai5-marketplace/container-cve-validator
+    - airesource:ai5-marketplace/coreos-cve-validator
+    - airesource:ai5-marketplace/cve-recon
+    - airesource:ai5-marketplace/image-inspect
+    - airesource:ai5-marketplace/network-policy-architect
+  includes:
+    - entityRef: airesource:ai5-marketplace/cluster-creator
+      type: skill
+    - entityRef: airesource:ai5-marketplace/cluster-inventory
+      type: skill
+    - entityRef: airesource:ai5-marketplace/cluster-report
+      type: skill
+    - entityRef: airesource:ai5-marketplace/container-cve-validator
+      type: skill
+    - entityRef: airesource:ai5-marketplace/coreos-cve-validator
+      type: skill
+    - entityRef: airesource:ai5-marketplace/cve-recon
+      type: skill
+    - entityRef: airesource:ai5-marketplace/image-inspect
+      type: skill
+    - entityRef: airesource:ai5-marketplace/network-policy-architect
+      type: skill
+    - entityRef: mcpserver:ai5-marketplace/assisted-installer
+      type: mcp-server
+    - entityRef: mcpserver:ai5-marketplace/openshift-mcp-server
+      type: mcp-server
   dependsOn:
     - mcpserver:ai5-marketplace/assisted-installer
     - mcpserver:ai5-marketplace/openshift-mcp-server

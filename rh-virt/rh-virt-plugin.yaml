@@ -12,6 +12,8 @@ metadata:
     - virtualization
     - kubevirt
     - openshift
+  labels:
+    distribution: external
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -35,6 +37,43 @@ spec:
     - virtualization
     - vm-lifecycle
   agents: []
+  license: Apache-2.0
+  attribution:
+    provider: Red Hat
+  skills:
+    - airesource:ai5-marketplace/vm-clone
+    - airesource:ai5-marketplace/vm-create
+    - airesource:ai5-marketplace/vm-delete
+    - airesource:ai5-marketplace/vm-inventory
+    - airesource:ai5-marketplace/vm-lifecycle-manager
+    - airesource:ai5-marketplace/vm-rebalance
+    - airesource:ai5-marketplace/vm-snapshot-create
+    - airesource:ai5-marketplace/vm-snapshot-delete
+    - airesource:ai5-marketplace/vm-snapshot-list
+    - airesource:ai5-marketplace/vm-snapshot-restore
+  includes:
+    - entityRef: airesource:ai5-marketplace/vm-clone
+      type: skill
+    - entityRef: airesource:ai5-marketplace/vm-create
+      type: skill
+    - entityRef: airesource:ai5-marketplace/vm-delete
+      type: skill
+    - entityRef: airesource:ai5-marketplace/vm-inventory
+      type: skill
+    - entityRef: airesource:ai5-marketplace/vm-lifecycle-manager
+      type: skill
+    - entityRef: airesource:ai5-marketplace/vm-rebalance
+      type: skill
+    - entityRef: airesource:ai5-marketplace/vm-snapshot-create
+      type: skill
+    - entityRef: airesource:ai5-marketplace/vm-snapshot-delete
+      type: skill
+    - entityRef: airesource:ai5-marketplace/vm-snapshot-list
+      type: skill
+    - entityRef: airesource:ai5-marketplace/vm-snapshot-restore
+      type: skill
+    - entityRef: mcpserver:ai5-marketplace/openshift-mcp-server
+      type: mcp-server
   dependsOn:
     - mcpserver:ai5-marketplace/openshift-mcp-server
   dependencyOf:

@@ -242,5 +242,87 @@ class TestSkillDocLinks(unittest.TestCase):
             )
 
 
+class TestPluginDualWriteIncludes(unittest.TestCase):
+    _PLUGIN_REF = "airesource:ai5-marketplace/rh-basic"
+    _PLUGIN_PATH = _REPO_ROOT / "rh-basic" / "rh-basic-plugin.yaml"
+    _PLUGIN_DATA = {"metadata": {"labels": {"distribution": "external"}}}
+    _DISK = frozenset({"skill-a"})
+    _DEPOF = frozenset({"skill-a"})
+
+    def _errors(self, plugin_spec: dict) -> list[str]:
+        errors: list[str] = []
+        compass._validate_plugin_dual_write(
+            self._PLUGIN_PATH,
+            self._PLUGIN_REF,
+            self._PLUGIN_DATA,
+            plugin_spec,
+            set(self._DISK),
+            set(self._DEPOF),
+            {},
+            errors,
+        )
+        return errors
+
+    def _base_spec(self, **overrides: object) -> dict:
+        spec = {
+            "skills": ["airesource:ai5-marketplace/skill-a"],
+            "includes": [
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+            ],
+            "dependsOn": [],
+            "dependencyOf": ["airesource:ai5-marketplace/skill-a"],
+        }
+        spec.update(overrides)
+        return spec
+
+    def test_empty_includes_rejected(self) -> None:
+        errors = self._errors(self._base_spec(includes=[]))
+        self.assertTrue(any("includes must not be empty" in e for e in errors))
+
+    def test_empty_skills_rejected(self) -> None:
+        errors = self._errors(self._base_spec(skills=[]))
+        self.assertTrue(any("spec.skills must not be empty" in e for e in errors))
+
+    def test_duplicate_entity_ref_rejected(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+            ],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(any("duplicate includes entityRef" in e for e in errors))
+
+    def test_self_include_rejected(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {"entityRef": self._PLUGIN_REF, "type": "skill"},
+            ],
+            skills=[],
+            dependencyOf=[],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(any("must not self-reference the plugin" in e for e in errors))
+
+    def test_plugin_typed_member_rejected(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {
+                    "entityRef": "airesource:ai5-marketplace/other-plugin",
+                    "type": "plugin",
+                },
+            ],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(any("must not include a plugin member" in e for e in errors))
+
+    def test_string_includes_entry_rejected(self) -> None:
+        spec = self._base_spec(
+            includes=["airesource:ai5-marketplace/skill-a"],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(any("must be a mapping, not a string" in e for e in errors))
+
+
 if __name__ == "__main__":
     unittest.main()

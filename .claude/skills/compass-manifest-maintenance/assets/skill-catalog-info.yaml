@@ -1,6 +1,7 @@
 # Template: skills/<skill-name>/catalog-info.yaml
 # Replace <plugin>, <skill-name>, title, description, tags, disciplines, categories, dependsOn.
 # lifecycle: copy from <plugin>/<plugin>-plugin.yaml spec.lifecycle (default); may downgrade only — see relationship-rules.md
+# Do not add spec.includes, spec.skills, or spec.system on skills. Keep agents: [].
 apiVersion: backstage.io/v1alpha1
 kind: AiResource
 metadata:
