@@ -244,7 +244,7 @@ mkdir -p <plugin>/skills/<skill-name>/references/
    - `references/external-resources.md` - Any external references/links/KB articles mentioned by user
 3. **Update <plugin>/AGENTS.md**: Add intent routing entry
 4. **Create <plugin>/mcps.json**: If new MCP server needed (use `${ENV_VAR}` format)
-5. **Compass manifests**: Run **compass-manifest-maintenance** (`.claude/skills/compass-manifest-maintenance/`) for registered plugins — skill `catalog-info.yaml`, Location targets, bidirectional `dependsOn`/`dependencyOf` on plugin and MCP manifests
+5. **Compass manifests**: Run **compass-manifest-maintenance** (`.claude/skills/compass-manifest-maintenance/`) for registered plugins — skill `catalog-info.yaml`, Location targets, plugin `includes` + `spec.skills` + `dependencyOf`, and MCP inverse `dependencyOf`. Do not hand-edit only `dependencyOf`.
 6. **Update marketplace/rh-agentic-collection.yml** in [agentic-catalog](https://github.com/RHEcosystemAppEng/agentic-catalog): If new plugin (register plugin for Lola installation)
 7. **Create plugin structure**: If new plugin (README.md, AGENTS.md, skills/ directory)
 

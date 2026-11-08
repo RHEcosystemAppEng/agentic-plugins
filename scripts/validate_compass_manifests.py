@@ -4,6 +4,7 @@ Validate Compass catalog-info.yaml manifests and skill references layout.
 
 Structural checks (no SKILL.md semantic inference):
   - Roster parity: skills on disk vs plugin Location targets vs manifest files
+  - Plugin spec.includes / legacy spec.skills dual-write vs disk roster
   - Plugin inverse roster and skill dependsOn plugin
   - Bidirectional dependsOn/dependencyOf for skill→skill and skill→owned-MCP
   - Plugin→owned-MCP inverse; plugin MCP dependsOn union vs skills
@@ -34,6 +35,7 @@ _FORBIDDEN_RELATION_RE = re.compile(r"^\s+(partOf|hasPart)\s*:", re.MULTILINE)
 _CANONICAL_MCP_PREFIXES = ("mcpserver:redhat/", "mcpserver:default/")
 _EXPECTED_OWNER = "group:redhat/ai5-marketplace"
 _EXPECTED_NAMESPACE = "ai5-marketplace"
+_ALLOWED_INCLUDE_TYPES = frozenset({"skill", "mcp-server"})
 _MD_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 _SKILL_DOCS_STANDARD = "https://agent-plugins.org/specification"
 _SHARED_SCRIPT_SYMLINK_RE = re.compile(
@@ -283,6 +285,133 @@ def _check_skill_conventions(path: Path, data: dict, errors: list[str]) -> None:
         errors.append(f"{rel}: spec.type must be skill")
 
 
+def _validate_plugin_dual_write(
+    plugin_path: Path,
+    plugin_ref: str,
+    plugin_data: dict,
+    plugin_spec: dict,
+    disk: set[str],
+    plugin_depof_skills: set[str],
+    owned_mcps: dict[str, Path],
+    errors: list[str],
+) -> None:
+    rel = plugin_path.relative_to(_REPO_ROOT)
+    labels = (plugin_data.get("metadata") or {}).get("labels") or {}
+    if labels.get("distribution") != "external":
+        errors.append(f"{rel}: metadata.labels.distribution must be external")
+
+    if not disk:
+        return
+
+    skills_raw = plugin_spec.get("skills")
+    if skills_raw is None:
+        errors.append(f"{rel}: missing spec.skills (legacy dual-write required)")
+        skill_refs: list[str] = []
+    elif not isinstance(skills_raw, list):
+        errors.append(f"{rel}: spec.skills must be a list")
+        skill_refs = []
+    elif not skills_raw:
+        errors.append(f"{rel}: spec.skills must not be empty")
+        skill_refs = []
+    else:
+        skill_refs = [str(item) for item in skills_raw]
+        for ref in skill_refs:
+            if not ref.startswith("airesource:ai5-marketplace/"):
+                errors.append(f"{rel}: spec.skills entries must be airesource refs, got {ref!r}")
+
+    skill_names_legacy = {
+        ref.split("/", 1)[1]
+        for ref in skill_refs
+        if ref.startswith("airesource:ai5-marketplace/")
+    }
+    if skill_names_legacy and skill_names_legacy != disk:
+        missing = disk - skill_names_legacy
+        extra = skill_names_legacy - disk
+        if missing:
+            errors.append(f"{rel}: spec.skills missing {sorted(missing)}")
+        if extra:
+            errors.append(f"{rel}: spec.skills lists unknown skills {sorted(extra)}")
+    if skill_names_legacy and skill_names_legacy != plugin_depof_skills:
+        errors.append(f"{rel}: spec.skills must match dependencyOf skill roster")
+
+    includes_raw = plugin_spec.get("includes")
+    if includes_raw is None:
+        errors.append(f"{rel}: missing spec.includes")
+        return
+    if not isinstance(includes_raw, list):
+        errors.append(f"{rel}: spec.includes must be a list")
+        return
+    if not includes_raw:
+        errors.append(f"{rel}: spec.includes must not be empty")
+
+    seen: set[str] = set()
+    include_skills: set[str] = set()
+    include_mcps: set[str] = set()
+
+    for index, entry in enumerate(includes_raw):
+        loc = f"{rel}: spec.includes[{index}]"
+        if isinstance(entry, str):
+            errors.append(f"{loc} must be a mapping, not a string")
+            continue
+        if not isinstance(entry, dict):
+            errors.append(f"{loc} must be a mapping")
+            continue
+        if entry.get("gitRef") is not None:
+            errors.append(f"{loc} must not set gitRef")
+        member_type = entry.get("type")
+        if member_type is not None and member_type not in _ALLOWED_INCLUDE_TYPES:
+            errors.append(f"{loc} type must be skill or mcp-server, got {member_type!r}")
+        if member_type == "plugin":
+            errors.append(f"{loc} must not include a plugin member")
+
+        entity_ref = entry.get("entityRef")
+        if not isinstance(entity_ref, str) or not entity_ref.strip():
+            errors.append(f"{loc} missing string entityRef")
+            continue
+        if entity_ref in seen:
+            errors.append(f"{rel}: duplicate includes entityRef {entity_ref}")
+        seen.add(entity_ref)
+        if entity_ref == plugin_ref:
+            errors.append(f"{rel}: includes must not self-reference the plugin")
+
+        if entity_ref.startswith("airesource:ai5-marketplace/"):
+            name = entity_ref.split("/", 1)[1]
+            include_skills.add(name)
+        elif entity_ref.startswith("mcpserver:"):
+            if entity_ref.startswith("mcpserver:redhat/"):
+                errors.append(f"{loc} canonical MCP {entity_ref} must not be in includes")
+            include_mcps.add(entity_ref)
+        else:
+            errors.append(f"{loc} unknown entityRef {entity_ref!r}")
+
+    if include_skills != disk:
+        missing = disk - include_skills
+        extra = include_skills - disk
+        if missing:
+            errors.append(f"{rel}: spec.includes missing skills {sorted(missing)}")
+        if extra:
+            errors.append(f"{rel}: spec.includes lists unknown skills {sorted(extra)}")
+    if include_skills != plugin_depof_skills:
+        errors.append(f"{rel}: spec.includes skill entityRefs must match dependencyOf")
+
+    if skill_names_legacy and include_skills and skill_names_legacy != include_skills:
+        errors.append(f"{rel}: spec.skills and spec.includes skill rosters must match")
+
+    plugin_mcp_deps = {
+        dep for dep in _refs(plugin_spec, "dependsOn") if dep.startswith("mcpserver:")
+    }
+    expected_mcp_includes = {
+        dep for dep in plugin_mcp_deps if dep in owned_mcps and dep in plugin_mcp_deps
+    }
+    if include_mcps != expected_mcp_includes:
+        missing = expected_mcp_includes - include_mcps
+        extra = include_mcps - expected_mcp_includes
+        if missing:
+            errors.append(f"{rel}: spec.includes missing owned MCPs {sorted(missing)}")
+        if extra:
+            errors.append(f"{rel}: spec.includes lists unexpected MCPs {sorted(extra)}")
+
+
 def validate_plugin_layout(plugin: str, errors: list[str]) -> None:
     plugin_dir = _REPO_ROOT / plugin
     for skill in sorted(skills_on_disk(plugin_dir)):
@@ -336,6 +465,17 @@ def validate_plugin(plugin: str, owned_mcps: dict[str, Path], errors: list[str])
         errors.append(
             f"{plugin}: {plugin_path.relative_to(_REPO_ROOT)} dependencyOf unknown skill '{skill}'"
         )
+
+    _validate_plugin_dual_write(
+        plugin_path,
+        plugin_ref,
+        plugin_data,
+        plugin_spec,
+        disk,
+        plugin_depof_skills,
+        owned_mcps,
+        errors,
+    )
 
     if "system:default/agentic-plugins" in _refs(plugin_spec, "dependsOn"):
         errors.append(

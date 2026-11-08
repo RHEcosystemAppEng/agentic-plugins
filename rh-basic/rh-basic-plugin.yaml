@@ -13,6 +13,8 @@ metadata:
     - red-hat
     - getting-started
     - support
+  labels:
+    distribution: external
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -36,6 +38,29 @@ spec:
     - getting-started
     - support
   agents: []
+  license: Apache-2.0
+  attribution:
+    provider: Red Hat
+  skills:
+    - airesource:ai5-marketplace/red-hat-cve-explainer
+    - airesource:ai5-marketplace/red-hat-diagnostics
+    - airesource:ai5-marketplace/red-hat-get-started
+    - airesource:ai5-marketplace/red-hat-product-lifecycle
+    - airesource:ai5-marketplace/red-hat-security-mcp-setup
+    - airesource:ai5-marketplace/red-hat-support-severity
+  includes:
+    - entityRef: airesource:ai5-marketplace/red-hat-cve-explainer
+      type: skill
+    - entityRef: airesource:ai5-marketplace/red-hat-diagnostics
+      type: skill
+    - entityRef: airesource:ai5-marketplace/red-hat-get-started
+      type: skill
+    - entityRef: airesource:ai5-marketplace/red-hat-product-lifecycle
+      type: skill
+    - entityRef: airesource:ai5-marketplace/red-hat-security-mcp-setup
+      type: skill
+    - entityRef: airesource:ai5-marketplace/red-hat-support-severity
+      type: skill
   dependsOn:
     - mcpserver:redhat/security-mcp-server
   dependencyOf:
