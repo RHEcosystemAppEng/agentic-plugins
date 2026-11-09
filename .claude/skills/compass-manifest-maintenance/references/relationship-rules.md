@@ -4,9 +4,9 @@
 
 | What | Where | Notes |
 |------|-------|-------|
-| Plugin membership | Plugin `spec.includes` (`{ entityRef, type }`) **and** legacy `spec.skills` (skill refs as strings) | Same skill set. Owned MCP (`mcpserver:ai5-marketplace/*`) goes in `includes` only, not in `spec.skills`. Canonical `mcpserver:redhat/*` goes in neither. Never `includes: []` or `skills: []`. No `gitRef`. |
-| Functional dependency | `dependsOn` | Skill→MCP, skill→skill, plugin MCP union, skill→plugin (keep until Phase C). |
-| Inverse of functional `dependsOn` | Target `dependencyOf` | Compass does **not** auto-generate inverses for custom kinds (COMPASS-1288). Dual-write both sides. Plugin `dependencyOf` still lists every skill until Phase C. |
+| Plugin membership | Plugin `spec.includes` (`{ entityRef, type }`) **and** legacy `spec.skills` (skill refs as strings) | Same skill set. Owned MCP (`mcpserver:ai5-marketplace/*`) goes in `includes` only, not in `spec.skills`. Canonical `mcpserver:redhat/*` goes in neither. Never `includes: []` or `skills: []`. No `gitRef`. Do **not** list skills on plugin `dependencyOf`. |
+| Functional dependency | `dependsOn` | Skill→MCP, skill→skill, plugin MCP union, skill→plugin (keep until Phase C H.5). |
+| Inverse of functional `dependsOn` | Target `dependencyOf` | Compass does **not** auto-generate inverses for custom kinds (COMPASS-1288). Dual-write both sides for **functional** edges only (MCP and skill→skill inverses on their targets; not plugin skill roster). |
 
 Do **not** author `partOf` / `hasPart` on `AiResource` or `MCPServer`. Compass may **generate** those from `includes` when plugin processing ships. Still do not write the keys.
 
@@ -16,7 +16,7 @@ Every **functional** relationship must be declared on **both** sides:
 
 | Origin | Field | Target | Inverse on target |
 |--------|-------|--------|-------------------|
-| Skill | `dependsOn` | Plugin | Plugin `dependencyOf` skill (until Phase C) |
+| Skill | `dependsOn` | Plugin | *(skill→plugin `dependsOn` until Phase C H.5; no plugin `dependencyOf` skill roster)* |
 | Skill | `dependsOn` | MCP | MCP `dependencyOf` skill |
 | Skill | `dependsOn` | Other skill | Other skill `dependencyOf` orchestrator |
 | Plugin | `dependsOn` | MCP | MCP `dependencyOf` plugin |
@@ -29,6 +29,7 @@ Every **functional** relationship must be declared on **both** sides:
 - Authored `partOf` / `hasPart` on `AiResource` or `MCPServer` — do not write these keys.
 - `includes` / `spec.skills` / `spec.system` on **skills** — plugins only for the first two; skills omit `spec.system`.
 - Canonical MCP in plugin `includes`.
+- Plugin `dependencyOf` skill roster — membership is `spec.includes` (and legacy `spec.skills` until H.4).
 
 ## Entity reference formats
 
@@ -51,7 +52,7 @@ All skills, plugins, and owned MCPs use `metadata.namespace: ai5-marketplace`.
 
 1. `skills/<skill-name>/catalog-info.yaml` — new or updated entity (skill→plugin `dependsOn`; no `includes`)
 2. `<plugin>/catalog-info.yaml` — Location `targets` entry
-3. `<plugin>/<plugin>-plugin.yaml` — `dependencyOf` skill **and** matching `spec.skills` string **and** `spec.includes` `{ entityRef, type: skill }`
+3. `<plugin>/<plugin>-plugin.yaml` — matching `spec.skills` string **and** `spec.includes` `{ entityRef, type: skill }` (not plugin `dependencyOf`)
 4. Each `mcps/*.yaml` referenced — `dependencyOf` skill (and plugin if plugin depends on MCP)
 5. Each depended-on skill manifest — `dependencyOf` orchestrator (skill→skill)
 6. Reconcile plugin `dependsOn` MCP union if MCP usage changed plugin-wide

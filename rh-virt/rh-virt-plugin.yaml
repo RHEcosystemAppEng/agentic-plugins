@@ -76,14 +76,3 @@ spec:
       type: mcp-server
   dependsOn:
     - mcpserver:ai5-marketplace/openshift-mcp-server
-  dependencyOf:
-    - airesource:ai5-marketplace/vm-clone
-    - airesource:ai5-marketplace/vm-create
-    - airesource:ai5-marketplace/vm-delete
-    - airesource:ai5-marketplace/vm-inventory
-    - airesource:ai5-marketplace/vm-lifecycle-manager
-    - airesource:ai5-marketplace/vm-rebalance
-    - airesource:ai5-marketplace/vm-snapshot-create
-    - airesource:ai5-marketplace/vm-snapshot-delete
-    - airesource:ai5-marketplace/vm-snapshot-list
-    - airesource:ai5-marketplace/vm-snapshot-restore

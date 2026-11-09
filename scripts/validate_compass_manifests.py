@@ -5,7 +5,7 @@ Validate Compass catalog-info.yaml manifests and skill references layout.
 Structural checks (no SKILL.md semantic inference):
   - Roster parity: skills on disk vs plugin Location targets vs manifest files
   - Plugin spec.includes / legacy spec.skills dual-write vs disk roster
-  - Plugin inverse roster and skill dependsOn plugin
+  - Skill dependsOn plugin (until Phase C H.5 retires that edge)
   - Bidirectional dependsOn/dependencyOf for skill→skill and skill→owned-MCP
   - Plugin→owned-MCP inverse; plugin MCP dependsOn union vs skills
   - Forbidden partOf/hasPart on skill manifests; redundant plugin dependsOn system
@@ -291,7 +291,6 @@ def _validate_plugin_dual_write(
     plugin_data: dict,
     plugin_spec: dict,
     disk: set[str],
-    plugin_depof_skills: set[str],
     owned_mcps: dict[str, Path],
     errors: list[str],
 ) -> None:
@@ -331,9 +330,6 @@ def _validate_plugin_dual_write(
             errors.append(f"{rel}: spec.skills missing {sorted(missing)}")
         if extra:
             errors.append(f"{rel}: spec.skills lists unknown skills {sorted(extra)}")
-    if skill_names_legacy and skill_names_legacy != plugin_depof_skills:
-        errors.append(f"{rel}: spec.skills must match dependencyOf skill roster")
-
     includes_raw = plugin_spec.get("includes")
     if includes_raw is None:
         errors.append(f"{rel}: missing spec.includes")
@@ -391,9 +387,6 @@ def _validate_plugin_dual_write(
             errors.append(f"{rel}: spec.includes missing skills {sorted(missing)}")
         if extra:
             errors.append(f"{rel}: spec.includes lists unknown skills {sorted(extra)}")
-    if include_skills != plugin_depof_skills:
-        errors.append(f"{rel}: spec.includes skill entityRefs must match dependencyOf")
-
     if skill_names_legacy and include_skills and skill_names_legacy != include_skills:
         errors.append(f"{rel}: spec.skills and spec.includes skill rosters must match")
 
@@ -451,28 +444,12 @@ def validate_plugin(plugin: str, owned_mcps: dict[str, Path], errors: list[str])
             "but skills/<name>/SKILL.md not found"
         )
 
-    plugin_depof_skills = {
-        ref.split("/", 1)[1]
-        for ref in _refs(plugin_spec, "dependencyOf")
-        if ref.startswith("airesource:ai5-marketplace/") and ref != plugin_ref
-    }
-    for skill in sorted(disk - plugin_depof_skills):
-        errors.append(
-            f"{plugin}: {plugin_path.relative_to(_REPO_ROOT)} missing "
-            f"dependencyOf airesource:ai5-marketplace/{skill}"
-        )
-    for skill in sorted(plugin_depof_skills - disk):
-        errors.append(
-            f"{plugin}: {plugin_path.relative_to(_REPO_ROOT)} dependencyOf unknown skill '{skill}'"
-        )
-
     _validate_plugin_dual_write(
         plugin_path,
         plugin_ref,
         plugin_data,
         plugin_spec,
         disk,
-        plugin_depof_skills,
         owned_mcps,
         errors,
     )

@@ -1,5 +1,5 @@
 # Template: <plugin>/<plugin>-plugin.yaml
-# Replace <plugin>, title, description, tags, disciplines, categories, skills, includes, dependencyOf, dependsOn (MCP union).
+# Replace <plugin>, title, description, tags, disciplines, categories, skills, includes, dependsOn (MCP union).
 # New plugins: spec.lifecycle defaults to development (confirm with user before raising maturity).
 # Membership: spec.includes (skills + owned MCP) AND legacy spec.skills (skill refs only).
 # Canonical mcpserver:redhat/* stays on dependsOn only — never in includes.
@@ -43,7 +43,7 @@ spec:
     provider: Red Hat
   skills:
     - airesource:ai5-marketplace/<skill-name>
-    # Every skill in the plugin — same set as includes type:skill and dependencyOf
+    # Every skill in the plugin — same set as includes type:skill (legacy dual-write until H.4)
   includes:
     - entityRef: airesource:ai5-marketplace/<skill-name>
       type: skill
@@ -54,6 +54,3 @@ spec:
     # Union of mcpserver refs used by any skill in this plugin (omit if none)
     # - mcpserver:ai5-marketplace/<owned-mcp>
     # - mcpserver:redhat/<canonical-mcp>
-  dependencyOf:
-    - airesource:ai5-marketplace/<skill-name>
-    # Every skill in the plugin — keep until Phase C; bidirectional with skill dependsOn plugin

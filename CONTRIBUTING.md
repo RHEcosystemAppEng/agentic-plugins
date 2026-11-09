@@ -62,7 +62,7 @@ Both tiers must pass before submitting a PR.
 
 - [ ] Tier 1 validation passed (agentskills.io spec)
 - [ ] Tier 2 validation passed (design principles)
-- [ ] Compass manifests and references layout validated: `make validate-compass-manifests` (registered plugins: new skills must land on plugin `includes` + `spec.skills` + `dependencyOf` via **compass-manifest-maintenance**, not `dependencyOf` alone)
+- [ ] Compass manifests and references layout validated: `make validate-compass-manifests` (registered plugins: new skills must land on plugin `includes` + `spec.skills` via **compass-manifest-maintenance**; update MCP/skill functional `dependencyOf` inverses as needed)
 - [ ] Skill doc links validated: `uv run python scripts/validate_skill_doc_links.py <plugin>/skills/<skill-name>/SKILL.md`
 - [ ] Skill doc tree links validated: `uv run python scripts/validate_docs_tree_links.py <plugin>/skills/<skill-name>/SKILL.md`
 - [ ] Plugin AGENTS.md intent routing updated

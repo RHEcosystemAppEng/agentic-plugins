@@ -87,7 +87,7 @@ catalog-info.yaml (root Location)
 
 #### Entity Relationships
 
-Plugin **membership** is `spec.includes` (skills + owned MCP) **and** legacy `spec.skills` (skill refs only, required by the live processor). Functional deps stay on `dependsOn` (skill→MCP, skill→skill, plugin MCP union, skill→plugin until that edge is retired). Keep plugin `dependencyOf` as the skill roster until then.
+Plugin **membership** is `spec.includes` (skills + owned MCP) **and** legacy `spec.skills` (skill refs only, required by the live processor). Functional deps stay on `dependsOn` (skill→MCP, skill→skill, plugin MCP union, skill→plugin until Phase C H.5). Do **not** list skills on plugin `dependencyOf` — that roster is retired.
 
 Do **not** author `partOf` / `hasPart` on `AiResource` / `MCPServer`. Compass may generate those from `includes`; we still do not write the keys. Compass does not auto-generate inverse relations for custom kinds (COMPASS-1288) — dual-write `dependsOn` / `dependencyOf` on every **functional** edge. Canonical `mcpserver:redhat/*` is `dependsOn` only, never `includes`.
 
@@ -145,7 +145,7 @@ spec:
 
 Then update membership **and** both sides of every functional relationship:
 1. Add the file as a target in the plugin's `catalog-info.yaml` Location
-2. Add the skill to `<plugin>-plugin.yaml` `dependencyOf`, `spec.skills`, **and** `spec.includes` (`entityRef` + `type: skill`)
+2. Add the skill to `<plugin>-plugin.yaml` `spec.skills` **and** `spec.includes` (`entityRef` + `type: skill`)
 3. Add the skill to each referenced **owned** MCP server's `dependencyOf` list in `mcps/<server>.yaml`. If that MCP is part of the plugin, it also belongs in plugin `includes` (`type: mcp-server`). Canonical `mcpserver:redhat/*` stays on skill/plugin `dependsOn` only.
 4. If the skill depends on other skills, add `dependencyOf` entries in those skills' manifests
 
@@ -295,7 +295,7 @@ last_updated: YYYY-MM-DD
    - Dependencies declaration
 4. Include concrete examples and complete error handling
 5. Update the plugin's `AGENTS.md` intent routing table to include the new skill
-6. Run **compass-manifest-maintenance** (`.claude/skills/compass-manifest-maintenance/`) to create or update Compass manifests — skill `catalog-info.yaml`, plugin Location targets, plugin `includes` / `spec.skills` / `dependencyOf`, MCP inverse `dependencyOf` (see "Adding Compass Manifests for a New Skill")
+6. Run **compass-manifest-maintenance** (`.claude/skills/compass-manifest-maintenance/`) to create or update Compass manifests — skill `catalog-info.yaml`, plugin Location targets, plugin `includes` / `spec.skills`, and functional MCP/skill inverse `dependencyOf` (see "Adding Compass Manifests for a New Skill")
 7. Run `make validate-compass-manifests` (or full `make validate`)
 8. Test with `Skill` tool invocation
 9. Validate with `uv run python scripts/validate_skills_tier1.py <plugin>/skills/<skill-name>/SKILL.md`

@@ -74,12 +74,3 @@ spec:
   dependsOn:
     - mcpserver:ai5-marketplace/assisted-installer
     - mcpserver:ai5-marketplace/openshift-mcp-server
-  dependencyOf:
-    - airesource:ai5-marketplace/cluster-creator
-    - airesource:ai5-marketplace/cluster-inventory
-    - airesource:ai5-marketplace/cluster-report
-    - airesource:ai5-marketplace/container-cve-validator
-    - airesource:ai5-marketplace/coreos-cve-validator
-    - airesource:ai5-marketplace/cve-recon
-    - airesource:ai5-marketplace/image-inspect
-    - airesource:ai5-marketplace/network-policy-architect

@@ -63,10 +63,3 @@ spec:
       type: skill
   dependsOn:
     - mcpserver:redhat/security-mcp-server
-  dependencyOf:
-    - airesource:ai5-marketplace/red-hat-cve-explainer
-    - airesource:ai5-marketplace/red-hat-diagnostics
-    - airesource:ai5-marketplace/red-hat-get-started
-    - airesource:ai5-marketplace/red-hat-product-lifecycle
-    - airesource:ai5-marketplace/red-hat-security-mcp-setup
-    - airesource:ai5-marketplace/red-hat-support-severity
