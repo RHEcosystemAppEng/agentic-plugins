@@ -5,7 +5,7 @@ description: |
   - Adding or updating a skill and its Compass manifest
   - Registering an existing plugin in Compass (manifests only; not creating a new agent plugin)
   - MCP usage or orchestration changed in SKILL.md
-  - Auditing plugin includes/skills/dependencyOf roster drift and bidirectional dependsOn/dependencyOf against repo Compass conventions
+  - Auditing plugin includes/spec.skills membership drift and bidirectional dependsOn/dependencyOf against repo Compass conventions
 
   File-based only: Read/Glob/Grep/Bash. For `.catalog/` marketplace metadata use create-collection.
 
@@ -46,7 +46,7 @@ test -f CLAUDE.md && echo "✓ repo root" || echo "✗ wrong directory"
 - New skill needs `skills/<name>/catalog-info.yaml` and Location / inverse updates.
 - Skill `allowed-tools` or orchestration changed → MCP or skill `dependsOn` must change.
 - Register an existing plugin in Compass (plugin, Location, root index, `system.yaml` manifests).
-- Drift audit: skill on disk without manifest, stale `includes` / `spec.skills` / `dependencyOf`, or dangling entity refs.
+- Drift audit: skill on disk without manifest, stale `includes` / `spec.skills`, or dangling entity refs.
 - After `agentic-contribution-skill` creates a skill (run before opening PR).
 
 **Do not use when:** `.catalog/collection.yaml` (use **create-collection** instead), generic Compass platform tasks, or automated Compass registration.
@@ -90,7 +90,7 @@ test -f CLAUDE.md && echo "✓ repo root" || echo "✗ wrong directory"
 
 6. **Update inverse manifests** ([relationship-rules.md](references/relationship-rules.md)):
    - `<plugin>/catalog-info.yaml` — `./skills/<skill-name>/catalog-info.yaml` in `spec.targets`
-   - `<plugin>/<plugin>-plugin.yaml` — add the skill to `dependencyOf`, `spec.skills`, **and** `spec.includes` (`entityRef` + `type: skill`). All three skill sets must match.
+   - `<plugin>/<plugin>-plugin.yaml` — add the skill to `spec.skills` **and** `spec.includes` (`entityRef` + `type: skill`). Both skill sets must match.
    - Each `mcpserver:` in skill `dependsOn` → matching `mcps/*.yaml` `dependencyOf`
    - Each skill in skill `dependsOn` → that skill's `dependencyOf` includes orchestrator
 
@@ -124,8 +124,8 @@ Run `uv run python scripts/validate_compass_manifests.py` (or `make validate-com
 | Check | Rule |
 |-------|------|
 | Roster parity | Every `skills/*/SKILL.md` has `catalog-info.yaml` and plugin Location target |
-| Membership dual-write | Plugin `includes` skill entityRefs = `spec.skills` = `dependencyOf` = disk skills. Owned MCP in `includes`; canonical MCP is not. Never `includes: []` or `skills: []`. |
-| Inverse parity | Plugin `dependencyOf` = full skill set; each skill `dependsOn` includes plugin |
+| Membership dual-write | Plugin `includes` skill entityRefs = `spec.skills` = disk skills. Owned MCP in `includes`; canonical MCP is not. Never `includes: []` or `skills: []`. No plugin `dependencyOf` skill roster. |
+| Skill→plugin | Each skill `dependsOn` includes its plugin (until Phase C H.5) |
 | MCP inverse | Each skill `mcpserver:` in `dependsOn` → MCP `dependencyOf` includes skill |
 | Skill inverse | Each skill→skill `dependsOn` → target `dependencyOf` includes source |
 | Dangling refs | Every ref resolves to on-disk manifest or documented canonical MCP |
@@ -144,7 +144,7 @@ Report violations with file path and fix per workflow §1. Do not weaken checks.
 
 **Error Handling:**
 - If skill on disk has no manifest → create from `assets/skill-catalog-info.yaml` and add Location target.
-- If inverse `dependencyOf` missing on plugin or MCP, or plugin `includes`/`spec.skills` missing the skill → update per [relationship-rules.md](references/relationship-rules.md).
+- If inverse `dependencyOf` missing on MCP or orchestrated skill, or plugin `includes`/`spec.skills` missing the skill → update per [relationship-rules.md](references/relationship-rules.md).
 - If MCP ref cannot be resolved → grep plugin manifests; do not invent new `mcpserver:` refs.
 - If `skills/<name>/docs/` exists or markdown links use `docs/...` → rename/merge to `references/`, flatten any `references/references/`, update link paths, **delete** `docs/`, fix symlinks; re-run `validate_compass_manifests.py`.
 
@@ -155,7 +155,7 @@ Report violations with file path and fix per workflow §1. Do not weaken checks.
 - [ ] MCP deps derived from `SKILL.md` usage, not copied from sibling skills.
 - [ ] Every new `dependsOn` has matching `dependencyOf` on the target entity.
 - [ ] Plugin Location lists every skill manifest path.
-- [ ] Plugin `dependencyOf`, `spec.skills`, and `includes` skill entityRefs list every skill in the plugin (same set).
+- [ ] Plugin `spec.skills` and `includes` skill entityRefs list every skill in the plugin (same set).
 - [ ] Owned MCP used by the plugin is in `includes` (`type: mcp-server`); canonical MCP is not.
 - [ ] No authored `partOf`/`hasPart` on custom kinds. No `includes` / `spec.skills` / `spec.system` on skills.
 - [ ] Skill documentation uses `references/` only — no leftover `docs/` directory, no `references/references/` nesting; links use `references/...` or `./references/...`.
@@ -183,8 +183,8 @@ None — uses Read, Glob, Grep, Bash.
 
 ## Common Issues
 
-- **COMPASS-1288 drift** — updated skill `dependsOn` but forgot plugin or MCP `dependencyOf`.
-- **Membership drift** — added a skill to `dependencyOf` but not to `spec.includes` and `spec.skills` (or the reverse).
+- **COMPASS-1288 drift** — updated skill `dependsOn` but forgot MCP or orchestrator skill `dependencyOf`.
+- **Membership drift** — skill on disk missing from `spec.includes` and `spec.skills` (or the reverse).
 - **Blanket MCP deps** — declaring every MCP in `mcps.json` instead of per-skill `allowed-tools` usage.
 - **Orchestration gaps** — `remediation`-style skills missing skill→skill edges or inverse `dependencyOf` on depended skills.
 - **Canonical vs owned** — Lightspeed and Security use `mcpserver:redhat/...`; do not register duplicates in `mcps/`.

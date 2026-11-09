@@ -247,7 +247,6 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
     _PLUGIN_PATH = _REPO_ROOT / "rh-basic" / "rh-basic-plugin.yaml"
     _PLUGIN_DATA = {"metadata": {"labels": {"distribution": "external"}}}
     _DISK = frozenset({"skill-a"})
-    _DEPOF = frozenset({"skill-a"})
 
     def _errors(self, plugin_spec: dict) -> list[str]:
         errors: list[str] = []
@@ -257,7 +256,6 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
             self._PLUGIN_DATA,
             plugin_spec,
             set(self._DISK),
-            set(self._DEPOF),
             {},
             errors,
         )
@@ -270,7 +268,6 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
                 {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
             ],
             "dependsOn": [],
-            "dependencyOf": ["airesource:ai5-marketplace/skill-a"],
         }
         spec.update(overrides)
         return spec
@@ -299,7 +296,6 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
                 {"entityRef": self._PLUGIN_REF, "type": "skill"},
             ],
             skills=[],
-            dependencyOf=[],
         )
         errors = self._errors(spec)
         self.assertTrue(any("must not self-reference the plugin" in e for e in errors))
@@ -322,6 +318,11 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
         )
         errors = self._errors(spec)
         self.assertTrue(any("must be a mapping, not a string" in e for e in errors))
+
+    def test_omitted_plugin_dependencyOf_skill_roster_ok(self) -> None:
+        errors = self._errors(self._base_spec())
+        depof_errors = [e for e in errors if "dependencyOf" in e]
+        self.assertEqual(depof_errors, [], msg=errors)
 
 
 if __name__ == "__main__":
