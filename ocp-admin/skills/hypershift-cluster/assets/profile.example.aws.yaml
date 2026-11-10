@@ -1,0 +1,34 @@
+# AWS example using the recommended management-Secret credential mode.
+# Copy this file to a private 0700 run directory, keep it readable only by you
+# (chmod 0600 profile.yaml), and replace every example value.
+# ${VARS} are expanded by hcp.py; credentials remain Secret/file references.
+schema_version: 1
+name: dev-aws
+namespace: clusters
+provider: aws
+cli: hypershift
+
+management:
+  kubeconfig: ${HYPERSHIFT_CONFIG}
+  context: management-context
+  kube_system_uid: REPLACE_WITH_MANAGEMENT_KUBE_SYSTEM_NAMESPACE_UID
+
+cloud_identity:
+  kind: aws
+  account_id: "123456789012"
+  region: us-west-2
+
+release_image: quay.io/openshift-release-dev/ocp-release@sha256:REPLACE_WITH_64_HEX_DIGEST
+# Secret in the management namespace holding aws_access_key_id,
+# aws_secret_access_key, aws_session_token, baseDomain, and pullSecret.
+secret_creds: hypershift-creds
+replicas: 2
+
+# Provider flags are literal argv values, never shell commands.
+create_args:
+  - --region=us-west-2
+  - --base-domain=guests.example.com
+  - --role-arn=arn:aws:iam::123456789012:role/hypershift-installer
+destroy_args:
+  - --region=us-west-2
+  - --role-arn=arn:aws:iam::123456789012:role/hypershift-installer
