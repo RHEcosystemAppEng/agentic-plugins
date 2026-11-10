@@ -295,6 +295,7 @@ def _validate_plugin_dual_write(
     errors: list[str],
 ) -> None:
     rel = plugin_path.relative_to(_REPO_ROOT)
+    plugin_spec = plugin_spec or {}
     labels = (plugin_data.get("metadata") or {}).get("labels") or {}
     if labels.get("distribution") != "external":
         errors.append(f"{rel}: metadata.labels.distribution must be external")
@@ -323,7 +324,7 @@ def _validate_plugin_dual_write(
         for ref in skill_refs
         if ref.startswith("airesource:ai5-marketplace/")
     }
-    if skill_names_legacy and skill_names_legacy != disk:
+    if skill_names_legacy != disk:
         missing = disk - skill_names_legacy
         extra = skill_names_legacy - disk
         if missing:
@@ -355,10 +356,11 @@ def _validate_plugin_dual_write(
         if entry.get("gitRef") is not None:
             errors.append(f"{loc} must not set gitRef")
         member_type = entry.get("type")
-        if member_type is not None and member_type not in _ALLOWED_INCLUDE_TYPES:
-            errors.append(f"{loc} type must be skill or mcp-server, got {member_type!r}")
         if member_type == "plugin":
             errors.append(f"{loc} must not include a plugin member")
+            continue
+        if member_type is not None and member_type not in _ALLOWED_INCLUDE_TYPES:
+            errors.append(f"{loc} type must be skill or mcp-server, got {member_type!r}")
 
         entity_ref = entry.get("entityRef")
         if not isinstance(entity_ref, str) or not entity_ref.strip():
@@ -369,12 +371,13 @@ def _validate_plugin_dual_write(
         seen.add(entity_ref)
         if entity_ref == plugin_ref:
             errors.append(f"{rel}: includes must not self-reference the plugin")
+            continue
 
         if entity_ref.startswith("airesource:ai5-marketplace/"):
             name = entity_ref.split("/", 1)[1]
             include_skills.add(name)
         elif entity_ref.startswith("mcpserver:"):
-            if entity_ref.startswith("mcpserver:redhat/"):
+            if entity_ref.startswith(_CANONICAL_MCP_PREFIXES):
                 errors.append(f"{loc} canonical MCP {entity_ref} must not be in includes")
             include_mcps.add(entity_ref)
         else:
@@ -387,7 +390,7 @@ def _validate_plugin_dual_write(
             errors.append(f"{rel}: spec.includes missing skills {sorted(missing)}")
         if extra:
             errors.append(f"{rel}: spec.includes lists unknown skills {sorted(extra)}")
-    if skill_names_legacy and include_skills and skill_names_legacy != include_skills:
+    if skill_names_legacy != include_skills:
         errors.append(f"{rel}: spec.skills and spec.includes skill rosters must match")
 
     plugin_mcp_deps = {
@@ -428,7 +431,7 @@ def validate_plugin(plugin: str, owned_mcps: dict[str, Path], errors: list[str])
 
     loc_data = _load_yaml(loc_path)
     plugin_data = _load_yaml(plugin_path)
-    plugin_spec = plugin_data.get("spec", {})
+    plugin_spec = plugin_data.get("spec") or {}
 
     disk = skills_on_disk(plugin_dir)
     loc_targets = location_skill_targets(loc_data)

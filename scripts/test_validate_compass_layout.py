@@ -293,16 +293,21 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
     def test_self_include_rejected(self) -> None:
         spec = self._base_spec(
             includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
                 {"entityRef": self._PLUGIN_REF, "type": "skill"},
             ],
-            skills=[],
         )
         errors = self._errors(spec)
         self.assertTrue(any("must not self-reference the plugin" in e for e in errors))
+        self.assertFalse(
+            any("unknown skills" in e for e in errors),
+            msg=errors,
+        )
 
     def test_plugin_typed_member_rejected(self) -> None:
         spec = self._base_spec(
             includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
                 {
                     "entityRef": "airesource:ai5-marketplace/other-plugin",
                     "type": "plugin",
@@ -311,6 +316,14 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
         )
         errors = self._errors(spec)
         self.assertTrue(any("must not include a plugin member" in e for e in errors))
+        self.assertFalse(
+            any("unknown skills" in e for e in errors),
+            msg=errors,
+        )
+        self.assertFalse(
+            any("type must be skill or mcp-server" in e for e in errors),
+            msg=errors,
+        )
 
     def test_string_includes_entry_rejected(self) -> None:
         spec = self._base_spec(
@@ -323,6 +336,49 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
         errors = self._errors(self._base_spec())
         depof_errors = [e for e in errors if "dependencyOf" in e]
         self.assertEqual(depof_errors, [], msg=errors)
+
+    def test_canonical_default_mcp_rejected_from_includes(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+                {
+                    "entityRef": "mcpserver:default/security-mcp-server",
+                    "type": "mcp-server",
+                },
+            ],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(
+            any(
+                "canonical MCP" in e and "mcpserver:default/security-mcp-server" in e
+                for e in errors
+            ),
+            msg=errors,
+        )
+
+    def test_malformed_skills_still_checked_against_disk(self) -> None:
+        spec = self._base_spec(skills=["mcpserver:redhat/not-a-skill"])
+        errors = self._errors(spec)
+        self.assertTrue(any("must be airesource refs" in e for e in errors), msg=errors)
+        self.assertTrue(any("spec.skills missing" in e for e in errors), msg=errors)
+        self.assertTrue(
+            any("spec.skills and spec.includes skill rosters must match" in e for e in errors),
+            msg=errors,
+        )
+
+    def test_null_plugin_spec_does_not_crash(self) -> None:
+        errors: list[str] = []
+        compass._validate_plugin_dual_write(
+            self._PLUGIN_PATH,
+            self._PLUGIN_REF,
+            self._PLUGIN_DATA,
+            None,  # YAML `spec:` parses to None
+            set(self._DISK),
+            {},
+            errors,
+        )
+        self.assertTrue(any("missing spec.skills" in e for e in errors), msg=errors)
+        self.assertTrue(any("missing spec.includes" in e for e in errors), msg=errors)
 
 
 if __name__ == "__main__":
