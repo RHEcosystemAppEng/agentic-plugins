@@ -5,24 +5,27 @@
 | What | Where | Notes |
 |------|-------|-------|
 | Plugin membership | Plugin `spec.includes` (`{ entityRef, type }`) **and** legacy `spec.skills` (skill refs as strings) | Same skill set. Owned MCP (`mcpserver:ai5-marketplace/*`) goes in `includes` only, not in `spec.skills`. Canonical `mcpserver:redhat/*` goes in neither. Never `includes: []` or `skills: []`. No `gitRef`. Do **not** list skills on plugin `dependencyOf`. |
-| Functional dependency | `dependsOn` | Skill→MCP, skill→skill, plugin MCP union, skill→plugin (keep until Phase C H.5). |
-| Inverse of functional `dependsOn` | Target `dependencyOf` | Compass does **not** auto-generate inverses for custom kinds (COMPASS-1288). Dual-write both sides for **functional** edges only (MCP and skill→skill inverses on their targets; not plugin skill roster). |
+| Skill→plugin (until Phase C H.5) | Skill `dependsOn` plugin | Leftover pack-roster edge. **The** exception to the bidirectional rule below: one-sided — do **not** write a plugin `dependencyOf` inverse. |
+| Functional dependency | `dependsOn` | Skill→MCP, skill→skill, plugin MCP union. Dual-write the inverse on the target. |
+| Inverse of functional `dependsOn` | Target `dependencyOf` | Compass does **not** auto-generate inverses for custom kinds (COMPASS-1288). Dual-write both sides for **functional** edges (MCP and skill→skill). Skill→plugin is the exception in the row above. |
 
 Do **not** author `partOf` / `hasPart` on `AiResource` or `MCPServer`. Compass may **generate** those from `includes` when plugin processing ships. Still do not write the keys.
 
 ## COMPASS-1288 bidirectional policy (functional edges)
 
-Every **functional** relationship must be declared on **both** sides:
+Every **functional** relationship must be declared on **both** sides.
+
+**Exception — skill→plugin:** keep skill `dependsOn` plugin until Phase C H.5, and do **not** add the plugin `dependencyOf` inverse (that roster is retired). This is the only `dependsOn` edge that is one-sided.
 
 | Origin | Field | Target | Inverse on target |
 |--------|-------|--------|-------------------|
-| Skill | `dependsOn` | Plugin | *(skill→plugin `dependsOn` until Phase C H.5; no plugin `dependencyOf` skill roster)* |
+| Skill | `dependsOn` | Plugin | **None** — bidirectional exception (until Phase C H.5) |
 | Skill | `dependsOn` | MCP | MCP `dependencyOf` skill |
 | Skill | `dependsOn` | Other skill | Other skill `dependencyOf` orchestrator |
 | Plugin | `dependsOn` | MCP | MCP `dependencyOf` plugin |
 | MCP | `dependsOn` | System | System `dependencyOf` MCP |
 
-**Exception:** Plugin and owned MCP → System use `spec.system: default/agentic-plugins`. Compass generates `partOf` automatically. Do **not** add `dependsOn: system:default/agentic-plugins` on plugins (redundant).
+**Also:** Plugin and owned MCP → System use `spec.system: default/agentic-plugins`. Compass generates `partOf` automatically. Do **not** add `dependsOn: system:default/agentic-plugins` on plugins (redundant).
 
 ## What does NOT work for custom kinds
 

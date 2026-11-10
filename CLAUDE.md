@@ -87,9 +87,9 @@ catalog-info.yaml (root Location)
 
 #### Entity Relationships
 
-Plugin **membership** is `spec.includes` (skills + owned MCP) **and** legacy `spec.skills` (skill refs only, required by the live processor). Functional deps stay on `dependsOn` (skill→MCP, skill→skill, plugin MCP union, skill→plugin until Phase C H.5). Do **not** list skills on plugin `dependencyOf` — that roster is retired.
+Plugin **membership** is `spec.includes` (skills + owned MCP) **and** legacy `spec.skills` (skill refs only, required by the live processor). Do **not** list skills on plugin `dependencyOf` — that roster is retired. Each skill still `dependsOn` its plugin until Phase C H.5; that edge is **the** exception to the bidirectional rule (one-sided, no plugin inverse).
 
-Do **not** author `partOf` / `hasPart` on `AiResource` / `MCPServer`. Compass may generate those from `includes`; we still do not write the keys. Compass does not auto-generate inverse relations for custom kinds (COMPASS-1288) — dual-write `dependsOn` / `dependencyOf` on every **functional** edge. Canonical `mcpserver:redhat/*` is `dependsOn` only, never `includes`.
+Do **not** author `partOf` / `hasPart` on `AiResource` / `MCPServer`. Compass may generate those from `includes`; we still do not write the keys. Compass does not auto-generate inverse relations for custom kinds (COMPASS-1288) — dual-write `dependsOn` / `dependencyOf` on every **functional** edge (skill→MCP, skill→skill, plugin MCP union). Canonical `mcpserver:redhat/*` is `dependsOn` only, never `includes`.
 
 Full relationship matrix, bidirectional policy, entity ref formats, and file touch lists: [`.claude/skills/compass-manifest-maintenance/references/relationship-rules.md`](.claude/skills/compass-manifest-maintenance/references/relationship-rules.md). Use the **compass-manifest-maintenance** skill when adding or updating manifests. CI enforces structural rules via `scripts/validate_compass_manifests.py` (`make validate-compass-manifests`).
 

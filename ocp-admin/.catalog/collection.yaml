@@ -21,7 +21,7 @@ personas:
 marketplaces:
 - Claude Code
 - Cursor
-support_level: Unknown
+support_level: developer-preview
 maturity: GREEN
 description: Automation capabilities for OpenShift Container Platform cluster management, workload orchestration,
   security validation, and operational tasks including CVE validation for container images and CoreOS.

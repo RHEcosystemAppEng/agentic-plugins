@@ -156,6 +156,6 @@
   ],
   "security_model": "#security_model.md",
   "summary": "Lightweight, self-contained skills for everyday Red Hat operations and support tasks. Skills fall back to public Red Hat documentation when MCP tools are unavailable.",
-  "support_level": "Unknown",
+  "support_level": "developer-preview",
   "version": "0.1.0"
 }
