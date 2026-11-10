@@ -8,6 +8,7 @@ metadata:
     Agentic tools and automation for managing Red Hat platforms and
     infrastructure. Covers vulnerability management, fleet inventory,
     system monitoring, and operational excellence for SRE workflows.
+  summary: The rh-sre collection provides skills for site reliability tasks.
   tags:
     - ai-skill
     - sre
@@ -15,6 +16,7 @@ metadata:
     - vulnerability-management
   labels:
     distribution: external
+    support_level: developer-preview
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -23,7 +25,16 @@ metadata:
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
     agentic.redhat.com/path: rh-sre
     github.com/project-slug: RHEcosystemAppEng/agentic-plugins
+    publishing.redhat.com/redhat-only: "true"
+    publishing.redhat.com/ecosystem: "true"
+    publishing.redhat.com/oci: "true"
   links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/LICENSE
+      type: license_agreement
+      title: License agreement
+    - url: https://www.redhat.com/en/about/privacy-policy
+      type: privacy_policy
+      title: Privacy policy
     - url: https://github.com/RHEcosystemAppEng/agentic-plugins
       title: Source Repository
       icon: github
@@ -32,6 +43,7 @@ spec:
   lifecycle: beta
   owner: group:redhat/ai5-marketplace
   system: default/agentic-plugins
+  version: "1.0"
   disciplines:
     - sre
     - security
@@ -42,6 +54,53 @@ spec:
   license: Apache-2.0
   attribution:
     provider: Red Hat
+    author: Red Hat Ecosystem Engineering
+  personas:
+    - Site Reliability Engineer
+  support:
+    ownerEmail: eco-engineering@redhat.com
+  sampleWorkflows:
+    - name: Fleet Discovery → CVE Analysis → Remediation
+      description: |
+        User: "Show the managed fleet"
+        - fleet-inventory skill lists all systems
+        User: "What are the critical CVEs affecting these systems?"
+        - cve-impact skill analyzes vulnerabilities
+        User: "Remediate CVE-2024-1234 on all RHEL 8 production systems"
+        - remediation skill orchestrates end-to-end remediation
+    - name: Emergency CVE Patching
+      description: |
+        User: "URGENT: CVE-2024-CRITICAL has CVSS 9.8 - create emergency remediation playbooks for all production systems"
+        - remediation skill:
+          - Validates CVE (cve-validation skill)
+          - Lists production systems (system-context skill)
+          - Generates playbook (playbook-generator skill)
+          - Provides execution instructions
+          - Offers automated execution option
+    - name: Batch Remediation with Verification
+      description: |
+        User: "Create and execute remediation playbooks for CVE-X, CVE-Y, CVE-Z on systems server-01, server-02, server-03"
+        - remediation skill:
+          - Validates all CVEs
+          - Gathers system context
+          - Generates consolidated playbook
+          - Asks for execution approval
+          - Executes and monitors job status
+          - Verifies remediation success (remediation-verifier skill)
+    - name: Account-Level CVE Discovery
+      description: |
+        User: "What are the critical vulnerabilities on my account?"
+        - cve-impact skill with account-level parameters
+        - Lists critical CVEs across the fleet, filters by severity and remediation availability
+    - name: Playbook Execution with Dry-Run
+      description: |
+        User: "Execute the CVE remediation playbook"
+        - playbook-executor skill:
+          - Validates AAP prerequisites
+          - Lists and selects job template
+          - Offers dry-run first (check mode)
+          - Proceeds to actual execution after approval
+          - Monitors job status and reports results
   skills:
     - airesource:ai5-marketplace/cve-impact
     - airesource:ai5-marketplace/cve-validation

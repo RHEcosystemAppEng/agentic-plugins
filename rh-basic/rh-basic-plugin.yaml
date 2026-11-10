@@ -8,6 +8,9 @@ metadata:
     Essential Red Hat skills for IT professionals. Covers CVE analysis,
     diagnostics gathering, product lifecycle status, and support case
     management. Works with or without MCP server configuration.
+  summary: >
+    Lightweight, self-contained skills for everyday Red Hat operations and support tasks.
+    Skills fall back to public Red Hat documentation when MCP tools are unavailable.
   tags:
     - ai-skill
     - red-hat
@@ -15,6 +18,7 @@ metadata:
     - support
   labels:
     distribution: external
+    support_level: developer-preview
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -23,7 +27,16 @@ metadata:
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
     agentic.redhat.com/path: rh-basic
     github.com/project-slug: RHEcosystemAppEng/agentic-plugins
+    publishing.redhat.com/redhat-only: "true"
+    publishing.redhat.com/ecosystem: "true"
+    publishing.redhat.com/oci: "true"
   links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/LICENSE
+      type: license_agreement
+      title: License agreement
+    - url: https://www.redhat.com/en/about/privacy-policy
+      type: privacy_policy
+      title: Privacy policy
     - url: https://github.com/RHEcosystemAppEng/agentic-plugins
       title: Source Repository
       icon: github
@@ -32,6 +45,7 @@ spec:
   lifecycle: beta
   owner: group:redhat/ai5-marketplace
   system: default/agentic-plugins
+  version: "1.0"
   disciplines:
     - operations
   categories:
@@ -41,6 +55,29 @@ spec:
   license: Apache-2.0
   attribution:
     provider: Red Hat
+    author: Red Hat Ecosystem Engineering
+  personas:
+    - IT Professional
+    - Red Hat Customer
+  support:
+    ownerEmail: eco-engineering@redhat.com
+  sampleWorkflows:
+    - name: CVE triage
+      description: |
+        User: "What is CVE-2024-1234 and how urgent is it?"
+        - red-hat-cve-explainer looks up severity and advisory, recommends action
+    - name: Opening a support case
+      description: |
+        User: "My production RHEL cluster is partially down. What severity should I file?"
+        - red-hat-support-severity maps situation to Sev 2, explains SLA and 24x7 coverage
+        User: "What diagnostic data should I attach to the case?"
+        - red-hat-diagnostics provides sos report commands and upload instructions
+    - name: Lifecycle check before an upgrade decision
+      description: |
+        User: "Is RHEL 8.8 still receiving security patches?"
+        - red-hat-product-lifecycle reports current phase, dates, and what updates are provided
+        User: "When do I need to upgrade or move to EUS?"
+        - red-hat-product-lifecycle explains EUS options and recommends upgrade timeline
   skills:
     - airesource:ai5-marketplace/red-hat-cve-explainer
     - airesource:ai5-marketplace/red-hat-diagnostics
