@@ -7,6 +7,9 @@ metadata:
   description: >
     Automation capabilities for VM lifecycle management, provisioning,
     and inventory operations on OpenShift clusters using KubeVirt.
+  summary: >
+    The rh-virt collection ships 10 skills for OpenShift Virtualization operations
+    with confirmations on destructive steps.
   tags:
     - ai-skill
     - virtualization
@@ -14,6 +17,7 @@ metadata:
     - openshift
   labels:
     distribution: external
+    support_level: developer-preview
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -22,7 +26,16 @@ metadata:
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
     agentic.redhat.com/path: rh-virt
     github.com/project-slug: RHEcosystemAppEng/agentic-plugins
+    publishing.redhat.com/redhat-only: "true"
+    publishing.redhat.com/ecosystem: "true"
+    publishing.redhat.com/oci: "true"
   links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/LICENSE
+      type: license_agreement
+      title: License agreement
+    - url: https://www.redhat.com/en/about/privacy-policy
+      type: privacy_policy
+      title: Privacy policy
     - url: https://github.com/RHEcosystemAppEng/agentic-plugins
       title: Source Repository
       icon: github
@@ -31,6 +44,7 @@ spec:
   lifecycle: beta
   owner: group:redhat/ai5-marketplace
   system: default/agentic-plugins
+  version: "1.0"
   disciplines:
     - platform-engineering
   categories:
@@ -40,6 +54,27 @@ spec:
   license: Apache-2.0
   attribution:
     provider: Red Hat
+    author: Red Hat Ecosystem Engineering
+  personas:
+    - Red Hat platform engineer
+  support:
+    ownerEmail: eco-engineering@redhat.com
+  sampleWorkflows:
+    - name: Create and verify VM
+      description: |
+        User: "Create a small RHEL VM in my team namespace"
+        - `/vm-create` resolves instance type and OS and applies the VirtualMachine spec with approval
+        - `/vm-inventory` confirms the VM is running with expected resources
+    - name: Snapshot before change
+      description: |
+        User: "Snapshot database-vm before the maintenance window"
+        - `/vm-snapshot-create` validates storage class and guest agent readiness
+        - `/vm-lifecycle-manager` stops the VM if the restore path requires it later
+    - name: Maintenance drain
+      description: |
+        User: "Drain worker-04 and move VMs safely"
+        - `/vm-rebalance` plans migrations for load or node maintenance
+        - `/vm-inventory` verifies placement after moves complete
   skills:
     - airesource:ai5-marketplace/vm-clone
     - airesource:ai5-marketplace/vm-create

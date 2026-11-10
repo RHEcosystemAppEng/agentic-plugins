@@ -8,6 +8,10 @@ metadata:
     Administration and management tools for OpenShift Container Platform
     including cluster lifecycle management, multi-cluster operations,
     workload orchestration, and security policies.
+  summary: |
+    The ocp-admin collection covers Assisted Installer cluster creation, multi-cluster discovery across self-managed and managed
+    OpenShift, kubeconfig-backed fleet health reporting, and security validation for Red Hat container images and CoreOS using
+    official SBOMs and VEX data. Use AGENTS.md intent routing to pick the right skill.
   tags:
     - ai-skill
     - openshift
@@ -15,6 +19,7 @@ metadata:
     - administration
   labels:
     distribution: external
+    support_level: developer-preview
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -23,7 +28,16 @@ metadata:
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
     agentic.redhat.com/path: ocp-admin
     github.com/project-slug: RHEcosystemAppEng/agentic-plugins
+    publishing.redhat.com/redhat-only: "true"
+    publishing.redhat.com/ecosystem: "true"
+    publishing.redhat.com/oci: "true"
   links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/LICENSE
+      type: license_agreement
+      title: License agreement
+    - url: https://www.redhat.com/en/about/privacy-policy
+      type: privacy_policy
+      title: Privacy policy
     - url: https://github.com/RHEcosystemAppEng/agentic-plugins
       title: Source Repository
       icon: github
@@ -32,6 +46,7 @@ spec:
   lifecycle: beta
   owner: group:redhat/ai5-marketplace
   system: default/agentic-plugins
+  version: "1.0"
   disciplines:
     - platform-engineering
   categories:
@@ -41,6 +56,39 @@ spec:
   license: Apache-2.0
   attribution:
     provider: Red Hat
+    author: Red Hat Ecosystem Engineering
+  personas:
+    - OpenShift Administrator
+    - Security Engineer
+    - DevSecOps
+  support:
+    ownerEmail: eco-engineering@redhat.com
+  sampleWorkflows:
+    - name: Assisted install then verify
+      description: |
+        User: "Create an HA cluster on bare metal and tell me when it is ready"
+        - `/cluster-creator` walks prerequisites, manifests, and installation monitoring with approvals at critical steps
+        - `/cluster-inventory` confirms version and state once the API shows the new cluster
+    - name: Fleet visibility
+      description: |
+        User: "List everything in my Red Hat account and flag stale check-ins"
+        - `/cluster-inventory` returns self-managed and managed clusters with metadata for triage
+    - name: Multi-cluster health
+      description: |
+        User: "Summarize node and pod health for every OpenShift context in my kubeconfig"
+        - `/cluster-report` skips non-OpenShift contexts and aggregates signals for operators
+    - name: Container CVE validation
+      description: |
+        User: "Is CVE-2024-45490 a real issue in registry.redhat.io/ubi9/ubi:latest?"
+        - `/container-cve-validator` extracts SBOM, checks VEX, confirms true/false positive with remediation
+    - name: CoreOS vulnerability check
+      description: |
+        User: "Does CVE-2025-61726 affect CoreOS in OCP 4.20.16?"
+        - `/coreos-cve-validator` extracts RPMs, finds affected package, checks VEX under OCP and RHEL EUS CPEs
+    - name: Zero Trust NetworkPolicy design
+      description: |
+        User: "Create NetworkPolicies for the qtodo namespace following Zero Trust"
+        - `/network-policy-architect` maps communication flows, drafts per-pod rules, verifies on live cluster with temporary apply-and-verify
   skills:
     - airesource:ai5-marketplace/cluster-creator
     - airesource:ai5-marketplace/cluster-inventory

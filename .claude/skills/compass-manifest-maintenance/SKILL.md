@@ -111,11 +111,11 @@ test -f CLAUDE.md && echo "✓ repo root" || echo "✗ wrong directory"
 
 ### 2. Register a new plugin in Compass
 
-1. Create `<plugin>/<plugin>-plugin.yaml` from [assets/plugin-catalog-info.yaml](assets/plugin-catalog-info.yaml) with **`spec.lifecycle: development`** (default for new plugins; confirm with user before raising maturity). The template already has `includes`, `spec.skills`, license, provider, and `distribution: external`.
+1. Create `<plugin>/<plugin>-plugin.yaml` from [assets/plugin-catalog-info.yaml](assets/plugin-catalog-info.yaml) with **`spec.lifecycle: development`** (default for new plugins; confirm with user before changing `spec.lifecycle`). The template includes publication-completeness fields (summary, legal links, `support_level`, destination annotations, `spec.version`, author, support email, `sampleWorkflows`, empty `agents`) plus membership scaffolding (`includes`, `spec.skills`, license, provider, `distribution: external`). Do **not** copy `.catalog` `maturity` or `contents.skills` into Compass YAML — use **create-collection** for `.catalog/` only.
 2. Create `<plugin>/catalog-info.yaml` from [assets/plugin-location.yaml](assets/plugin-location.yaml).
 3. Add `./<plugin>/catalog-info.yaml` to root `catalog-info.yaml`.
 4. Add `airesource:ai5-marketplace/<plugin>` to `system.yaml` `spec.dependencyOf`.
-5. Run **create-collection** for `<plugin>/.catalog/` separately.
+5. Run **create-collection** for `<plugin>/.catalog/` separately (marketplace metadata stays out of Compass manifests).
 
 ### 3. Drift / compliance audit
 

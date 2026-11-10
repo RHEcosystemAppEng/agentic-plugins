@@ -1,8 +1,9 @@
 # Template: <plugin>/<plugin>-plugin.yaml
-# Replace <plugin>, title, description, tags, disciplines, categories, skills, includes, dependsOn (MCP union).
+# Replace <plugin>, title, description, summary, tags, disciplines, categories, skills, includes, dependsOn (MCP union).
 # New plugins: spec.lifecycle defaults to development (confirm with user before raising maturity).
 # Membership: spec.includes (skills + owned MCP) AND legacy spec.skills (skill refs only).
 # Canonical mcpserver:redhat/* stays on dependsOn only — never in includes.
+# Do not copy .catalog maturity or contents.skills into Compass YAML.
 apiVersion: backstage.io/v1alpha1
 kind: AiResource
 metadata:
@@ -11,11 +12,14 @@ metadata:
   title: <Plugin Title>
   description: >
     <Plugin description from README or plugin manifest.>
+  summary: >
+    <Short catalog summary (distinct from description).>
   tags:
     - ai-skill
     - <plugin-tag>
   labels:
     distribution: external
+    support_level: developer-preview
   annotations:
     agentic-plugins.redhat.com/version: "1.0"
     agentic-plugins.redhat.com/repo: "agentic-plugins"
@@ -24,7 +28,18 @@ metadata:
     agentic.redhat.com/repository: https://github.com/RHEcosystemAppEng/agentic-plugins
     agentic.redhat.com/path: <plugin>
     github.com/project-slug: RHEcosystemAppEng/agentic-plugins
+    # Destination targeting (Q7): set "true" only for destinations this pack is published to.
+    # All four Compass-registered packs today use redhat-only, ecosystem, and oci (see closed Q7).
+    publishing.redhat.com/redhat-only: "true"
+    publishing.redhat.com/ecosystem: "true"
+    publishing.redhat.com/oci: "true"
   links:
+    - url: https://github.com/RHEcosystemAppEng/agentic-plugins/blob/main/LICENSE
+      type: license_agreement
+      title: License agreement
+    - url: https://www.redhat.com/en/about/privacy-policy
+      type: privacy_policy
+      title: Privacy policy
     - url: https://github.com/RHEcosystemAppEng/agentic-plugins
       title: Source Repository
       icon: github
@@ -33,6 +48,7 @@ spec:
   lifecycle: development
   owner: group:redhat/ai5-marketplace
   system: default/agentic-plugins
+  version: "1.0"
   disciplines:
     - <discipline>
   categories:
@@ -41,6 +57,16 @@ spec:
   license: Apache-2.0
   attribution:
     provider: Red Hat
+    author: Red Hat Ecosystem Engineering
+  personas:
+    - <primary persona>
+  support:
+    ownerEmail: eco-engineering@redhat.com
+  sampleWorkflows:
+    - name: <Example workflow>
+      description: |
+        User: "<user prompt>"
+        - <skill-name> <expected behavior>
   skills:
     - airesource:ai5-marketplace/<skill-name>
     # Every skill in the plugin — same set as includes type:skill (legacy dual-write until H.4)
