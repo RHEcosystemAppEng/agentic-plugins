@@ -4,6 +4,7 @@
 # Membership: spec.includes (skills + owned MCP) AND legacy spec.skills (skill refs only).
 # Canonical mcpserver:redhat/* stays on dependsOn only — never in includes.
 # Do not copy .catalog maturity or contents.skills into Compass YAML.
+# Keep metadata.labels.support_level in sync with .catalog support_level (developer-preview).
 apiVersion: backstage.io/v1alpha1
 kind: AiResource
 metadata:

@@ -111,7 +111,7 @@ test -f CLAUDE.md && echo "✓ repo root" || echo "✗ wrong directory"
 
 ### 2. Register a new plugin in Compass
 
-1. Create `<plugin>/<plugin>-plugin.yaml` from [assets/plugin-catalog-info.yaml](assets/plugin-catalog-info.yaml) with **`spec.lifecycle: development`** (default for new plugins; confirm with user before changing `spec.lifecycle`). The template includes publication-completeness fields (summary, legal links, `support_level`, destination annotations, `spec.version`, author, support email, `sampleWorkflows`, empty `agents`) plus membership scaffolding (`includes`, `spec.skills`, license, provider, `distribution: external`). Do **not** copy `.catalog` `maturity` or `contents.skills` into Compass YAML — use **create-collection** for `.catalog/` only.
+1. Create `<plugin>/<plugin>-plugin.yaml` from [assets/plugin-catalog-info.yaml](assets/plugin-catalog-info.yaml) with **`spec.lifecycle: development`** (default for new plugins; confirm with user before changing `spec.lifecycle`). The template includes publication-completeness fields (summary, legal links, `support_level`, destination annotations, `spec.version`, author, support email, `sampleWorkflows`, empty `agents`) plus membership scaffolding (`includes`, `spec.skills`, license, provider, `distribution: external`). Do **not** copy `.catalog` `maturity` or `contents.skills` into Compass YAML — use **create-collection** for `.catalog/` only. Keep Compass `metadata.labels.support_level` in sync with `.catalog` `support_level` (`developer-preview`).
 2. Create `<plugin>/catalog-info.yaml` from [assets/plugin-location.yaml](assets/plugin-location.yaml).
 3. Add `./<plugin>/catalog-info.yaml` to root `catalog-info.yaml`.
 4. Add `airesource:ai5-marketplace/<plugin>` to `system.yaml` `spec.dependencyOf`.
@@ -125,7 +125,7 @@ Run `uv run python scripts/validate_compass_manifests.py` (or `make validate-com
 |-------|------|
 | Roster parity | Every `skills/*/SKILL.md` has `catalog-info.yaml` and plugin Location target |
 | Membership dual-write | Plugin `includes` skill entityRefs = `spec.skills` = disk skills. Owned MCP in `includes`; canonical MCP is not. Never `includes: []` or `skills: []`. No plugin `dependencyOf` skill roster. |
-| Skill→plugin | Each skill `dependsOn` includes its plugin (until Phase C H.5) |
+| Skill→plugin | Each skill `dependsOn` includes its plugin until Phase C H.5. One-sided: no plugin `dependencyOf` inverse. |
 | MCP inverse | Each skill `mcpserver:` in `dependsOn` → MCP `dependencyOf` includes skill |
 | Skill inverse | Each skill→skill `dependsOn` → target `dependencyOf` includes source |
 | Dangling refs | Every ref resolves to on-disk manifest or documented canonical MCP |

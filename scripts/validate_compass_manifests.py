@@ -10,7 +10,8 @@ Structural checks (no SKILL.md semantic inference):
   - Plugin→owned-MCP inverse; plugin MCP dependsOn union vs skills
   - Forbidden partOf/hasPart on skill manifests; redundant plugin dependsOn system
   - Dangling airesource refs; canonical mcpserver:redhat/* allowed without local file
-  - Basic field conventions on skill manifests (namespace, owner, agents, distribution)
+  - Basic field conventions on skill manifests (namespace, owner, agents, distribution;
+    no plugin-only includes/skills/system)
   - Skill documentation layout (all plugins with skills/):
       no skills/<name>/docs/; no references/references/ nesting;
       no internal docs/ links; symlinks under references/ must not target docs/
@@ -36,6 +37,7 @@ _CANONICAL_MCP_PREFIXES = ("mcpserver:redhat/", "mcpserver:default/")
 _EXPECTED_OWNER = "group:redhat/ai5-marketplace"
 _EXPECTED_NAMESPACE = "ai5-marketplace"
 _ALLOWED_INCLUDE_TYPES = frozenset({"skill", "mcp-server"})
+_PLUGIN_ONLY_SKILL_SPEC_KEYS = ("includes", "skills", "system")
 _MD_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 _SKILL_DOCS_STANDARD = "https://agent-plugins.org/specification"
 _SHARED_SCRIPT_SYMLINK_RE = re.compile(
@@ -123,6 +125,14 @@ def load_owned_mcps() -> dict[str, Path]:
 
 def _is_allowed_dangling_mcp(ref: str) -> bool:
     return ref.startswith(_CANONICAL_MCP_PREFIXES)
+
+
+def _expected_include_type(entity_ref: str) -> str | None:
+    if entity_ref.startswith("airesource:ai5-marketplace/"):
+        return "skill"
+    if entity_ref.startswith("mcpserver:"):
+        return "mcp-server"
+    return None
 
 
 def _is_external_link(target: str) -> bool:
@@ -268,8 +278,8 @@ def _check_skill_scripts_layout(plugin: str, skill_dir: Path, errors: list[str])
 
 
 def _check_skill_conventions(path: Path, data: dict, errors: list[str]) -> None:
-    meta = data.get("metadata", {})
-    spec = data.get("spec", {})
+    meta = data.get("metadata") or {}
+    spec = data.get("spec") or {}
     rel = path.relative_to(_REPO_ROOT)
 
     if meta.get("namespace") != _EXPECTED_NAMESPACE:
@@ -283,6 +293,9 @@ def _check_skill_conventions(path: Path, data: dict, errors: list[str]) -> None:
         errors.append(f"{rel}: spec.agents must be []")
     if spec.get("type") != "skill":
         errors.append(f"{rel}: spec.type must be skill")
+    for key in _PLUGIN_ONLY_SKILL_SPEC_KEYS:
+        if key in spec:
+            errors.append(f"{rel}: spec.{key} is plugin-only; omit it on skill manifests")
 
 
 def _validate_plugin_dual_write(
@@ -359,8 +372,11 @@ def _validate_plugin_dual_write(
         if member_type == "plugin":
             errors.append(f"{loc} must not include a plugin member")
             continue
-        if member_type is not None and member_type not in _ALLOWED_INCLUDE_TYPES:
-            errors.append(f"{loc} type must be skill or mcp-server, got {member_type!r}")
+        if member_type not in _ALLOWED_INCLUDE_TYPES:
+            if member_type:
+                errors.append(f"{loc} type must be skill or mcp-server, got {member_type!r}")
+            else:
+                errors.append(f"{loc} type is required (skill or mcp-server)")
 
         entity_ref = entry.get("entityRef")
         if not isinstance(entity_ref, str) or not entity_ref.strip():
@@ -373,10 +389,20 @@ def _validate_plugin_dual_write(
             errors.append(f"{rel}: includes must not self-reference the plugin")
             continue
 
-        if entity_ref.startswith("airesource:ai5-marketplace/"):
+        expected_type = _expected_include_type(entity_ref)
+        if (
+            member_type in _ALLOWED_INCLUDE_TYPES
+            and expected_type is not None
+            and member_type != expected_type
+        ):
+            errors.append(
+                f"{loc} type must be {expected_type} to match entityRef, got {member_type!r}"
+            )
+
+        if expected_type == "skill":
             name = entity_ref.split("/", 1)[1]
             include_skills.add(name)
-        elif entity_ref.startswith("mcpserver:"):
+        elif expected_type == "mcp-server":
             if entity_ref.startswith(_CANONICAL_MCP_PREFIXES):
                 errors.append(f"{loc} canonical MCP {entity_ref} must not be in includes")
             include_mcps.add(entity_ref)

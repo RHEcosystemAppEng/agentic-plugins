@@ -218,6 +218,6 @@
   ],
   "security_model": "#security_model.md",
   "summary": "The rh-sre collection provides skills for site reliability tasks.",
-  "support_level": "Unknown",
+  "support_level": "developer-preview",
   "version": "0.1.0"
 }
