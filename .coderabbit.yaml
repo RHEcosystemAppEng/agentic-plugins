@@ -79,7 +79,7 @@ reviews:
         ai5-marketplace. dependencyOf must list every skill under this plugin.
         Flag orphan skills or stale skill refs. Contract drift only.
 
-    - path: "mcps/*.yaml"
+    - path: "mcps/{ansible-automation-platform,assisted-installer,openshift-mcp-server}.yaml"
       instructions: >-
         MCPServer manifests: keep dependencyOf in sync with skills that use
         this server. Flag missing inverse edges. No style nits.
