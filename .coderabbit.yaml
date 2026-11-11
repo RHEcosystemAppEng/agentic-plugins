@@ -28,9 +28,7 @@ reviews:
       - "[WIP]"
       - "draft"
     labels:
-      - "!work-in-progress"
-      - "!do-not-merge"
-      - "!wip"
+      - "!hold"
     ignore_usernames:
       - "dependabot[bot]"
       - "renovate[bot]"
@@ -46,8 +44,6 @@ reviews:
     - "!**/yarn.lock"
     - "!**/*.pyc"
     - "!**/__pycache__/**"
-    - "!eval/**"
-    - "!**/.catalog/collection.json"
     - "!**/*.svg"
     - "!**/*.png"
     - "!**/*.jpg"
@@ -106,6 +102,16 @@ reviews:
         print credential values). Flag broken globs or checks that weaken
         Tier 1/Compass/collection gates. Skip import/style nits.
 
+    - path: "eval/**"
+      instructions: >-
+        Secret leakage only: flag real credentials, tokens, or API keys in eval
+        output or fixtures. Skip style, structure, and report-format nits.
+
+    - path: "**/.catalog/collection.json"
+      instructions: >-
+        Generated mirror of collection.yaml. Flag secrets only; skip formatting
+        and roster nits (those belong on collection.yaml).
+
     - path: "**"
       instructions: >-
         This repository is a skills source for the agentic catalog (plugins,
@@ -115,6 +121,7 @@ reviews:
 
 chat:
   auto_reply: true
+  allow_non_org_members: false
 
 knowledge_base:
   opt_out: false
