@@ -69,12 +69,33 @@ Both tiers must pass before submitting a PR.
 - [ ] Tested skill locally by invoking it in Claude Code
 - [ ] No credentials hardcoded (use `${ENV_VAR}` format)
 - [ ] Human-in-the-loop confirmation for destructive operations
+- [ ] PR description fills the template (CodeRabbit warns on thin descriptions)
+
+## CodeRabbit reviews
+
+PRs are auto-reviewed by [CodeRabbit](https://coderabbit.ai) using [`.coderabbit.yaml`](.coderabbit.yaml). Reviews are short and contract-focused (skills, `mcps.json`, Compass manifests, `AGENTS.md`, collection roster, secrets). They do **not** replace `make validate` or required human / CODEOWNERS approval.
+
+**What CodeRabbit looks for**
+- Skill frontmatter and skill-first / MCP encapsulation rules
+- No hardcoded credentials (`${ENV_VAR}` only in `mcps.json`)
+- Compass `dependsOn` / `dependencyOf` consistency and collection roster sync
+- Secret leakage (including under `eval/`)
+
+**How to work with it**
+- Fill [`.github/pull_request_template.md`](.github/pull_request_template.md); description check is `warning` (not a merge blocker)
+- Skip auto-review with a `hold` label, or a WIP/draft title (`WIP`, `wip:`, `[WIP]`)
+- Bot / Dependabot-style authors are ignored for auto-review
+- Org members can chat with the bot on the PR; non-org members cannot (`allow_non_org_members: false`)
+- Useful comments: `@coderabbitai review`, `@coderabbitai full review`, `@coderabbitai summary`
+
+Policy changes to `.coderabbit.yaml` are owned like other CI/config (see `CODEOWNERS`).
 
 ## Resources
 
 - [SKILL_DESIGN_PRINCIPLES.md](SKILL_DESIGN_PRINCIPLES.md) -- Design principles and templates
 - [agentskills.io specification](https://agentskills.io/specification) -- Base skill standard
 - [Security Policy](SECURITY.md) -- Credential handling and vulnerability reporting
+- [`.coderabbit.yaml`](.coderabbit.yaml) -- CodeRabbit review policy
 
 ## License
 
