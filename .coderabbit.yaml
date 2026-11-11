@@ -8,10 +8,11 @@ reviews:
   high_level_summary_in_walkthrough: true
   poem: false
 
-  # Do not block merges on PR description/template, title, or docstring checks.
+  # Soft/off pre-merge checks: warn on thin PR descriptions (template exists);
+  # do not enforce title, docstrings, or linked-issue assessment.
   pre_merge_checks:
     description:
-      mode: "off"
+      mode: "warning"
     title:
       mode: "off"
     docstrings:
