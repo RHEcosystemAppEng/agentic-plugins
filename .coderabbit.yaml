@@ -1,0 +1,118 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+inheritance: true
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_in_walkthrough: true
+  poem: false
+
+  auto_review:
+    enabled: true
+    drafts: false
+    ignore_title_keywords:
+      - "WIP"
+      - "wip:"
+      - "[WIP]"
+      - "draft"
+    labels:
+      - "!work-in-progress"
+      - "!do-not-merge"
+      - "!wip"
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "renovate[bot]"
+      - "redhat-konflux[bot]"
+
+  # Review skills/metadata; skip noise and generated mirrors only.
+  path_filters:
+    - "!**/*.lock"
+    - "!**/poetry.lock"
+    - "!**/Pipfile.lock"
+    - "!**/uv.lock"
+    - "!**/package-lock.json"
+    - "!**/yarn.lock"
+    - "!**/*.pyc"
+    - "!**/__pycache__/**"
+    - "!eval/**"
+    - "!**/.catalog/collection.json"
+    - "!**/*.svg"
+    - "!**/*.png"
+    - "!**/*.jpg"
+    - "!**/*.whl"
+    - "!**/*.gz"
+
+  path_instructions:
+    - path: "**/skills/**/SKILL.md"
+      instructions: >-
+        Enforce agentskills.io frontmatter (name, description) and repo fields
+        (model, color). Flag hardcoded credentials or secret values. Skills must
+        encapsulate MCP tools (never instruct calling MCP tools outside a skill).
+        Workflow steps need exact parameter names/formats and error handling.
+        Report only contract or security breaks; skip style and wording nits.
+
+    - path: "**/mcps.json"
+      instructions: >-
+        Credentials must use env-var placeholder references only (dollar-brace
+        VAR_NAME form) — never literal secrets, tokens, or passwords. Flag
+        missing security blocks or commands that embed secrets in args.
+        Security contract only; keep feedback brief.
+
+    - path: "**/catalog-info.yaml"
+      instructions: >-
+        Compass Location/AiResource manifests: namespace ai5-marketplace for
+        skills/plugins/MCPServers; declare both sides of dependsOn/dependencyOf;
+        skill lifecycle must match plugin or be less mature (never above plugin).
+        Flag missing Location targets for new skills. Skip formatting nits.
+
+    - path: "**/*-plugin.yaml"
+      instructions: >-
+        Plugin AiResource: type plugin, system agentic-plugins, namespace
+        ai5-marketplace. dependencyOf must list every skill under this plugin.
+        Flag orphan skills or stale skill refs. Contract drift only.
+
+    - path: "mcps/*.yaml"
+      instructions: >-
+        MCPServer manifests: keep dependencyOf in sync with skills that use
+        this server. Flag missing inverse edges. No style nits.
+
+    - path: "**/.catalog/collection.yaml"
+      instructions: >-
+        Roster and sample workflows must match skills present on disk. Do not
+        invent skills. Catalog is derived from SKILL.md, README.md, AGENTS.md —
+        flag content that contradicts those golden sources. Skip prose polish.
+
+    - path: "**/AGENTS.md"
+      instructions: >-
+        Intent routing must cover every skill in the plugin skills/ directory.
+        Preserve skill-first rule (invoke skills; do not call MCP tools
+        directly). Flag missing or stale skill routes only.
+
+    - path: "scripts/**/*.py"
+      instructions: >-
+        Focus on validation correctness and accidental secret leakage (never
+        print credential values). Flag broken globs or checks that weaken
+        Tier 1/Compass/collection gates. Skip import/style nits.
+
+    - path: "**"
+      instructions: >-
+        This repository is a skills source for the agentic catalog (plugins,
+        SKILL.md, Compass manifests, mcps.json, .catalog). Prefer short reviews:
+        major contract, security, or secret-leakage issues only. Do not nitpick
+        formatting, imports, or minor wording.
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: false
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - files: "SKILL_DESIGN_PRINCIPLES.md"
+        applyTo: "**/skills/**/SKILL.md, **/AGENTS.md"
+      - files: "CLAUDE.md"
+        applyTo: "**"
