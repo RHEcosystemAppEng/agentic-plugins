@@ -8,6 +8,17 @@ reviews:
   high_level_summary_in_walkthrough: true
   poem: false
 
+  # Do not block merges on PR description/template, title, or docstring checks.
+  pre_merge_checks:
+    description:
+      mode: "off"
+    title:
+      mode: "off"
+    docstrings:
+      mode: "off"
+    issue_assessment:
+      mode: "off"
+
   auto_review:
     enabled: true
     drafts: false
