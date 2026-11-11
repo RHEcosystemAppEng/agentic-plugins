@@ -27,7 +27,6 @@ reviews:
       - "WIP"
       - "wip:"
       - "[WIP]"
-      - "draft"
     labels:
       - "!hold"
     ignore_usernames:

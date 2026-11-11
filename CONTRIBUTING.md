@@ -83,7 +83,7 @@ PRs are auto-reviewed by [CodeRabbit](https://coderabbit.ai) using [`.coderabbit
 
 **How to work with it**
 - Fill [`.github/pull_request_template.md`](.github/pull_request_template.md); description check is `warning` (not a merge blocker)
-- Skip auto-review with a `hold` label, or a WIP/draft title (`WIP`, `wip:`, `[WIP]`)
+- Skip auto-review with a `hold` label, a WIP title (`WIP`, `wip:`, `[WIP]`), or a GitHub Draft PR
 - Bot / Dependabot-style authors are ignored for auto-review
 - Org members can chat with the bot on the PR; non-org members cannot (`allow_non_org_members: false`)
 - Useful comments: `@coderabbitai review`, `@coderabbitai full review`, `@coderabbitai summary`
