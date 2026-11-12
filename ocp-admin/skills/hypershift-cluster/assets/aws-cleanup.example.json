@@ -1,0 +1,39 @@
+{
+  "aws_cleanup": {
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "credentials_file": "/absolute/path/aws-credentials",
+    "profile": "default",
+    "ownership_reviewed": false,
+    "owned": {
+      "vpcs": [],
+      "instances": [],
+      "volumes": [],
+      "snapshots": [],
+      "nat_gateways": [],
+      "network_interfaces": [],
+      "elastic_ips": [],
+      "load_balancers_v2": [],
+      "load_balancers_v1": [],
+      "roles": ["example-guest-generated-role"],
+      "users": [],
+      "instance_profiles": ["example-guest-worker-profile"],
+      "oidc_providers": ["arn:aws:iam::111122223333:oidc-provider/oidc.example.test/example-infra"],
+      "buckets": ["example-guest-image-registry"],
+      "hosted_zones": ["ZGUESTEXAMPLE"]
+    },
+    "preserve": {
+      "vpcs": ["vpc-0123456789abcdef0"],
+      "roles": ["example-shared-cli-role"],
+      "users": ["example-shared-operator-user"],
+      "hosted_zones": ["ZSHAREDEXAMPLE"]
+    },
+    "dns_records": [
+      {"zone_id": "ZSHAREDEXAMPLE", "name": "api.example-guest.guests.example.test.", "type": "A"},
+      {"zone_id": "ZSHAREDEXAMPLE", "name": "api-external-dns.example-guest.guests.example.test.", "type": "TXT"}
+    ],
+    "oidc_documents": [
+      {"bucket": "example-shared-oidc", "prefix": "example-infra/"}
+    ]
+  }
+}
