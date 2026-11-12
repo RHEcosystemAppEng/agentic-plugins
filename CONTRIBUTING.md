@@ -72,12 +72,38 @@ Both tiers must pass before submitting a PR.
 - [ ] Tested skill locally by invoking it in Claude Code
 - [ ] No credentials hardcoded (use `${ENV_VAR}` format)
 - [ ] Human-in-the-loop confirmation for destructive operations
+- [ ] PR description fills the template (CodeRabbit warns on thin descriptions)
+
+## CodeRabbit reviews
+
+PRs are auto-reviewed by [CodeRabbit](https://coderabbit.ai) using [`.coderabbit.yaml`](.coderabbit.yaml). Reviews are short and contract-focused (skills, `mcps.json`, Compass manifests, `AGENTS.md`, collection roster, secrets). They do **not** replace `make validate` or required human / CODEOWNERS approval.
+
+**What CodeRabbit looks for**
+- Skill frontmatter and skill-first / MCP encapsulation rules
+- No hardcoded credentials (`${ENV_VAR}` only in `mcps.json`)
+- Compass `dependsOn` / `dependencyOf` consistency and collection roster sync
+- Secret leakage (including under `eval/`)
+
+**How to work with it**
+- Fill [`.github/pull_request_template.md`](.github/pull_request_template.md); description check is `warning` (not a merge blocker)
+- Skip auto-review with a `hold` label, a WIP title (`wip:`, `[WIP]`), or a GitHub Draft PR
+- Bot / Dependabot-style authors are ignored for auto-review
+- Org members can chat with the bot on the PR; non-org members cannot (`allow_non_org_members: false`)
+- Auto-review stays on for every push (`auto_pause_after_reviewed_commits: 0`)
+- Useful comments: `@coderabbitai review`, `@coderabbitai full review`, `@coderabbitai summary`
+
+When adding a new MCP server under `mcps/`, add a matching `path_instructions` entry in [`.coderabbit.yaml`](.coderabbit.yaml) for that manifest (do not use `mcps/*.yaml` — it would also match `mcps/catalog-info.yaml`).
+
+When adding a new plugin, update [`.coderabbit.yaml`](.coderabbit.yaml): add the plugin directory to the plugin `catalog-info.yaml` brace list in `path_instructions`, and add a per-plugin `code_guidelines.filePatterns` entry mapping that plugin's `AGENTS.md` to its `skills/**/SKILL.md` only.
+
+Policy changes to `.coderabbit.yaml` are owned like other CI/config (see `CODEOWNERS`).
 
 ## Resources
 
 - [SKILL_DESIGN_PRINCIPLES.md](SKILL_DESIGN_PRINCIPLES.md) -- Design principles and templates
 - [agentskills.io specification](https://agentskills.io/specification) -- Base skill standard
 - [Security Policy](SECURITY.md) -- Credential handling and vulnerability reporting
+- [`.coderabbit.yaml`](.coderabbit.yaml) -- CodeRabbit review policy
 
 ## License
 

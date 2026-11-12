@@ -1,0 +1,190 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+inheritance: true
+
+reviews:
+  profile: "chill"
+  auto_approvals:
+    enabled: false
+  high_level_summary: true
+  high_level_summary_in_walkthrough: true
+  poem: false
+
+  # Soft/off pre-merge checks: warn on thin PR descriptions (template exists);
+  # do not enforce title, docstrings, or linked-issue assessment.
+  pre_merge_checks:
+    description:
+      mode: "warning"
+    title:
+      mode: "off"
+    docstrings:
+      mode: "off"
+    issue_assessment:
+      mode: "off"
+
+  auto_review:
+    enabled: true
+    drafts: false
+    # 0 disables pause so every push keeps getting reviewed.
+    auto_pause_after_reviewed_commits: 0
+    ignore_title_keywords:
+      - "wip:"
+      - "[WIP]"
+    labels:
+      - "!hold"
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "renovate[bot]"
+      - "redhat-konflux[bot]"
+
+  # Review skills/metadata; skip noise and generated mirrors only.
+  path_filters:
+    - "!**/*.lock"
+    - "!**/poetry.lock"
+    - "!**/Pipfile.lock"
+    - "!**/uv.lock"
+    - "!**/package-lock.json"
+    - "!**/yarn.lock"
+    - "!**/*.pyc"
+    - "!**/__pycache__/**"
+    - "!**/*.svg"
+    - "!**/*.png"
+    - "!**/*.jpg"
+    - "!**/*.whl"
+    - "!**/*.gz"
+
+  path_instructions:
+    - path: "**/skills/**/SKILL.md"
+      instructions: >-
+        Enforce agentskills.io frontmatter (name, description) and repo fields
+        (model, color). Flag hardcoded credentials or secret values. Skills must
+        encapsulate MCP tools (never instruct calling MCP tools outside a skill).
+        Workflow steps need exact parameter names/formats and error handling.
+        For new skills, verify purpose aligns with the plugin persona in that
+        plugin AGENTS.md opening paragraph; flag skills that belong elsewhere.
+        Report only contract or security breaks; skip style and wording nits.
+
+    - path: "**/mcps.json"
+      instructions: >-
+        Credentials must use env-var placeholder references only (dollar-brace
+        VAR_NAME form) — never literal secrets, tokens, or passwords. Flag
+        missing security blocks or commands that embed secrets in args.
+        Security contract only; keep feedback brief.
+
+    - path: "**/skills/**/catalog-info.yaml"
+      instructions: >-
+        Skill AiResource: namespace ai5-marketplace, type skill; dependsOn must
+        include the parent plugin (and MCP/skill deps as needed); lifecycle must
+        match plugin or be less mature (never above plugin). Declare both sides
+        of dependsOn/dependencyOf. Skip formatting nits.
+
+    - path: "{ocp-admin,rh-sre,rh-virt,rh-basic,rh-ai-engineer,rh-automation,rh-developer}/catalog-info.yaml"
+      instructions: >-
+        Plugin Location: targets must list the plugin AiResource and every skill
+        catalog-info.yaml under this plugin. Flag missing targets for new skills.
+        Skip formatting nits.
+
+    - path: "mcps/catalog-info.yaml"
+      instructions: >-
+        MCP Location index: targets must list every MCPServer manifest under
+        mcps/. Flag missing or stale MCP targets. Skip formatting nits.
+
+    - path: "catalog-info.yaml"
+      instructions: >-
+        Root Location: targets must include system.yaml, each registered plugin
+        catalog-info.yaml, and mcps/catalog-info.yaml. Flag missing plugin or
+        MCP Location targets when adding a new plugin. Skip formatting nits.
+
+    - path: "**/*-plugin.yaml"
+      instructions: >-
+        Plugin AiResource: type plugin, system agentic-plugins, namespace
+        ai5-marketplace. dependencyOf must list every skill under this plugin.
+        Flag orphan skills or stale skill refs. Contract drift only.
+
+    # Keep explicit MCPServer paths in sync when adding a new mcps/*.yaml server.
+    - path: "mcps/ansible-automation-platform.yaml"
+      instructions: >-
+        MCPServer manifest: keep dependencyOf in sync with skills that use this
+        server. Flag missing inverse edges. No style nits.
+
+    - path: "mcps/assisted-installer.yaml"
+      instructions: >-
+        MCPServer manifest: keep dependencyOf in sync with skills that use this
+        server. Flag missing inverse edges. No style nits.
+
+    - path: "mcps/openshift-mcp-server.yaml"
+      instructions: >-
+        MCPServer manifest: keep dependencyOf in sync with skills that use this
+        server. Flag missing inverse edges. No style nits.
+
+    - path: "**/.catalog/collection.yaml"
+      instructions: >-
+        Roster and sample workflows must match skills present on disk. Do not
+        invent skills. Catalog is derived from SKILL.md, README.md, AGENTS.md —
+        flag content that contradicts those golden sources. Skip prose polish.
+
+    - path: "**/AGENTS.md"
+      instructions: >-
+        Intent routing must cover every skill in the plugin skills/ directory.
+        Preserve skill-first rule (invoke skills; do not call MCP tools
+        directly). Flag missing or stale skill routes only.
+
+    - path: "scripts/**/*.py"
+      instructions: >-
+        Focus on validation correctness and accidental secret leakage (never
+        print credential values). Flag broken globs or checks that weaken
+        Tier 1/Compass/collection gates. Skip import/style nits.
+
+    - path: "eval/**"
+      instructions: >-
+        Secret leakage only: flag real credentials, tokens, or API keys in eval
+        output or fixtures. Skip style, structure, and report-format nits.
+
+    - path: "**/.catalog/collection.json"
+      instructions: >-
+        Generated mirror of collection.yaml. Flag secrets only; skip formatting
+        and roster nits (those belong on collection.yaml).
+
+    - path: "docs/data.json"
+      instructions: >-
+        Generated artifact; must not be committed. Flag if present in a diff.
+
+    - path: "**"
+      instructions: >-
+        This repository is a skills source for the agentic catalog (plugins,
+        SKILL.md, Compass manifests, mcps.json, .catalog). Prefer short reviews:
+        major contract, security, or secret-leakage issues only. Do not nitpick
+        formatting, imports, or minor wording. PLUGIN_DIRS in
+        scripts/validate_structure.py is auto-discovered — do not flag a PR for
+        not registering a new plugin there. If skills, agents, or mcps.json
+        changed, remind the author to run make validate.
+
+chat:
+  auto_reply: true
+  allow_non_org_members: false
+
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: false
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - files: "SKILL_DESIGN_PRINCIPLES.md"
+        applyTo: "**/skills/**/SKILL.md, **/AGENTS.md"
+      # Persona guidance: each plugin AGENTS.md applies only to that plugin's skills.
+      - files: "ocp-admin/AGENTS.md"
+        applyTo: "ocp-admin/skills/**/SKILL.md"
+      - files: "rh-sre/AGENTS.md"
+        applyTo: "rh-sre/skills/**/SKILL.md"
+      - files: "rh-virt/AGENTS.md"
+        applyTo: "rh-virt/skills/**/SKILL.md"
+      - files: "rh-basic/AGENTS.md"
+        applyTo: "rh-basic/skills/**/SKILL.md"
+      - files: "rh-ai-engineer/AGENTS.md"
+        applyTo: "rh-ai-engineer/skills/**/SKILL.md"
+      - files: "rh-automation/AGENTS.md"
+        applyTo: "rh-automation/skills/**/SKILL.md"
+      - files: "rh-developer/AGENTS.md"
+        applyTo: "rh-developer/skills/**/SKILL.md"
+      - files: "CLAUDE.md"
+        applyTo: "**"
