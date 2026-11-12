@@ -59,6 +59,8 @@ reviews:
         (model, color). Flag hardcoded credentials or secret values. Skills must
         encapsulate MCP tools (never instruct calling MCP tools outside a skill).
         Workflow steps need exact parameter names/formats and error handling.
+        For new skills, verify purpose aligns with the plugin persona in that
+        plugin AGENTS.md opening paragraph; flag skills that belong elsewhere.
         Report only contract or security breaks; skip style and wording nits.
 
     - path: "**/mcps.json"
@@ -153,7 +155,8 @@ reviews:
         major contract, security, or secret-leakage issues only. Do not nitpick
         formatting, imports, or minor wording. PLUGIN_DIRS in
         scripts/validate_structure.py is auto-discovered — do not flag a PR for
-        not registering a new plugin there.
+        not registering a new plugin there. If skills, agents, or mcps.json
+        changed, remind the author to run make validate.
 
 chat:
   auto_reply: true
@@ -168,5 +171,7 @@ knowledge_base:
     filePatterns:
       - files: "SKILL_DESIGN_PRINCIPLES.md"
         applyTo: "**/skills/**/SKILL.md, **/AGENTS.md"
+      - files: "**/AGENTS.md"
+        applyTo: "**/skills/**/SKILL.md"
       - files: "CLAUDE.md"
         applyTo: "**"
