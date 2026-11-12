@@ -280,6 +280,19 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
         errors = self._errors(self._base_spec(skills=[]))
         self.assertTrue(any("spec.skills must not be empty" in e for e in errors))
 
+    def test_empty_disk_rejected(self) -> None:
+        errors: list[str] = []
+        compass._validate_plugin_dual_write(
+            self._PLUGIN_PATH,
+            self._PLUGIN_REF,
+            self._PLUGIN_DATA,
+            self._base_spec(),
+            set(),
+            {},
+            errors,
+        )
+        self.assertTrue(any("plugin has no skills on disk" in e for e in errors), msg=errors)
+
     def test_duplicate_entity_ref_rejected(self) -> None:
         spec = self._base_spec(
             includes=[
@@ -388,6 +401,18 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
         self.assertTrue(any("type is required" in e for e in errors), msg=errors)
         self.assertFalse(any("unknown skills" in e for e in errors), msg=errors)
         self.assertFalse(any("spec.includes missing skills" in e for e in errors), msg=errors)
+
+    def test_non_string_includes_type_rejected(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": ["skill"]},
+            ],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(
+            any("type must be skill or mcp-server" in e for e in errors),
+            msg=errors,
+        )
 
     def test_includes_type_must_match_entity_ref(self) -> None:
         spec = self._base_spec(
