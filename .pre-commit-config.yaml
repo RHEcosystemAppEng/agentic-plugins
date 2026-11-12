@@ -50,3 +50,9 @@ repos:
         entry: bash -c 'uv run python scripts/validate_skills_tier1.py "$@"' --
         language: system
         files: ^(rh-[-a-z0-9]+|ocp-admin)/skills/[^/]+/SKILL\.md$
+
+      - id: ruff-lint
+        name: ruff lint (skill scripts)
+        entry: bash -c 'uv run ruff check "$@"' --
+        language: system
+        files: ^(rh-[-a-z0-9]+|ocp-admin)/(skills/[^/]+/scripts|scripts/[^/]+)/.*\.py$

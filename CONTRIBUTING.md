@@ -27,6 +27,9 @@ The fastest way to contribute is using `/agentic-contribution-skill` in Claude C
 1. Fork and clone the repository
 2. Open the project in Claude Code
 3. Run `/agentic-contribution-skill` and follow the prompts
+4. Install the local git hooks once: `make install && scripts/install-hooks.sh`
+
+`make install` only installs Python dependencies — it does **not** register the git hooks; `scripts/install-hooks.sh` is the separate step that does. Once installed, every commit runs: gitleaks (secrets), `make validate` (structure/catalog, when those paths change), the Tier-2 skill design check, the Tier-1 agentskills.io linter, and ruff lint on skill scripts.
 
 The skill handles plugin selection, AGENTS.md routing, validation (Tier 1 + Tier 2), and git workflow automatically.
 

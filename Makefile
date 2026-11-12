@@ -1,4 +1,4 @@
-.PHONY: help install validate validate-structure validate-collection-schema validate-collection-compliance validate-compass-manifests validate-lifecycle-ceiling validate-skill-design validate-skill-design-changed validate-mcp-tools validate-spelling package clean check-uv
+.PHONY: help install validate validate-structure validate-collection-schema validate-collection-compliance validate-compass-manifests validate-lifecycle-ceiling validate-skill-design validate-skill-design-changed validate-mcp-tools validate-spelling validate-scripts package clean check-uv
 
 help:
 	@echo "agentic-plugins"
@@ -15,6 +15,7 @@ help:
 	@echo "  validate-skill-design-changed - Validate only changed skills (staged + unstaged, for local dev)"
 	@echo "  validate-mcp-tools            - Validate allowed-tools against live MCP servers (requires podman)"
 	@echo "  validate-spelling             - Run codespell spell check on all files"
+	@echo "  validate-scripts              - Run ruff lint on skill scripts (<plugin>/skills/*/scripts/*.py)"
 	@echo "  package                       - Package skills into ZIPs (output: dist/)"
 	@echo "  clean                         - Remove generated files"
 	@echo ""
@@ -73,6 +74,8 @@ validate: check-uv
 	uv run python scripts/validate_skills_tier2.py || EXIT=1; \
 	echo "=== Running spell check..."; \
 	$(MAKE) validate-spelling || EXIT=1; \
+	echo "=== Running ruff lint on skill scripts..."; \
+	$(MAKE) validate-scripts || EXIT=1; \
 	echo ""; \
 	echo "======================================================================"; \
 	echo "  Validation complete!"; \
@@ -138,6 +141,11 @@ validate-spelling: check-uv
 	@echo "Running spell check with codespell..."
 	@uv run codespell
 	@echo "Spell check passed!"
+
+validate-scripts: check-uv
+	@echo "Running ruff lint on skill scripts..."
+	@uv run ruff check */skills/*/scripts/*.py
+	@echo "Script lint passed!"
 
 package: check-uv
 	@uv run python scripts/package_skills.py
