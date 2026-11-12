@@ -114,3 +114,6 @@ config.local.*
 
 # Reports
 reports/
+
+# Generated docs index (must not be committed)
+docs/data.json

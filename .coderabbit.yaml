@@ -24,6 +24,8 @@ reviews:
   auto_review:
     enabled: true
     drafts: false
+    # 0 disables pause so every push keeps getting reviewed.
+    auto_pause_after_reviewed_commits: 0
     ignore_title_keywords:
       - "wip:"
       - "[WIP]"
@@ -66,12 +68,29 @@ reviews:
         missing security blocks or commands that embed secrets in args.
         Security contract only; keep feedback brief.
 
-    - path: "**/catalog-info.yaml"
+    - path: "**/skills/**/catalog-info.yaml"
       instructions: >-
-        Compass Location/AiResource manifests: namespace ai5-marketplace for
-        skills/plugins/MCPServers; declare both sides of dependsOn/dependencyOf;
-        skill lifecycle must match plugin or be less mature (never above plugin).
-        Flag missing Location targets for new skills. Skip formatting nits.
+        Skill AiResource: namespace ai5-marketplace, type skill; dependsOn must
+        include the parent plugin (and MCP/skill deps as needed); lifecycle must
+        match plugin or be less mature (never above plugin). Declare both sides
+        of dependsOn/dependencyOf. Skip formatting nits.
+
+    - path: "{ocp-admin,rh-sre,rh-virt,rh-basic,rh-ai-engineer,rh-automation,rh-developer}/catalog-info.yaml"
+      instructions: >-
+        Plugin Location: targets must list the plugin AiResource and every skill
+        catalog-info.yaml under this plugin. Flag missing targets for new skills.
+        Skip formatting nits.
+
+    - path: "mcps/catalog-info.yaml"
+      instructions: >-
+        MCP Location index: targets must list every MCPServer manifest under
+        mcps/. Flag missing or stale MCP targets. Skip formatting nits.
+
+    - path: "catalog-info.yaml"
+      instructions: >-
+        Root Location: targets must include system.yaml, each registered plugin
+        catalog-info.yaml, and mcps/catalog-info.yaml. Flag missing plugin or
+        MCP Location targets when adding a new plugin. Skip formatting nits.
 
     - path: "**/*-plugin.yaml"
       instructions: >-
@@ -79,10 +98,21 @@ reviews:
         ai5-marketplace. dependencyOf must list every skill under this plugin.
         Flag orphan skills or stale skill refs. Contract drift only.
 
-    - path: "mcps/{ansible-automation-platform,assisted-installer,openshift-mcp-server}.yaml"
+    # Keep explicit MCPServer paths in sync when adding a new mcps/*.yaml server.
+    - path: "mcps/ansible-automation-platform.yaml"
       instructions: >-
-        MCPServer manifests: keep dependencyOf in sync with skills that use
-        this server. Flag missing inverse edges. No style nits.
+        MCPServer manifest: keep dependencyOf in sync with skills that use this
+        server. Flag missing inverse edges. No style nits.
+
+    - path: "mcps/assisted-installer.yaml"
+      instructions: >-
+        MCPServer manifest: keep dependencyOf in sync with skills that use this
+        server. Flag missing inverse edges. No style nits.
+
+    - path: "mcps/openshift-mcp-server.yaml"
+      instructions: >-
+        MCPServer manifest: keep dependencyOf in sync with skills that use this
+        server. Flag missing inverse edges. No style nits.
 
     - path: "**/.catalog/collection.yaml"
       instructions: >-
