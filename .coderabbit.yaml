@@ -25,7 +25,6 @@ reviews:
     enabled: true
     drafts: false
     ignore_title_keywords:
-      - "WIP"
       - "wip:"
       - "[WIP]"
     labels:
