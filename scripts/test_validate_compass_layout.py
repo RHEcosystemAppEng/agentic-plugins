@@ -242,5 +242,213 @@ class TestSkillDocLinks(unittest.TestCase):
             )
 
 
+class TestPluginDualWriteIncludes(unittest.TestCase):
+    _PLUGIN_REF = "airesource:ai5-marketplace/rh-basic"
+    _PLUGIN_PATH = _REPO_ROOT / "rh-basic" / "rh-basic-plugin.yaml"
+    _PLUGIN_DATA = {"metadata": {"labels": {"distribution": "external"}}}
+    _DISK = frozenset({"skill-a"})
+
+    def _errors(self, plugin_spec: dict) -> list[str]:
+        errors: list[str] = []
+        compass._validate_plugin_dual_write(
+            self._PLUGIN_PATH,
+            self._PLUGIN_REF,
+            self._PLUGIN_DATA,
+            plugin_spec,
+            set(self._DISK),
+            {},
+            errors,
+        )
+        return errors
+
+    def _base_spec(self, **overrides: object) -> dict:
+        spec = {
+            "skills": ["airesource:ai5-marketplace/skill-a"],
+            "includes": [
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+            ],
+            "dependsOn": [],
+        }
+        spec.update(overrides)
+        return spec
+
+    def test_empty_includes_rejected(self) -> None:
+        errors = self._errors(self._base_spec(includes=[]))
+        self.assertTrue(any("includes must not be empty" in e for e in errors))
+
+    def test_empty_skills_rejected(self) -> None:
+        errors = self._errors(self._base_spec(skills=[]))
+        self.assertTrue(any("spec.skills must not be empty" in e for e in errors))
+
+    def test_duplicate_entity_ref_rejected(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+            ],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(any("duplicate includes entityRef" in e for e in errors))
+
+    def test_self_include_rejected(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+                {"entityRef": self._PLUGIN_REF, "type": "skill"},
+            ],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(any("must not self-reference the plugin" in e for e in errors))
+        self.assertFalse(
+            any("unknown skills" in e for e in errors),
+            msg=errors,
+        )
+
+    def test_plugin_typed_member_rejected(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+                {
+                    "entityRef": "airesource:ai5-marketplace/other-plugin",
+                    "type": "plugin",
+                },
+            ],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(any("must not include a plugin member" in e for e in errors))
+        self.assertFalse(
+            any("unknown skills" in e for e in errors),
+            msg=errors,
+        )
+        self.assertFalse(
+            any("type must be skill or mcp-server" in e for e in errors),
+            msg=errors,
+        )
+
+    def test_string_includes_entry_rejected(self) -> None:
+        spec = self._base_spec(
+            includes=["airesource:ai5-marketplace/skill-a"],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(any("must be a mapping, not a string" in e for e in errors))
+
+    def test_omitted_plugin_dependencyOf_skill_roster_ok(self) -> None:
+        errors = self._errors(self._base_spec())
+        depof_errors = [e for e in errors if "dependencyOf" in e]
+        self.assertEqual(depof_errors, [], msg=errors)
+
+    def test_canonical_default_mcp_rejected_from_includes(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"},
+                {
+                    "entityRef": "mcpserver:default/security-mcp-server",
+                    "type": "mcp-server",
+                },
+            ],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(
+            any(
+                "canonical MCP" in e and "mcpserver:default/security-mcp-server" in e
+                for e in errors
+            ),
+            msg=errors,
+        )
+
+    def test_malformed_skills_still_checked_against_disk(self) -> None:
+        spec = self._base_spec(skills=["mcpserver:redhat/not-a-skill"])
+        errors = self._errors(spec)
+        self.assertTrue(any("must be airesource refs" in e for e in errors), msg=errors)
+        self.assertTrue(any("spec.skills missing" in e for e in errors), msg=errors)
+        self.assertTrue(
+            any("spec.skills and spec.includes skill rosters must match" in e for e in errors),
+            msg=errors,
+        )
+
+    def test_null_plugin_spec_does_not_crash(self) -> None:
+        errors: list[str] = []
+        compass._validate_plugin_dual_write(
+            self._PLUGIN_PATH,
+            self._PLUGIN_REF,
+            self._PLUGIN_DATA,
+            None,  # YAML `spec:` parses to None
+            set(self._DISK),
+            {},
+            errors,
+        )
+        self.assertTrue(any("missing spec.skills" in e for e in errors), msg=errors)
+        self.assertTrue(any("missing spec.includes" in e for e in errors), msg=errors)
+
+    def test_includes_type_required(self) -> None:
+        spec = self._base_spec(
+            includes=[{"entityRef": "airesource:ai5-marketplace/skill-a"}],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(any("type is required" in e for e in errors), msg=errors)
+        self.assertFalse(any("unknown skills" in e for e in errors), msg=errors)
+        self.assertFalse(any("spec.includes missing skills" in e for e in errors), msg=errors)
+
+    def test_includes_type_must_match_entity_ref(self) -> None:
+        spec = self._base_spec(
+            includes=[
+                {"entityRef": "airesource:ai5-marketplace/skill-a", "type": "mcp-server"},
+                {"entityRef": "mcpserver:ai5-marketplace/owned-mcp", "type": "skill"},
+            ],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(
+            any("type must be skill to match entityRef" in e for e in errors),
+            msg=errors,
+        )
+        self.assertTrue(
+            any("type must be mcp-server to match entityRef" in e for e in errors),
+            msg=errors,
+        )
+        self.assertFalse(any("unknown skills" in e for e in errors), msg=errors)
+        self.assertFalse(any("spec.includes missing skills" in e for e in errors), msg=errors)
+
+
+class TestSkillConventions(unittest.TestCase):
+    _PATH = _REPO_ROOT / "rh-basic" / "skills" / "skill-a" / "catalog-info.yaml"
+
+    def _errors(self, data: dict) -> list[str]:
+        errors: list[str] = []
+        compass._check_skill_conventions(self._PATH, data, errors)
+        return errors
+
+    def _skill_data(self, **spec_overrides: object) -> dict:
+        spec: dict[str, object] = {
+            "type": "skill",
+            "owner": compass._EXPECTED_OWNER,
+            "agents": [],
+        }
+        spec.update(spec_overrides)
+        return {
+            "metadata": {
+                "namespace": compass._EXPECTED_NAMESPACE,
+                "labels": {"distribution": "external"},
+            },
+            "spec": spec,
+        }
+
+    def test_plugin_only_fields_rejected_on_skills(self) -> None:
+        data = self._skill_data(
+            includes=[{"entityRef": "airesource:ai5-marketplace/skill-a", "type": "skill"}],
+            skills=["airesource:ai5-marketplace/skill-a"],
+            system="default/agentic-plugins",
+        )
+        errors = self._errors(data)
+        for key in ("includes", "skills", "system"):
+            self.assertTrue(
+                any(f"spec.{key} is plugin-only" in e for e in errors),
+                msg=errors,
+            )
+
+    def test_valid_skill_spec_has_no_plugin_only_errors(self) -> None:
+        errors = self._errors(self._skill_data())
+        self.assertEqual(errors, [])
+
+
 if __name__ == "__main__":
     unittest.main()

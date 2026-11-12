@@ -17,7 +17,7 @@ personas:
 marketplaces:
 - Claude Code
 - Cursor
-support_level: Unknown
+support_level: developer-preview
 maturity: GREEN
 description: "Virtual machine management and automation for OpenShift Virtualization and KubeVirt workloads."
 summary: |

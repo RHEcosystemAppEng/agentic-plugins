@@ -87,7 +87,9 @@ catalog-info.yaml (root Location)
 
 #### Entity Relationships
 
-Use `dependsOn` / `dependencyOf` for custom kinds (`AiResource`, `MCPServer`); do not use `partOf` / `hasPart` on those kinds. Compass does not auto-generate inverse relations (COMPASS-1288) — declare both sides on every edge.
+Plugin **membership** is `spec.includes` (skills + owned MCP) **and** legacy `spec.skills` (skill refs only, required by the live processor). Do **not** list skills on plugin `dependencyOf` — that roster is retired. Each skill still `dependsOn` its plugin until Phase C H.5; that edge is **the** exception to the bidirectional rule (one-sided, no plugin inverse).
+
+Do **not** author `partOf` / `hasPart` on `AiResource` / `MCPServer`. Compass may generate those from `includes`; we still do not write the keys. Compass does not auto-generate inverse relations for custom kinds (COMPASS-1288) — dual-write `dependsOn` / `dependencyOf` on every **functional** edge (skill→MCP, skill→skill, plugin MCP union). Canonical `mcpserver:redhat/*` is `dependsOn` only, never `includes`.
 
 Full relationship matrix, bidirectional policy, entity ref formats, and file touch lists: [`.claude/skills/compass-manifest-maintenance/references/relationship-rules.md`](.claude/skills/compass-manifest-maintenance/references/relationship-rules.md). Use the **compass-manifest-maintenance** skill when adding or updating manifests. CI enforces structural rules via `scripts/validate_compass_manifests.py` (`make validate-compass-manifests`).
 
@@ -99,7 +101,8 @@ All entities (skills, plugins, and MCP servers) share a single namespace: `ai5-m
 
 - Skills: `airesource:ai5-marketplace/<skill-name>`
 - Plugins: `airesource:ai5-marketplace/<plugin-name>`
-- MCP servers: `mcpserver:ai5-marketplace/<server-name>`
+- Owned MCP servers: `mcpserver:ai5-marketplace/<server-name>`
+- Canonical MCP servers: `mcpserver:redhat/<server-name>` (not in `includes`)
 
 #### Adding Compass Manifests for a New Skill
 
@@ -140,11 +143,13 @@ spec:
     - mcpserver:ai5-marketplace/<server-name>
 ```
 
-Then update **both sides** of every relationship:
+Then update membership **and** both sides of every functional relationship:
 1. Add the file as a target in the plugin's `catalog-info.yaml` Location
-2. Add the skill to the plugin's `dependencyOf` list in `<plugin>-plugin.yaml`
-3. Add the skill to each referenced MCP server's `dependencyOf` list in `mcps/<server>.yaml`
+2. Add the skill to `<plugin>-plugin.yaml` `spec.skills` **and** `spec.includes` (`entityRef` + `type: skill`)
+3. Add the skill to each referenced **owned** MCP server's `dependencyOf` list in `mcps/<server>.yaml`. If that MCP is part of the plugin, it also belongs in plugin `includes` (`type: mcp-server`). Canonical `mcpserver:redhat/*` stays on skill/plugin `dependsOn` only.
 4. If the skill depends on other skills, add `dependencyOf` entries in those skills' manifests
+
+Prefer running **compass-manifest-maintenance** over hand-editing these arrays.
 
 ## Contributing
 
@@ -270,8 +275,8 @@ last_updated: YYYY-MM-DD
 3. Add `AGENTS.md` with persona, skill-first rule, intent routing table, MCP servers, and global rules (see [rh-ai-engineer/AGENTS.md](rh-ai-engineer/AGENTS.md) for reference)
 4. Create `skills/` directory
 5. Add `mcps.json` when the plugin integrates MCP servers (use `${VAR}` for secrets)
-6. Create Compass manifests:
-   - `<plugin-name>-plugin.yaml` — AiResource with `type: plugin`, `system: agentic-plugins`
+6. Create Compass manifests from **compass-manifest-maintenance** templates:
+   - `<plugin-name>-plugin.yaml` — AiResource with `type: plugin`, `system: agentic-plugins`, `includes` + `spec.skills`, license, provider, `distribution: external`
    - `catalog-info.yaml` — Location targeting the plugin file and all skill catalog-info.yaml files
 7. Add the plugin's `catalog-info.yaml` as a target in the root `catalog-info.yaml`
 8. Update main `README.md` table with link
@@ -290,7 +295,7 @@ last_updated: YYYY-MM-DD
    - Dependencies declaration
 4. Include concrete examples and complete error handling
 5. Update the plugin's `AGENTS.md` intent routing table to include the new skill
-6. Run **compass-manifest-maintenance** (`.claude/skills/compass-manifest-maintenance/`) to create or update Compass manifests — skill `catalog-info.yaml`, plugin Location targets, plugin/MCP inverse `dependencyOf` (see "Adding Compass Manifests for a New Skill")
+6. Run **compass-manifest-maintenance** (`.claude/skills/compass-manifest-maintenance/`) to create or update Compass manifests — skill `catalog-info.yaml`, plugin Location targets, plugin `includes` / `spec.skills`, and functional MCP/skill inverse `dependencyOf` (see "Adding Compass Manifests for a New Skill")
 7. Run `make validate-compass-manifests` (or full `make validate`)
 8. Test with `Skill` tool invocation
 9. Validate with `uv run python scripts/validate_skills_tier1.py <plugin>/skills/<skill-name>/SKILL.md`
