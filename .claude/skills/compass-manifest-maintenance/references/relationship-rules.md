@@ -1,5 +1,7 @@
 # Compass relationship rules (agentic-plugins)
 
+**Phase C H.4 / H.5:** H.4 drops legacy plugin `spec.skills` once Analyze accepts `includes` without `skills`. H.5 drops skill→plugin `dependsOn` once pipeline child detection is proven on includes-only entities. Until then, dual-write both membership fields and keep the one-sided skill→plugin edge.
+
 ## Membership vs functional deps
 
 | What | Where | Notes |

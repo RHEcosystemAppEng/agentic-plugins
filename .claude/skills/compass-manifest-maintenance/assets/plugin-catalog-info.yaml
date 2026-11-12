@@ -70,7 +70,7 @@ spec:
         - <skill-name> <expected behavior>
   skills:
     - airesource:ai5-marketplace/<skill-name>
-    # Every skill in the plugin — same set as includes type:skill (legacy dual-write until H.4)
+    # Every skill in the plugin — same set as includes type:skill (legacy dual-write until Phase C H.4)
   includes:
     - entityRef: airesource:ai5-marketplace/<skill-name>
       type: skill
