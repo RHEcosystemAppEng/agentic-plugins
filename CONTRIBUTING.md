@@ -91,7 +91,7 @@ PRs are auto-reviewed by [CodeRabbit](https://coderabbit.ai) using [`.coderabbit
 
 When adding a new MCP server under `mcps/`, add a matching `path_instructions` entry in [`.coderabbit.yaml`](.coderabbit.yaml) for that manifest (do not use `mcps/*.yaml` — it would also match `mcps/catalog-info.yaml`).
 
-When adding a new plugin, add its directory to the plugin `catalog-info.yaml` brace list in [`.coderabbit.yaml`](.coderabbit.yaml) `path_instructions` (same hardcoded-list pattern as the MCPServer entries).
+When adding a new plugin, update [`.coderabbit.yaml`](.coderabbit.yaml): add the plugin directory to the plugin `catalog-info.yaml` brace list in `path_instructions`, and add a per-plugin `code_guidelines.filePatterns` entry mapping that plugin's `AGENTS.md` to its `skills/**/SKILL.md` only.
 
 Policy changes to `.coderabbit.yaml` are owned like other CI/config (see `CODEOWNERS`).
 
