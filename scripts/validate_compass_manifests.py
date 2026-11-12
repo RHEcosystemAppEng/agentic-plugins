@@ -314,6 +314,7 @@ def _validate_plugin_dual_write(
         errors.append(f"{rel}: metadata.labels.distribution must be external")
 
     if not disk:
+        errors.append(f"{rel}: plugin has no skills on disk")
         return
 
     skills_raw = plugin_spec.get("skills")
@@ -369,6 +370,9 @@ def _validate_plugin_dual_write(
         if entry.get("gitRef") is not None:
             errors.append(f"{loc} must not set gitRef")
         member_type = entry.get("type")
+        if member_type is not None and not isinstance(member_type, str):
+            errors.append(f"{loc} type must be skill or mcp-server, got {member_type!r}")
+            continue
         if member_type == "plugin":
             errors.append(f"{loc} must not include a plugin member")
             continue
