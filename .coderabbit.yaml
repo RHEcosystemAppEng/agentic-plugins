@@ -112,12 +112,18 @@ reviews:
         Generated mirror of collection.yaml. Flag secrets only; skip formatting
         and roster nits (those belong on collection.yaml).
 
+    - path: "docs/data.json"
+      instructions: >-
+        Generated artifact; must not be committed. Flag if present in a diff.
+
     - path: "**"
       instructions: >-
         This repository is a skills source for the agentic catalog (plugins,
         SKILL.md, Compass manifests, mcps.json, .catalog). Prefer short reviews:
         major contract, security, or secret-leakage issues only. Do not nitpick
-        formatting, imports, or minor wording.
+        formatting, imports, or minor wording. PLUGIN_DIRS in
+        scripts/validate_structure.py is auto-discovered — do not flag a PR for
+        not registering a new plugin there.
 
 chat:
   auto_reply: true
