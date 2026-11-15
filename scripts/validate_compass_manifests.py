@@ -313,6 +313,18 @@ def _validate_plugin_dual_write(
     if labels.get("distribution") != "external":
         errors.append(f"{rel}: metadata.labels.distribution must be external")
 
+    depof_raw = plugin_spec.get("dependencyOf")
+    if depof_raw is not None:
+        if not isinstance(depof_raw, list):
+            errors.append(f"{rel}: spec.dependencyOf must be a list")
+        else:
+            for dep in depof_raw:
+                if isinstance(dep, str) and dep.startswith("airesource:ai5-marketplace/"):
+                    errors.append(
+                        f"{rel}: spec.dependencyOf must not list skills "
+                        f"(roster retired) — got {dep}"
+                    )
+
     if not disk:
         errors.append(f"{rel}: plugin has no skills on disk")
         return

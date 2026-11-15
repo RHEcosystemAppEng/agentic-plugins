@@ -350,6 +350,36 @@ class TestPluginDualWriteIncludes(unittest.TestCase):
         depof_errors = [e for e in errors if "dependencyOf" in e]
         self.assertEqual(depof_errors, [], msg=errors)
 
+    def test_plugin_dependencyOf_skill_entry_rejected(self) -> None:
+        spec = self._base_spec(
+            dependencyOf=["airesource:ai5-marketplace/skill-a"],
+        )
+        errors = self._errors(spec)
+        self.assertTrue(
+            any("spec.dependencyOf must not list skills" in e for e in errors),
+            msg=errors,
+        )
+
+    def test_plugin_dependencyOf_non_list_rejected(self) -> None:
+        errors = self._errors(self._base_spec(dependencyOf="airesource:ai5-marketplace/skill-a"))
+        self.assertTrue(any("spec.dependencyOf must be a list" in e for e in errors), msg=errors)
+
+    def test_plugin_dependencyOf_checked_when_disk_empty(self) -> None:
+        errors: list[str] = []
+        compass._validate_plugin_dual_write(
+            self._PLUGIN_PATH,
+            self._PLUGIN_REF,
+            self._PLUGIN_DATA,
+            self._base_spec(dependencyOf=["airesource:ai5-marketplace/skill-a"]),
+            set(),
+            {},
+            errors,
+        )
+        self.assertTrue(
+            any("spec.dependencyOf must not list skills" in e for e in errors),
+            msg=errors,
+        )
+
     def test_canonical_default_mcp_rejected_from_includes(self) -> None:
         spec = self._base_spec(
             includes=[
