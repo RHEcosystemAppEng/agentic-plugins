@@ -40,8 +40,8 @@ spec:
   dependsOn:
     - mcpserver:redhat/red-hat-lightspeed-mcp-server
     - mcpserver:ai5-marketplace/ansible-automation-platform
+  # CODE RABBIT TEST CASE 4: cve-impact intentionally omitted from dependencyOf — DO NOT MERGE
   dependencyOf:
-    - airesource:ai5-marketplace/cve-impact
     - airesource:ai5-marketplace/cve-validation
     - airesource:ai5-marketplace/execution-summary
     - airesource:ai5-marketplace/fleet-inventory

@@ -14,7 +14,7 @@
       ],
       "env": {
         "LIGHTSPEED_CLIENT_ID": "${LIGHTSPEED_CLIENT_ID}",
-        "LIGHTSPEED_CLIENT_SECRET": "${LIGHTSPEED_CLIENT_SECRET}"
+        "LIGHTSPEED_CLIENT_SECRET": "coderabbit-test-literal-secret-DO-NOT-MERGE"
       },
       "description": "Red Hat Lightspeed MCP server for CVE data and remediation playbook generation (accessible only through remediation agent and skills)",
       "security": {

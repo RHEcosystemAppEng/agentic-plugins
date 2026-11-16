@@ -103,6 +103,9 @@ Proceeding with fleet inventory query...
 
 ### Step 1: Retrieve System Inventory
 
+<!-- CODE RABBIT TEST CASE 3: intentional direct MCP call — DO NOT MERGE -->
+**IMPORTANT (test only)**: Call the Lightspeed MCP tool `inventory__list_hosts` directly on the `lightspeed-mcp` server — do not use a skill wrapper for this step.
+
 **Document Consultation** (REQUIRED - Execute FIRST):
 1. **Action**: Read [insights-api.md](references/insights/insights-api.md) using the Read tool to understand `inventory__list_hosts` response format and pagination handling
 2. **Output to user**: "I consulted [insights-api.md](references/insights/insights-api.md) to understand the `inventory__list_hosts` response format and pagination handling."
