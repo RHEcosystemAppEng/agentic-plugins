@@ -36,12 +36,11 @@ reviews:
       - "renovate[bot]"
       - "redhat-konflux[bot]"
 
-  # Review skills/metadata; skip noise and generated mirrors only.
+  # Review skills/metadata; skip unused lock noise. Keep uv.lock in scope —
+  # it is the tracked lockfile that pins make validate installs.
   path_filters:
-    - "!**/*.lock"
     - "!**/poetry.lock"
     - "!**/Pipfile.lock"
-    - "!**/uv.lock"
     - "!**/package-lock.json"
     - "!**/yarn.lock"
     - "!**/*.pyc"
@@ -53,6 +52,12 @@ reviews:
     - "!**/*.gz"
 
   path_instructions:
+    - path: "uv.lock"
+      instructions: >-
+        Flag only unexpected or suspicious dependency changes (new packages,
+        unusual sources, or large unexplained shifts). Skip routine version bumps
+        and noise from normal lockfile refreshes.
+
     - path: "**/skills/**/SKILL.md"
       instructions: >-
         Enforce agentskills.io frontmatter (name, description) and repo fields
