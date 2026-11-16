@@ -20,6 +20,7 @@ rh-basic/            @r2dedios @dmartinol
 .github/ @r2dedios @dmartinol
 scripts/ @r2dedios @dmartinol
 catalog/ @r2dedios @dmartinol
+.coderabbit.yaml @r2dedios @dmartinol
 CLAUDE.md @r2dedios @dmartinol
 SKILL_DESIGN_PRINCIPLES.md @r2dedios @dmartinol
 CONTRIBUTING.md @r2dedios @dmartinol
