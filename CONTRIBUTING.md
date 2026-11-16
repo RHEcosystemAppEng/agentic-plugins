@@ -90,7 +90,8 @@ PRs are auto-reviewed by [CodeRabbit](https://coderabbit.ai) using [`.coderabbit
 - Bot / Dependabot-style authors are ignored for auto-review
 - Org members can chat with the bot on the PR; non-org members cannot (`allow_non_org_members: false`)
 - Auto-review stays on for every push (`auto_pause_after_reviewed_commits: 0`)
-- Useful comments: `@coderabbitai review`, `@coderabbitai full review`, `@coderabbitai summary`
+- Useful comments: `@coderabbitai review`, `@coderabbitai full review`, `@coderabbitai summary`, `@coderabbitai help`
+- Full command cheat sheet: [`.github/CODERABBIT.md`](.github/CODERABBIT.md)
 
 When adding a new MCP server under `mcps/`, add a matching `path_instructions` entry in [`.coderabbit.yaml`](.coderabbit.yaml) for that manifest (do not use `mcps/*.yaml` — it would also match `mcps/catalog-info.yaml`).
 
@@ -104,6 +105,7 @@ Policy changes to `.coderabbit.yaml` are owned like other CI/config (see `CODEOW
 - [agentskills.io specification](https://agentskills.io/specification) -- Base skill standard
 - [Security Policy](SECURITY.md) -- Credential handling and vulnerability reporting
 - [`.coderabbit.yaml`](.coderabbit.yaml) -- CodeRabbit review policy
+- [`.github/CODERABBIT.md`](.github/CODERABBIT.md) -- CodeRabbit PR comment commands
 
 ## License
 
