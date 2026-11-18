@@ -43,9 +43,9 @@ Org members / collaborators can.
 
 | Comment | What it does |
 | --- | --- |
-| `@coderabbitai resolve` | Resolve all CodeRabbit review threads on the PR |
+| `@coderabbitai resolve` | Resolve all CodeRabbit review threads on the PR. **Does not verify** that findings were fixed — it only closes discussion threads |
 | `@coderabbitai fix comments` | Attempt to fix unresolved CodeRabbit findings and commit to the branch |
-| `@coderabbitai local commit` | Commit changes CodeRabbit proposed in a comment |
+| `@coderabbitai local commit` | Commit changes CodeRabbit proposed in a comment. **Must be posted as a reply** to that CodeRabbit comment (not as a top-level PR comment) |
 | `@coderabbitai autofix` | Keep fixing CodeRabbit findings / required CI / merge conflicts on the PR |
 | `@coderabbitai generate sequence diagram` | Post a sequence diagram of the PR changes |
 | `@coderabbitai generate unit tests` | Generate unit tests for changed code (plan-dependent) |
@@ -56,7 +56,7 @@ Org members / collaborators can.
 - **Auto-review is on** for every push (`auto_pause_after_reviewed_commits: 0`)
 - **Approvals are off** (`auto_approvals.enabled: false`): `@coderabbitai approve` will not approve the PR. Human / CODEOWNERS approval is still required.
 - Skip auto-review with a `hold` label, a WIP title (`wip:` / `[WIP]`), or a GitHub Draft PR
-- Reviews stay short and contract-focused (skills, `mcps.json`, Compass, `AGENTS.md`, secrets, `uv.lock`)
+- Reviews stay short and contract-focused (skills, `mcps.json`, Compass, `AGENTS.md`, secrets, `**/uv.lock`)
 - CodeRabbit does **not** replace `make validate` or required human review
 
 ## Suggested workflow
