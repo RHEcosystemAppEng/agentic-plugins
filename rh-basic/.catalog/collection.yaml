@@ -16,7 +16,7 @@ personas:
 marketplaces:
 - Claude Code
 - Cursor
-support_level: Unknown
+support_level: developer-preview
 maturity: GREEN
 description: "Essential Red Hat skills for IT professionals: CVE explanation, diagnostics, product lifecycle, and support severity guidance."
 summary: Lightweight, self-contained skills for everyday Red Hat operations and support tasks. Skills fall back to public Red Hat documentation when MCP tools are unavailable.

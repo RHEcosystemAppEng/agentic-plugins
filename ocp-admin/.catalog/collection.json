@@ -209,6 +209,6 @@
     }
   ],
   "summary": "The ocp-admin collection covers Assisted Installer cluster creation, provider-neutral HyperShift hosted-cluster lifecycle,\nmulti-cluster discovery across self-managed and managed OpenShift, kubeconfig-backed fleet health reporting, and security\nvalidation for Red Hat container images and CoreOS using official SBOMs and VEX data. Use AGENTS.md intent routing to pick\nthe right skill.\n",
-  "support_level": "Unknown",
+  "support_level": "developer-preview",
   "version": "0.1.0"
 }

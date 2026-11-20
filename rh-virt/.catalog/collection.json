@@ -153,6 +153,6 @@
     }
   ],
   "summary": "The rh-virt collection ships 10 skills for OpenShift Virtualization operations with confirmations on destructive steps.\n",
-  "support_level": "Unknown",
+  "support_level": "developer-preview",
   "version": "0.1.0"
 }

@@ -14,7 +14,7 @@ personas:
 marketplaces:
 - Claude Code
 - Cursor
-support_level: Unknown
+support_level: developer-preview
 maturity: GREEN
 description: Site reliability engineering tools and automation for managing Red Hat platforms and infrastructure.
 summary: The rh-sre collection provides skills for site reliability tasks.
