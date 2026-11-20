@@ -87,7 +87,7 @@ catalog-info.yaml (root Location)
 
 #### Entity Relationships
 
-Use `dependsOn` / `dependencyOf` for custom kinds (`AiResource`, `MCPServer`); do not use `partOf` / `hasPart` on those kinds. Compass does not auto-generate inverse relations (COMPASS-1288) — declare both sides on every edge.
+Use `dependsOn` / `dependencyOf` for edges between custom kinds (`AiResource`, `MCPServer`) — do not declare `partOf` / `hasPart` directly between them. Compass does not auto-generate inverse relations for these edges (COMPASS-1288); declare both sides. Exception: the Plugin/owned-MCP → System edge auto-generates `partOf`/`hasPart` from `spec.system` (confirmed live in prod and staging, Nov 2026) — do not add a redundant `dependsOn` for it.
 
 Full relationship matrix, bidirectional policy, entity ref formats, and file touch lists: [`.claude/skills/compass-manifest-maintenance/references/relationship-rules.md`](.claude/skills/compass-manifest-maintenance/references/relationship-rules.md). Use the **compass-manifest-maintenance** skill when adding or updating manifests. CI enforces structural rules via `scripts/validate_compass_manifests.py` (`make validate-compass-manifests`).
 
