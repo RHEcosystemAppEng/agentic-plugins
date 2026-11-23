@@ -1,0 +1,5 @@
+# The trusted run-script-oci-ta task generates this directory before buildah.
+# This image is a content artifact. It contains no executable service or source checkout.
+FROM scratch
+COPY .konflux/package/plugin/ /opt/plugin/
+COPY .konflux/package/manifest.json /opt/plugin-manifest.json
