@@ -1,0 +1,102 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: rh-sre-on-pull-request
+  namespace: skills-marketplace-tenant
+  labels:
+    appstudio.openshift.io/application: agentic-plugins
+    appstudio.openshift.io/component: rh-sre
+    pipelines.appstudio.openshift.io/type: build
+  annotations:
+    pipelinesascode.tekton.dev/on-cel-expression: event == 'pull_request' && target_branch == 'konflux-p02' && ("rh-sre/**".pathChanged()
+      || "submissions/rh-sre/**".pathChanged() || ".tekton/rh-sre-push.yaml".pathChanged() || ".tekton/rh-sre-pull-request.yaml".pathChanged()
+      || "scripts/**".pathChanged() || "containers/plugin/**".pathChanged() || "konflux/**".pathChanged() || "system.yaml".pathChanged()
+      || "catalog-info.yaml".pathChanged() || "policy/**".pathChanged())
+    pipelinesascode.tekton.dev/cancel-in-progress: 'true'
+    pipelinesascode.tekton.dev/max-keep-runs: '3'
+    build.appstudio.openshift.io/repo: https://github.com/RHEcosystemAppEng/agentic-plugins?rev={{revision}}
+    build.appstudio.redhat.com/commit_sha: '{{revision}}'
+    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
+    build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+spec:
+  pipelineRef:
+    resolver: bundles
+    params:
+    - name: name
+      value: plugin-component-build
+    - name: bundle
+      value: quay.io/ecosystem-appeng/konflux-plugin-pipelines:per-plugin-componnent-20261116-source-subdir-build-v1@sha256:57e8c001136997b91189750106342a10dcbd13192241c8f86bfa2abaf35c9512
+    - name: kind
+      value: pipeline
+  params:
+  - name: git-url
+    value: '{{source_url}}'
+  - name: revision
+    value: '{{revision}}'
+  - name: output-image
+    value: quay.io/redhat-user-workloads/skills-marketplace-tenant/agentic-plugins/rh-sre:on-pr-{{revision}}
+  - name: image-expires-after
+    value: 5d
+  - name: plugin-id
+    value: rh-sre
+  - name: source-subdir
+    value: .
+  - name: dockerfile
+    value: containers/plugin/Containerfile
+  - name: tools-image
+    value: quay.io/ecosystem-appeng/plugin-pipeline-tools:per-plugin-componnent-20261116-source-subdir-v1@sha256:bdf07289e1feea846ffc7ee29dd22fe359bb8d3db3b4077e9e2831a410c687c2
+  - name: prepare-task-bundle
+    value: quay.io/konflux-ci/tekton-catalog/task-run-script-oci-ta:0.1.3@sha256:e1b074b6c5818f17c1967581e94c1a45f051055196bcf3638d465362aa0b4936
+  - name: evaluation-task-bundle
+    value: quay.io/ecosystem-appeng/konflux-skill-evaluation/aeh-skill-eval:3.1.0@sha256:e5d4858a54e4f186be2be77e0ef5fe2343fc3878401a91c9abe1a46cde1dd9eb
+  - name: label-task-bundle
+    value: quay.io/ecosystem-appeng/konflux-skill-evaluation/check-pr-label:0.2.1@sha256:01c867e65305a8cf0a7ec7dd66d87eaacac7ef9d8d70f027b819e8552f92c0ac
+  - name: target-branch
+    value: konflux-p02
+  - name: ca-bundle-configmap
+    value: trusted-ca
+  - name: evaluation-image
+    value: quay.io/ecosystem-appeng/agent-eval-harness:per-plugin-componnent-20261105-harness8@sha256:6e45ccc233515d50a832e18ef2e7ef6d33c9368653b10db6d0c2d69323bbca5f
+  - name: trial-image
+    value: quay.io/ecosystem-appeng/agent-eval-harness:v1.0.2-trial@sha256:374b28704de8562ae2d6130d84d8d33d99db7dfe9680315034b10db5308cc983
+  # Explicit tiers skip GitLab MR lookup. Leave the optional token reference unbound.
+  - name: tiers
+    value: '1'
+  - name: gitlab-token-secret
+    value: rh-sre-unused-gitlab-token
+  - name: persist
+    value: ''
+  - name: persistence-required
+    value: 'true'
+  - name: evidence-image
+    value: quay.io/ecosystem-appeng/plugin-pipeline-tools:per-plugin-componnent-20261116-source-subdir-v1@sha256:bdf07289e1feea846ffc7ee29dd22fe359bb8d3db3b4077e9e2831a410c687c2
+  - name: verify-task-bundle
+    value: quay.io/ecosystem-appeng/konflux-skill-evaluation/verify-plugin-evidence:1.0.0@sha256:6a1f8536d700353d170ce153338de97cb88c675c87ff26b1fd699986d2f8ba92
+  - name: compass-task-bundle
+    value: quay.io/ecosystem-appeng/konflux-skill-evaluation/collect-plugin-context:1.0.0@sha256:3a73ec3083f0dbdb203a1e0766454a429b88851487c7ba2adfecc926f30243e3
+  - name: compass-url
+    value: https://compass.stage.redhat.com
+  - name: compass-secret
+    value: plugin-pipeline-compass-sec
+  - name: compass-token-key
+    value: COMPASS_STAGE_TOKEN
+  - name: soundcheck-checks
+    value: '{"plugin":[],"skill":[],"mcp":[]}'
+  timeouts:
+    pipeline: 24h
+    tasks: 23h
+    finally: 1h
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-rh-sre
+  workspaces:
+  - name: git-auth
+    secret:
+      secretName: '{{ git_auth_secret }}'
+  - name: shared-workspace
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi

@@ -7,7 +7,7 @@ Read this reference when generating Phase 6 error reports or troubleshooting.
 **Parse error output** from `jobs_stdout_retrieve` for these common patterns:
 
 1. **Connection Failures**: SSH timeout, host unreachable, authentication failed
-2. **Permission Errors**: sudo required, insufficient privileges, SELinux denials
+2. **Permission Errors**: elevated privileges required, insufficient permissions, SELinux denials
 3. **Package Manager Issues**: repo unavailable, package not found, dependency conflicts
 4. **Service Failures**: service not found, restart failed, timeout
 5. **Disk Space**: insufficient space for updates

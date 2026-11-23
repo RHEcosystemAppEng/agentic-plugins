@@ -1,19 +1,9 @@
 ---
 name: remediation-verifier
-description: |
-  **CRITICAL**: This skill must be used for remediation verification. DO NOT use raw MCP tools like get_cve or get_host_details directly for verification.
-
-  Verify CVE remediation success by checking Red Hat Lightspeed CVE status, validating package versions, and confirming service health.
-
-  Use when:
-  - "Verify CVE remediation was successful"
-  - "Confirm package updates were applied"
-  - "Check if CVE-X is fixed on target systems"
-  - "Validate remediation after playbook execution"
-
-  This skill orchestrates MCP tools (get_cve, get_cve_systems, get_host_details) for remediation verification.
-
-  **IMPORTANT**: ALWAYS use this skill instead of calling verification MCP tools directly.
+description: >-
+  Verify CVE remediation with Red Hat Lightspeed by checking CVE status, package
+  versions, and service health. Use after playbook or manual remediation to
+  confirm affected systems are fixed.
 model: inherit
 color: blue
 license: Apache-2.0
@@ -42,6 +32,8 @@ This skill verifies CVE remediation success by validating that vulnerabilities h
 **How they work together**: The `/remediation` skill invokes this skill after the user executes the remediation playbook, providing final confirmation that the CVE is resolved.
 
 ## Workflow
+
+Use this sequence to verify CVE status, host state, and service health.
 
 ### 1. CVE Status Verification
 
@@ -318,7 +310,8 @@ When completing verification, provide output in this format:
 1. Remediation verified successfully on all 10 systems
 2. Re-scan systems with Red Hat Lightspeed for updated inventory:
    ```bash
-   sudo insights-client --check-results
+   # Run with administrative privileges
+   insights-client --check-results
    ```
 3. Document remediation in change management system
 4. Consider scheduling next vulnerability scan in 7 days
@@ -330,6 +323,8 @@ When completing verification, provide output in this format:
 ```
 
 ## Examples
+
+The examples show complete and partial verification outcomes.
 
 ### Example 1: Successful Verification
 
@@ -352,6 +347,8 @@ When completing verification, provide output in this format:
 4. Return: "⚠ 18/20 systems verified. 2 systems failed package update. Troubleshooting guidance provided."
 
 ## Dependencies
+
+Connect to these MCP servers and tools before running verification.
 
 ### Required MCP Servers
 - `lightspeed-mcp` - Red Hat Lightspeed platform access
