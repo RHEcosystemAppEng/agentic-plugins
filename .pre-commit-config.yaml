@@ -3,7 +3,7 @@ default_install_hook_types: [pre-commit]
 
 repos:
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.4
+    rev: v8.30.1
     hooks:
       # Uses gitleaks on PATH (install: brew install gitleaks, or run scripts/install-hooks.sh)
       - id: gitleaks-system
